@@ -1,12 +1,27 @@
 package org.firstinspires.ftc.teamcode.ALGORITHMS
 
-class stateArray(val position1: Double, val position2: Double, val position3: Double){
-    constructor(pos1: Double, pos2: Double): this(pos1, pos2, 0.0)
-    constructor(pos1: Double): this(pos1, 0.0, 0.0)
+import kotlin.math.sqrt
+
+class Array(val val1: Double, val val2: Double, val val3: Double){
+    constructor(val1: Double, val2: Double): this(val1, val2, 0.0)
+    constructor(val1: Double): this(val1, 0.0, 0.0)
+    constructor(): this(0.0,0.0, 0.0)
 
     operator fun get(i: Int) = when (i) {
-        0 -> position1
-        1 -> position2
-        else -> position3
+        0 -> val1
+        1 -> val2
+        else -> val3
     }
+}
+
+class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double){
+    constructor(): this(0.0, 0.0, 0.0)
+
+    operator fun plus(pose: Pose): Pose = Pose(x + pose.x, y + pose.y, h + pose.h)
+
+    operator fun minus(pose: Pose): Pose = Pose(x - pose.x, y - pose.y, h - pose.h)
+
+    operator fun times(a: Double): Pose = Pose(a * x, a * y, a * h)
+
+    fun distance(): Double = sqrt(x*x - y*y)
 }

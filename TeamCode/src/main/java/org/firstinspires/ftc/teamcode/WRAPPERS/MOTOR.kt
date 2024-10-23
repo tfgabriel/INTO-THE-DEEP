@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 
 @Photon
 class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
-
     val motor: PhotonDcMotor = hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
 
     init{

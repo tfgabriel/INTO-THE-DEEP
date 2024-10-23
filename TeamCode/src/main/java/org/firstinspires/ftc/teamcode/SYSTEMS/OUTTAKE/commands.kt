@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE
 
-import org.firstinspires.ftc.teamcode.ALGORITHMS.stateArray
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Array
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
@@ -21,14 +21,12 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.wrist_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.wrist_neutral
 
 object simple_commands {
-
     /// O = open, 1 = close
     fun setClawState(state: Int): Command {
-        val states: stateArray = if(state == 0){
-             stateArray(chub_claw_close, ehub_claw_close)
-        }
+        val states: Array = if(state == 0)
+            Array(chub_claw_close, ehub_claw_close)
         else
-            stateArray(chub_claw_open, ehub_claw_open)
+            Array(chub_claw_open, ehub_claw_open)
 
         return ParallelCommand(
             InstantCommand{ outtake.ehub_claw.position = states[0]},
@@ -38,13 +36,12 @@ object simple_commands {
 
     /// -1 = chub, 0 = neutral, 1 = ehub
     fun setPositionerState(state: Int): Command{
-        val states: stateArray = if(state == 0){
-            stateArray(positioner_neutral)
-        }
+        val states: Array = if(state == 0)
+            Array(positioner_neutral)
         else if(state == -1)
-            stateArray(positioner_chub)
+            Array(positioner_chub)
         else
-            stateArray(positioner_ehub)
+            Array(positioner_ehub)
 
         return SequentialCommand(
             InstantCommand{ outtake.positioner.position = states[0] }
@@ -53,11 +50,10 @@ object simple_commands {
 
     /// 0 = pickup, 1 = chamber
     fun setArmState(state: Int): Command{
-        val states: stateArray = if(state == 0){
-            stateArray(chub_arm_pickup, ehub_arm_pickup)
-        }
+        val states: Array = if(state == 0)
+            Array(chub_arm_pickup, ehub_arm_pickup)
         else
-            stateArray(chub_arm_place, ehub_arm_place)
+            Array(chub_arm_place, ehub_arm_place)
 
         return ParallelCommand(
             InstantCommand{ outtake.chub_arm.position = states[0] },
@@ -67,15 +63,13 @@ object simple_commands {
 
     /// 0 = neutral, 1 = intake
     fun setWristState(state: Int): Command{
-        val states: stateArray = if(state == 0){
-            stateArray(wrist_neutral)
-        }
+        val states: Array = if(state == 0)
+            Array(wrist_neutral)
         else
-            stateArray(wrist_intake)
+            Array(wrist_intake)
 
         return SequentialCommand(
             InstantCommand{ outtake.wrist.position = states[0] }
         )
     }
-
 }

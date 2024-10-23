@@ -8,5 +8,6 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot
 class opTest: LinearOpMode() {
     override fun runOpMode() {
         val robot = robot(false)
+        robot.start()
     }
 }

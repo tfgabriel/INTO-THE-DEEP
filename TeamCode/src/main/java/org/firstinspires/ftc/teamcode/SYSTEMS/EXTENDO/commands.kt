@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.tolerance
 
 object commands {
-
     ///0 - max_examination, 1 - home_examination , 2 - home_submersible, 3 - max_submersible
     fun setLiftState(state: Int): Command {
         extendo_pdfl = if(state == 0)
@@ -41,14 +40,13 @@ object commands {
 
         return ParallelCommand(
             RunUntilCommand(
-                InstantCommand{ extendo.chub_rails.power = extendo_pdfl.update(target- extendo.chub_rails.currentpos, tolerance )},
+                InstantCommand{ extendo.chub_rails.power = extendo_pdfl.update((target - extendo.chub_rails.currentpos).toDouble(), tolerance )},
                 InstantCommand { target - extendo.chub_rails.currentpos < tolerance }
             ),
             RunUntilCommand(
-                InstantCommand{ extendo.ehub_rails.power = extendo_pdfl.update(target- extendo.chub_rails.currentpos, tolerance )},
+                InstantCommand{ extendo.ehub_rails.power = extendo_pdfl.update((target - extendo.chub_rails.currentpos).toDouble(), tolerance )},
                 InstantCommand { target - extendo.chub_rails.currentpos < tolerance }
             )
         )
     }
-
 }

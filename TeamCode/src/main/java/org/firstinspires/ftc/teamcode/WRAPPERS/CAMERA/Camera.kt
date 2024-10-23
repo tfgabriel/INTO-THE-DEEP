@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.SYSTEMS.CAMERA
+package org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA
 
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 
 class Camera {
-
     var limelight: Limelight3A = hardwareMap.get(Limelight3A::class.java, "limelight");
 
     val ang_X: Double
@@ -16,5 +15,4 @@ class Camera {
         get(){
             return limelight.latestResult.ty
         }
-
 }

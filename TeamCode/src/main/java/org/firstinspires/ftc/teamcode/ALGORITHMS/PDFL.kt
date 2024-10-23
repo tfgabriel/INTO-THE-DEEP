@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.ALGORITHMS
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.ElapsedTime
 import kotlin.math.abs
 import kotlin.math.sign
 
-
+@Config
 class PDFLCoef(@JvmField var p: Double, @JvmField var d: Double, @JvmField var f: Double, @JvmField var l: Double){
 
 }
@@ -19,16 +20,15 @@ class PDFL(val coef: PDFLCoef) {
 
     var ep = ElapsedTime()
 
-    fun update(err: Int, tolerance: Double): Double{
-        val error = err.toDouble()
+    fun update(err: Double, tolerance: Double): Double{
 
         derivative = (err - proportionate) / ep.milliseconds()
         ep.reset()
-        proportionate = error
+        proportionate = err
 
         return if(abs(err) > tolerance)
-            proportionate * coef.p + derivative + coef.d + sign(error) * force + sign(error) * lower_limit
+            proportionate * coef.p + derivative + coef.d + sign(err) * force + sign(err) * lower_limit
         else
-            force * sign(error)
+            force * sign(err)
     }
 }

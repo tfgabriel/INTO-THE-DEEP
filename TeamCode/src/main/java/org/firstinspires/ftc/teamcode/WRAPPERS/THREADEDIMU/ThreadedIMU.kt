@@ -5,12 +5,14 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.vars.imu_offset
 import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.vars.initialized
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.vars.localizeraccessed
 import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.vars.running
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.vars.yaw
 
 class ThreadedIMU(name: String) {
     private val imu: BNO055IMU = hardwareMap.get(BNO055IMU::class.java, name)
+
+    var yaw: Double = 0.0
+    var localizeraccessed: Boolean = false
+
 
     fun resetYaw(d: Double) {
         imu_offset = -yaw + d
@@ -25,8 +27,8 @@ class ThreadedIMU(name: String) {
             while (running) {
                 val fixed = threadedimew.imu.angularOrientation
                 val y = fixed.firstAngle.toDouble()
-                yaw = y
-                localizeraccessed = false
+                threadedimew.yaw = y
+                threadedimew.localizeraccessed = false
                 ep.reset()
             }
         }

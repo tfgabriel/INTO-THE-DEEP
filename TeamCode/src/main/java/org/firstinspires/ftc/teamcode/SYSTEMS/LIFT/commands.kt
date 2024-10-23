@@ -2,12 +2,10 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.LIFT
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFL
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFLCoef
-import org.firstinspires.ftc.teamcode.ALGORITHMS.stateArray
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.RunUntilCommand
-import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.derivative
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.force
@@ -48,7 +46,7 @@ object commands
 
         return ParallelCommand(
             RunUntilCommand(
-                InstantCommand{ lift.chub_slides.power = lift_pdfl.update(target-lift.chub_slides.currentpos, tolerance )},
+                InstantCommand{ lift.chub_slides.power = lift_pdfl.update((target-lift.chub_slides.currentpos, tolerance )},
                 InstantCommand { target-lift.chub_slides.currentpos < tolerance}
             ),
             RunUntilCommand(
