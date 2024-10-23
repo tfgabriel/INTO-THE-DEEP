@@ -46,11 +46,11 @@ object commands
 
         return ParallelCommand(
             RunUntilCommand(
-                InstantCommand{ lift.chub_slides.power = lift_pdfl.update((target-lift.chub_slides.currentpos, tolerance )},
+                InstantCommand{ lift.chub_slides.power = lift_pdfl.update((target-lift.chub_slides.currentpos).toDouble(), tolerance )},
                 InstantCommand { target-lift.chub_slides.currentpos < tolerance}
             ),
             RunUntilCommand(
-                InstantCommand{ lift.ehub_slides.power = lift_pdfl.update(target-lift.chub_slides.currentpos, tolerance )},
+                InstantCommand{ lift.ehub_slides.power = lift_pdfl.update((target-lift.chub_slides.currentpos).toDouble(), tolerance )},
                 InstantCommand { target-lift.chub_slides.currentpos < tolerance}
             )
         )
