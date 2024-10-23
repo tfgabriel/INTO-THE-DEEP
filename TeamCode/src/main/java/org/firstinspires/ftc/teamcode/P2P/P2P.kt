@@ -52,8 +52,8 @@ class P2P {
         current_pos = localizer.pos
         err = path - current_pos
 
-        x_err = cos(imew.yaw) * (err.x - tolerance) - sin(imew.yaw) * (err.y - tolerance)
-        y_err = sin(imew.yaw) * (err.x - tolerance) + cos(imew.yaw) * (err.y - tolerance)
+        x_err = cos(imew.yaw) * (err.x) - sin(imew.yaw) * (err.y)
+        y_err = sin(imew.yaw) * (err.x) + cos(imew.yaw) * (err.y)
         h_err = ang_diff(current_pos.h, imew.yaw)
 
         chassis.fc_drive(xPDFL.update(x_err, tolerance) * slow, yPDFL.update(y_err, tolerance) * slow, hPDFL.update(h_err, angular_tolerance), 0.0)
