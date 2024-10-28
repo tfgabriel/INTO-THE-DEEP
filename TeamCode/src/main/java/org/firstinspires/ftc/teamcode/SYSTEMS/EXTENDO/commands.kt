@@ -3,21 +3,20 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFL
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFLCoef
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.RunUntilCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.derivative
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.extendo_pdfl
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.force
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.home_examination
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.home_submersible
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.lower_limit
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.max_examination
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.max_submersible
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.proportional
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.derivative
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdfl
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.lower_limit
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examination
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_submersible
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
 
 object commands {
     ///0 - max_examination, 1 - home_examination , 2 - home_submersible, 3 - max_submersible

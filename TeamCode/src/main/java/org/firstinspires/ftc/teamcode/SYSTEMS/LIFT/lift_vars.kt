@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFL
 
 @Config
-object vars {
+object lift_vars {
     @JvmField
     var low_rung: Int = 0
     @JvmField

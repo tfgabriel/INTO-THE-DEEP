@@ -7,18 +7,18 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.RunUntilCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.derivative
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.force
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.high_chamber
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.high_rung
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.home
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.lift_pdfl
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.low_chamber
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.low_rung
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.lower_limit
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.max_extension
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.proportional
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.derivative
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.force
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_chamber
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_rung
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdfl
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.low_chamber
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.low_rung
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lower_limit
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.max_extension
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.proportional
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance
 
 object commands
 {

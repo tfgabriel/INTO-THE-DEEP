@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFL
 
 @Config
-object vars {
+object extendo_vars {
     @JvmField
     var max_submersible: Int = 0
     @JvmField

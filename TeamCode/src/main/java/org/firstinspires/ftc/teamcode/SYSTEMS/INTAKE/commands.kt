@@ -6,14 +6,14 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.vars.chub_arm_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.vars.chub_arm_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.vars.ehub_arm_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.vars.ehub_arm_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.vars.intaker_power
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.vars.intaker_spit_power
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.vars.wrist_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.vars.wrist_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_spit_power
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
 
 object commands {
     ///0 = neutral, 1 = intake

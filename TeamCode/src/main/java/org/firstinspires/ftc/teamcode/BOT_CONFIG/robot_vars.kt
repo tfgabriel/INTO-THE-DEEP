@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.acmerobotics.dashboard.FtcDashboard
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.LOCALIZATION.Sparkfun
@@ -23,6 +24,7 @@ object robot_vars {
     lateinit var control_hub: LynxModule
     lateinit var expansion_hub: LynxModule
 
+    lateinit var linearopmode: LinearOpMode
     lateinit var hardwareMap: HardwareMap
 
     lateinit var voltage_sensor: PhotonLynxVoltageSensor

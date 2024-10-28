@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.vars.imu_offset
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.vars.initialized
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.vars.running
+import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.threadedimu_vars.imu_offset
+import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.threadedimu_vars.initialized
+import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.threadedimu_vars.running
 
 class ThreadedIMU(name: String) {
     private val imu: BNO055IMU = hardwareMap.get(BNO055IMU::class.java, name)

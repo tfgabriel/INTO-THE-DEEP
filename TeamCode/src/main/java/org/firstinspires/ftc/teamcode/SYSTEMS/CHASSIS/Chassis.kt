@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS
 
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
-import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.vars.denominator
-import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.vars.slowcoef
-import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.vars.slowdown
+import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars.denominator
+import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars.slowcoef
+import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars.slowdown
 import org.firstinspires.ftc.teamcode.WRAPPERS.MOTOR
 import kotlin.math.cos
 import kotlin.math.max

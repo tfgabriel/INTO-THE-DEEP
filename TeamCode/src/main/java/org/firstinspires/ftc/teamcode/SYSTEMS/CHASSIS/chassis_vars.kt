@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS
 import com.acmerobotics.dashboard.config.Config
 
 @Config
-object vars {
+object chassis_vars {
     var slowdown: Double = 0.0
 
     @JvmField

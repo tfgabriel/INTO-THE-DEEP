@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFL
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 
 @Config
-object vars{
+object p2p_vars{
     lateinit var path: Pose
     lateinit var current_pos: Pose
     lateinit var err: Pose

@@ -6,19 +6,19 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.chub_arm_pickup
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.chub_arm_place
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.chub_claw_close
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.chub_claw_open
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.ehub_arm_pickup
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.ehub_arm_place
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.ehub_claw_close
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.ehub_claw_open
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.positioner_chub
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.positioner_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.positioner_ehub
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.wrist_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.vars.wrist_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_pickup
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_place
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_claw_close
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_claw_open
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_arm_pickup
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_arm_place
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_claw_close
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_claw_open
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_chub
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_ehub
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.wrist_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.wrist_neutral
 
 object simple_commands {
     /// O = open, 1 = close

@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.THREEWHEELODOMETRY
 
-class vars {
+class threewheelodo_vars {
 }
