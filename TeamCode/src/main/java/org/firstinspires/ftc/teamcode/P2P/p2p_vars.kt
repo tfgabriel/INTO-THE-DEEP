@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.P2P
 
 import com.acmerobotics.dashboard.config.Config
-import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFL
+import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 
 @Config
@@ -35,9 +35,9 @@ object p2p_vars{
     @JvmField
     var h_f: Double = 0.0
 
-    var xPDFL: PDFL = PDFL()
-    var yPDFL: PDFL = PDFL()
-    var hPDFL: PDFL = PDFL()
+    var xPDFL: PDF = PDF()
+    var yPDFL: PDF = PDF()
+    var hPDFL: PDF = PDF()
 
     @JvmField
     var tolerance: Double = 0.0

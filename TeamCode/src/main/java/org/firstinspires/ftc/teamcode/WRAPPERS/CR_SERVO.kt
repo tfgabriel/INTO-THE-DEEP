@@ -6,9 +6,8 @@ import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 
-@Photon
 class CR_SERVO(name: String, reversed: Boolean) {
-    //val crservo: PhotonCRServo = hardwareMap.get(CRServo::class.java, name) as PhotonCRServo
+    //crservo: PhotonCRServo = hardwareMap.get(CRServo::class.java, name) as PhotonCRServo
     val crservo = hardwareMap.crservo.get(name)
     init{
         if(reversed)

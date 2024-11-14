@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry
 object communication {
     fun send_todash(caption: String, content: Any){
         telemetry.addData(caption, content)
-        telemetry.update()
     }
 
     fun send_todash(caption: String, content: Double) = send_todash(caption, String.format("%.4f", content))

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.BOT_CONFIG
 
 import android.annotation.SuppressLint
 import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.config.Config
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -14,9 +15,10 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
+import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.ThreadedIMU
 
+@Config
 @SuppressLint("StaticFieldLeak")
 object robot_vars {
     lateinit var dashboard: FtcDashboard
@@ -39,4 +41,11 @@ object robot_vars {
     lateinit var camera: Camera
     lateinit var pose_set: Any
     lateinit var p2p: P2P
+
+    @JvmField
+    var WITH_PID: Boolean = false
+    @JvmField
+    var EXTENDO_STATE: Int = 0
+    @JvmField
+    var LIFT_STATE: Int = 0
 }

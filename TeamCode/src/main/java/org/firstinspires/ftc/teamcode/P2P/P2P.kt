@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.P2P
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
-import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFL
-import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFLCoef
+import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
@@ -41,9 +40,9 @@ class P2P {
         }
 
     fun followpath(current_path: Pose){
-        xPDFL = PDFL(PDFLCoef( x_p, x_d, x_f, 0.0))
-        yPDFL = PDFL(PDFLCoef(y_p, y_d, y_f, 0.0))
-        hPDFL = PDFL(PDFLCoef(h_p, h_d, h_f, 0.0))
+        xPDFL = PDF(x_p, x_d, x_f)
+        yPDFL = PDF(y_p, y_d, y_f)
+        hPDFL = PDF(h_p, h_d, h_f)
 
         path = current_path
     }
@@ -52,10 +51,10 @@ class P2P {
         current_pos = localizer.pos
         err = path - current_pos
 
-        x_err = cos(imew.yaw) * (err.x) - sin(imew.yaw) * (err.y)
-        y_err = sin(imew.yaw) * (err.x) + cos(imew.yaw) * (err.y)
+        y_err = cos(imew.yaw) * (err.x) - sin(imew.yaw) * (err.y)
+        x_err = sin(imew.yaw) * (err.x) + cos(imew.yaw) * (err.y)
         h_err = ang_diff(current_pos.h, imew.yaw)
 
-        chassis.fc_drive(xPDFL.update(x_err, tolerance) * slow, yPDFL.update(y_err, tolerance) * slow, hPDFL.update(h_err, angular_tolerance), 0.0)
+        chassis.fc_drive(yPDFL.update(y_err, tolerance) * slow, xPDFL.update(x_err, tolerance) * slow, hPDFL.update(h_err, angular_tolerance), 0.0)
     }
 }

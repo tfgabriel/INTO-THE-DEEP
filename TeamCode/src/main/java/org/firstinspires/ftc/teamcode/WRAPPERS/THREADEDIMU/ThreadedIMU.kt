@@ -1,22 +1,33 @@
-package org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU
+package org.firstinspires.ftc.teamcode.Systems
 
 import com.qualcomm.hardware.bosch.BNO055IMU
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_norm
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.threadedimu_vars.imu_offset
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.threadedimu_vars.initialized
-import org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU.threadedimu_vars.running
+import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 
-class ThreadedIMU(name: String) {
+class ThreadedIMU(val name: String) {
     private val imu: BNO055IMU = hardwareMap.get(BNO055IMU::class.java, name)
+    var imuoffset = 0.0
 
-    var yaw: Double = 0.0
-    var localizeraccessed: Boolean = false
+    var running: Boolean = false
+    var initialized: Boolean = false
 
+    val yaw: Double
+        get() = ang_norm(_yaw + imuoffset)
+    private var _yaw = 0.0
+    var yawVel: Double = 0.0
+    var localizerAccessed = false
 
     fun resetYaw(d: Double) {
-        imu_offset = -yaw + d
+        imuoffset = -_yaw + d
     }
+
+
 
     val ep = ElapsedTime()
 
@@ -24,18 +35,17 @@ class ThreadedIMU(name: String) {
         override fun run() {
             val ep = ElapsedTime()
             ep.reset()
-            while (running) {
+            while (threadedimew.running) {
                 val fixed = threadedimew.imu.angularOrientation
                 val y = fixed.firstAngle.toDouble()
-                threadedimew.yaw = y
-                threadedimew.localizeraccessed = false
+                threadedimew._yaw = y
+                threadedimew.localizerAccessed = false
                 ep.reset()
             }
         }
     }
 
     var thread = Thread()
-
     fun init() {
         val parameters = BNO055IMU.Parameters()
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
@@ -44,7 +54,11 @@ class ThreadedIMU(name: String) {
         ep.reset()
 
         thread = Thread(imew(this))
+        thread.setUncaughtExceptionHandler { th, er -> send_toall("GOT ERR TIMMY ${th.id}", er.stackTraceToString()) }
+
     }
+
+
 
     fun initThread() {
         if (!running) {

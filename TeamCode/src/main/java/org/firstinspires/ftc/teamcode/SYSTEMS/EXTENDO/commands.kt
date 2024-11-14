@@ -1,34 +1,35 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO
 
-import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFL
-import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFLCoef
+import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.RunUntilCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
+import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.derivative
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdfl
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.lower_limit
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
+import kotlin.math.abs
+import kotlin.math.sign
 
 object commands {
     ///0 - max_examination, 1 - home_examination , 2 - home_submersible, 3 - max_submersible
-    fun setLiftState(state: Int): Command {
-        extendo_pdfl = if(state == 0)
-            PDFL(PDFLCoef(0.0, 0.0, lower_limit, 0.0))
-        else if(state != -1)
-            PDFL(PDFLCoef(proportional, derivative, force, 0.0))
-        else
-            PDFL()
+    fun setExtendoTarget(state: Int) {
 
-        val target = if(state == 0)
+        if(state != -1)
+            PDF(proportional, derivative, force)
+        else
+            PDF()
+
+        extendo_target = if(state == 0)
             max_examination
         else if(state == 1)
             home_examination
@@ -37,15 +38,28 @@ object commands {
         else
             max_submersible
 
-        return ParallelCommand(
-            RunUntilCommand(
-                InstantCommand{ extendo.chub_rails.power = extendo_pdfl.update((target - extendo.chub_rails.currentpos).toDouble(), tolerance )},
-                InstantCommand { target - extendo.chub_rails.currentpos < tolerance }
-            ),
-            RunUntilCommand(
-                InstantCommand{ extendo.ehub_rails.power = extendo_pdfl.update((target - extendo.chub_rails.currentpos).toDouble(), tolerance )},
-                InstantCommand { target - extendo.chub_rails.currentpos < tolerance }
+    }
+
+    fun isExtendoinTolerance() = extendo_target - extendo.chub_rails.currentpos < tolerance
+
+    fun setExtendoState(): Command{
+        val err = extendo_target - extendo.chub_rails.currentpos
+        //if i'm not inside the tolerance, i'm running the pdf, else i'm just running the f
+        return if (abs(err) > tolerance)
+            ParallelCommand(
+                RunUntilCommand(
+                    InstantCommand { extendo.chub_rails.power = extendo_pdf.update(err.toDouble())},
+                    InstantCommand { err < tolerance }
+                ),
+                RunUntilCommand(
+                    InstantCommand { extendo.ehub_rails.power = extendo_pdf.update(err.toDouble())},
+                    InstantCommand { err < tolerance }
+                ), WaitUntilCommand { err < tolerance }
             )
-        )
+        else
+            ParallelCommand(
+                InstantCommand { extendo.chub_rails.power = sign(err.toDouble()) * force },
+                InstantCommand { extendo.ehub_rails.power = sign(err.toDouble()) * force }
+            )
     }
 }

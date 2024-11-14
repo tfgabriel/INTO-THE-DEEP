@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ALGORITHMS
 
+import java.lang.Math
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.floor
@@ -14,4 +15,6 @@ object Math {
 
     //angle difference calculated but so that it gets the shortest arc between the 2
     fun ang_diff(ang1: Double, ang2: Double) = float_mod(ang2 - ang1 + PI, 2 * PI) - PI
+
+    fun ang_norm(o1: Double) = float_mod(o1, 2 * Math.PI)
 }

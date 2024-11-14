@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.dashboard
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.expansion_hub
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
@@ -33,6 +34,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
+import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 
 class robot(var isAuto: Boolean, var isRed: Boolean) {
     constructor(isAuto: Boolean): this(isAuto, true)
@@ -55,13 +57,15 @@ class robot(var isAuto: Boolean, var isRed: Boolean) {
         }
         if (lynxModules[0].isParent && LynxConstants.isEmbeddedSerialNumber(lynxModules[0].serialNumber)) {
             control_hub = lynxModules[0]
-          //  expansion_hub = lynxModules[1]
+            expansion_hub = lynxModules[1]
         } else {
             control_hub = lynxModules[1]
-          //  expansion_hub = lynxModules[0]
+            expansion_hub = lynxModules[0]
         }
 
-
+        imew = ThreadedIMU("IMU")
+        imew.init()
+        imew.reset()
         dashboard = FtcDashboard.getInstance()
         telemetry = dashboard.telemetry
 
@@ -70,10 +74,10 @@ class robot(var isAuto: Boolean, var isRed: Boolean) {
 
     //all systems
     fun init_systems(){
-       // chassis = Chassis()
-      //  lift = Lift()
-       // extendo = Extendo()
-        //intake = Intake()
+        chassis = Chassis()
+        lift = Lift()
+        extendo = Extendo()
+        intake = Intake()
         outtake = Outtake()
     }
 
@@ -90,8 +94,9 @@ class robot(var isAuto: Boolean, var isRed: Boolean) {
     private val et = ElapsedTime()
     fun update() {
         send_toall("framerate", 1 / et.seconds())
+        telemetry.update()
         et.reset()
         control_hub.clearBulkCache()
-        //expansionHub.clearBulkCache()
+        expansion_hub.clearBulkCache()
     }
 }

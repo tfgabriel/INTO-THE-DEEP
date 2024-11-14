@@ -24,8 +24,8 @@ object commands {
             Array(chub_arm_intake, ehub_arm_intake)
 
         return SequentialCommand(
-            InstantCommand{ intake.chub_arm.position = states[0] },
-            InstantCommand{ intake.ehub_arm.position = states[1] }
+            //InstantCommand{ intake.chub_arm.position = states[0] },
+            //InstantCommand{ intake.ehub_arm.position = states[1] }
         )
     }
 
@@ -37,7 +37,7 @@ object commands {
             Array(wrist_intake)
 
         return SequentialCommand(
-            InstantCommand{ intake.wrist.position = states[0] }
+           // InstantCommand{ intake.wrist.position = states[0] }
         )
     }
 
@@ -51,8 +51,8 @@ object commands {
             Array(0.0)
 
         return ParallelCommand(
-            InstantCommand { intake.chub_intaker.power = states[0] },
-            InstantCommand { intake.ehub_intaker.power = states[0] }
+            //InstantCommand { intake.chub_intaker.power = states[0] },
+            //InstantCommand { intake.ehub_intaker.power = states[0] }
         )
     }
 }

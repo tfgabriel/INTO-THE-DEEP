@@ -8,10 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 
-@Photon
 class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
-    //val motor: PhotonDcMotor = hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
-    val motor = hardwareMap.dcMotor.get(name)
+    val motor: PhotonDcMotor = hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
+    //val motor = hardwareMap.dcMotor.get(name)
     init{
         motor.mode = if(encoder){
             DcMotor.RunMode.STOP_AND_RESET_ENCODER
@@ -31,12 +30,12 @@ class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
             return motor.currentPosition
         }
 
-    /*val voltage: Double
+    val voltage: Double
         get(){
             return motor.getCurrent(CurrentUnit.MILLIAMPS)
         }
 
-     */
+
 
     var power: Double = 0.0
         set(p){
