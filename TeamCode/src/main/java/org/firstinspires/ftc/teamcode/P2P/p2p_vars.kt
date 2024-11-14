@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.P2P
 
 import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 
@@ -46,6 +47,8 @@ object p2p_vars{
 
     @JvmField
     val slow: Double = 1.0
+
+    val ep: ElapsedTime = ElapsedTime()
 }
 
 @Config
