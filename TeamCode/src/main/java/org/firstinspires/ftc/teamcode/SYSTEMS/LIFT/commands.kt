@@ -26,7 +26,7 @@ import kotlin.math.sign
 
 object commands
 {
-    ///0 - homed, 1 - low chamber, 2 - low rung, 3 - high chamber, 4 - high rung, 5 - low basket, 6 - high bsket, 7 - max extension, -1 - emergency stop
+    ///0 - homed, 1 - low chamber, 2 - low rung, 3 - high chamber, 4 - high rung, 5 - low basket, 6 - high basket, 7 - max extension, -1 - emergency stop
     fun setLiftTarget(state: Int) {
 
         //emergency stop in case i start a campfire
@@ -55,21 +55,41 @@ object commands
 
     fun isLiftinTolerance() = lift_target-lift.chub_slides.currentpos < tolerance
 
+    fun setLiftPowers(pwr1: Double){
+        lift.chub_slides.power = pwr1
+        lift.ehub_slides.power = pwr1
+    }
+
+    fun setLift(){
+        val err = lift_target-lift.chub_slides.currentpos
+
+        if(!isLiftinTolerance())
+            setLiftPowers(lift_pdf.update(err.toDouble()))
+        else if(lift_target == home)
+            setLiftPowers(0.0)
+        else
+            setLiftPowers(-force * sign(err.toDouble()))
+    }
+
+
+
+    //not sure if i wanna run my lifts on commandbase
     fun setLiftState(): Command{
         val err = lift_target-lift.chub_slides.currentpos
 
         //if i'm not inside the tolerance, i'm running the pdf, else i'm just running the f
         return if (abs(err) > tolerance)
+
             ParallelCommand(
-            RunUntilCommand(
-                InstantCommand { lift.chub_slides.power = lift_pdf.update(err.toDouble())},
-                InstantCommand { err < tolerance}
-            ),
-            RunUntilCommand(
-                InstantCommand { lift.ehub_slides.power = lift_pdf.update(err.toDouble())},
-                InstantCommand { err < tolerance }
-            ), WaitUntilCommand { err < tolerance}
-        )
+                RunUntilCommand(
+                    InstantCommand { lift.chub_slides.power = lift_pdf.update(err.toDouble())},
+                    InstantCommand { err < tolerance}
+                ),
+                RunUntilCommand(
+                    InstantCommand { lift.ehub_slides.power = lift_pdf.update(err.toDouble())},
+                    InstantCommand { err < tolerance }
+                ), WaitUntilCommand { err < tolerance}
+            )
         else
             ParallelCommand(
                 InstantCommand { lift.chub_slides.power = sign(err.toDouble()) * force },

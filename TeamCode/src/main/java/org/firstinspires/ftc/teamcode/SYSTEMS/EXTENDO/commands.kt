@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.RunUntilCommand
@@ -17,6 +18,11 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examinati
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -41,6 +47,28 @@ object commands {
     }
 
     fun isExtendoinTolerance() = extendo_target - extendo.chub_rails.currentpos < tolerance
+
+
+    fun setExtendoPowers(pwr1: Double, pwr2: Double){
+        extendo.chub_rails.power = pwr1
+        extendo.ehub_rails.power = pwr2
+    }
+
+    fun setExtendoPowers(pwr1: Double){
+        extendo.chub_rails.power = pwr1
+        extendo.ehub_rails.power = pwr1
+    }
+
+    fun setExtendo(){
+        val err = extendo_target - extendo.chub_rails.currentpos
+
+        if(!isExtendoinTolerance())
+            setExtendoPowers(extendo_pdf.update(err.toDouble()))
+        else
+            setExtendoPowers(-force * sign(err.toDouble()))
+    }
+
+
 
     fun setExtendoState(): Command{
         val err = extendo_target - extendo.chub_rails.currentpos

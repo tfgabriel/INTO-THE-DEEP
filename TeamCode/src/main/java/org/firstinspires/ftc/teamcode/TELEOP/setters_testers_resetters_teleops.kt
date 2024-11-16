@@ -47,47 +47,128 @@ import kotlin.math.abs
 import kotlin.math.sign
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
 
-var PS1: Boolean = false
-var targetheading: Double = 0.0
-var ep: ElapsedTime = ElapsedTime()
-@Photon
 @TeleOp
-class opTest: LinearOpMode() {
+class servo_resetter: LinearOpMode(){
+
     override fun runOpMode() {
         val robot = robot(false)
         robot.start(this)
+        val chub_outtake_servo = robot_vars.hardwareMap.servo.get("CHUB_ARM")
+        val ehub_outtake_servo = robot_vars.hardwareMap.servo.get("EHUB_ARM")
+
+        waitForStart()
+        while (!isStopRequested){
+            chub_outtake_servo.position = 0.0
+            ehub_outtake_servo.position = 1.0
+
+            robot.update()
+        }
+    }
+
+}
+
+@Photon
+@TeleOp
+class extendo_test: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        extendo = Extendo()
 
         waitForStart()
         while(!isStopRequested){
-            chassis_vars.h_PDF = PDF(chassis_vars.p, chassis_vars.d, chassis_vars.f)
+            setExtendoTarget(EXTENDO_STATE)
+            extendo_pdf = PDF(extendo_vars.proportional, extendo_vars.derivative, extendo_vars.force)
 
-            send_toall("IMEW", imew.yaw)
-            send_toall("FORWARDS POWER", gamepad1.left_stick_y)
-            send_toall("STRAFE POWER", gamepad1.left_stick_x)
-            send_toall("ROTATION POWER", gamepad1.right_stick_x)
-            send_toall("SLOWDOWN", gamepad1.left_trigger)
+            setExtendo()
+            send_toall("ERR", extendo_target- extendo.chub_rails.currentpos)
+            send_toall("PID VALUE", extendo_pdf.update((extendo_target- extendo.chub_rails.currentpos).toDouble()))
+            robot.update()
+        }
+    }
 
-            if(gamepad1.ps && !PS1){
-                imew.reset()
-                targetheading = imew.yaw
-            }
-            PS1 = gamepad1.ps
+}
 
-            if(abs(gamepad1.right_stick_x) > 0.005){
-                targetheading = imew.yaw
-                ep.reset()
-            } else {
-                while(ep.milliseconds() <= chassis_vars.heading_timeout){
-                    targetheading = imew.yaw
-                }
-            }
+@Photon
+@TeleOp
+class lift_test: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        lift = Lift()
+        waitForStart()
 
-            send_toall("TARGETHEADING", targetheading)
+        while(!isStopRequested){
+            setLiftTarget(LIFT_STATE)
+            lift_pdf = PDF(lift_vars.proportional, lift_vars.derivative, lift_vars.force)
+            setLift()
+            send_toall("ERR", lift_target-lift.chub_slides.currentpos)
+            send_toall("PID VALUE", lift_pdf.update((lift_target-lift.chub_slides.currentpos).toDouble()))
+            robot.update()
+        }
+    }
 
-            chassis.fc_drive(gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
-            send_toall("diff", ang_diff(targetheading, imew.yaw))
-            send_toall("pid value", chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)))
+}
 
+@Photon
+@TeleOp
+class set_lift_f: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        lift = Lift()
+
+        waitForStart()
+        while(!isStopRequested){
+            setLiftPowers(lift_vars.force)
+            robot.update()
+        }
+    }
+}
+
+@Photon
+@TeleOp
+class set_extendo_f: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        extendo = Extendo()
+
+        waitForStart()
+        while(!isStopRequested){
+            setExtendoPowers(extendo_vars.force)
+            robot.update()
+        }
+    }
+}
+
+@Photon
+@TeleOp
+class find_lift_positions: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        lift = Lift()
+
+        waitForStart()
+        while(!isStopRequested){
+            send_toall("LIFT POSITION", lift.chub_slides.currentpos)
+            robot.update()
+        }
+    }
+}
+
+@Photon
+@TeleOp
+class find_extendo_positions: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        extendo = Extendo()
+
+        waitForStart()
+        while(!isStopRequested){
+            send_toall("EXTENDO POSITION", extendo.chub_rails.currentpos)
             robot.update()
         }
     }
