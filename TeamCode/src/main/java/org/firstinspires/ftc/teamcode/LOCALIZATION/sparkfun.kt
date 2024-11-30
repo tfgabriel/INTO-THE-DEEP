@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 
+// Not in use :()
 class Sparkfun {
     val sparkfun: SparkFunOTOS = hardwareMap.get(SparkFunOTOS::class.java, "sparkfun")
 

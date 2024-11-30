@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA
 
-class camera_vars {
+object camera_vars {
+    @JvmField
+    var angtopos: Double = 255.0/355.0
 }

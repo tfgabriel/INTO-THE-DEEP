@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
+import org.firstinspires.ftc.teamcode.TELEOP.isIntaking
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -30,7 +31,7 @@ object commands {
     ///0 - max_examination, 1 - home_examination , 2 - home_submersible, 3 - max_submersible
     fun setExtendoTarget(state: Int) {
 
-        if(state != -1)
+        extendo_pdf = if(state != -1)
             PDF(proportional, derivative, force)
         else
             PDF()
@@ -46,31 +47,35 @@ object commands {
 
     }
 
-    fun isExtendoinTolerance() = extendo_target - extendo.chub_rails.currentpos < tolerance
+    fun isExtendoinTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < tolerance
 
 
+    /*
     fun setExtendoPowers(pwr1: Double, pwr2: Double){
         extendo.chub_rails.power = pwr1
-        extendo.ehub_rails.power = pwr2
+        //extendo.ehub_rails.power = pwr2
     }
+    */
 
     fun setExtendoPowers(pwr1: Double){
         extendo.chub_rails.power = pwr1
-        extendo.ehub_rails.power = pwr1
+        //extendo.ehub_rails.power = pwr1
     }
 
-    fun setExtendo(){
+    fun setExtendo(gamepad_power: Double){
         val err = extendo_target - extendo.chub_rails.currentpos
 
-        if(!isExtendoinTolerance())
+        if(isIntaking){
+            setExtendoPowers(gamepad_power)
+        }else if(!isExtendoinTolerance())
             setExtendoPowers(extendo_pdf.update(err.toDouble()))
         else
-            setExtendoPowers(-force * sign(err.toDouble()))
+            setExtendoPowers(force * sign(err.toDouble()))
     }
 
 
 
-    fun setExtendoState(): Command{
+    /*fun setExtendoState(): Command{
         val err = extendo_target - extendo.chub_rails.currentpos
         //if i'm not inside the tolerance, i'm running the pdf, else i'm just running the f
         return if (abs(err) > tolerance)
@@ -90,4 +95,6 @@ object commands {
                 InstantCommand { extendo.ehub_rails.power = sign(err.toDouble()) * force }
             )
     }
+
+     */
 }

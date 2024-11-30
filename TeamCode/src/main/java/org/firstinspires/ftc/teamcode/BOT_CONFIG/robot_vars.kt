@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.BOT_CONFIG
 import android.annotation.SuppressLint
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
 object robot_vars {
     lateinit var dashboard: FtcDashboard
     lateinit var telemetry: Telemetry
+    lateinit var telemetry_packet: TelemetryPacket
     lateinit var control_hub: LynxModule
     lateinit var expansion_hub: LynxModule
 
@@ -48,4 +50,10 @@ object robot_vars {
     var EXTENDO_STATE: Int = 0
     @JvmField
     var LIFT_STATE: Int = 0
+
+    var READY_FOR_TRANSFER: Boolean = false
+    var READY_FOR_PLACEMENT: Boolean = false
+    var READY_FOR_LEAVING: Boolean = false
+    var READY_FOR_INTAKING: Boolean = false
+    var READY_FOR_EXAMINING: Boolean = false
 }

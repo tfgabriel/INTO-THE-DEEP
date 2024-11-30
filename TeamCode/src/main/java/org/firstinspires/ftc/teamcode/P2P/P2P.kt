@@ -52,13 +52,13 @@ class P2P {
         x_err = sin(imew.yaw) * (err.x) + cos(imew.yaw) * (err.y)
         h_err = ang_diff(current_pos.h, imew.yaw)
 
-        //if the robot is not in tolerance, run with the pd
+        // If the robot is not in tolerance, run with the pd
         if (!isBotinTolerance()) {
             chassis.fc_drive(yPDF.update(y_err) * slow, xPDF.update(x_err) * slow, hPDF.update(h_err), 0.0)
             ep.reset()
         }
         else {
-            //else, run with the pd in the opposite direction in order to stop it and counteract the slip for a bit then stop
+            // else, run with the pd in the opposite direction in order to stop it and counteract the slip for a bit then stop
             if(ep.milliseconds()<50)
                 chassis.fc_drive(- y_f * sign(y_err), - x_f * sign(x_err),- h_f * sign(h_err), 0.0)
             else

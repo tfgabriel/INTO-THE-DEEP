@@ -30,7 +30,7 @@ object commands
     fun setLiftTarget(state: Int) {
 
         //emergency stop in case i start a campfire
-        if(state != -1)
+        lift_pdf = if(state != -1)
             PDF(proportional, derivative, force)
         else
             PDF()
@@ -53,7 +53,7 @@ object commands
             max_extension
     }
 
-    fun isLiftinTolerance() = lift_target-lift.chub_slides.currentpos < tolerance
+    fun isLiftinTolerance() = abs(lift_target-lift.ehub_slides.currentpos) < tolerance
 
     fun setLiftPowers(pwr1: Double){
         lift.chub_slides.power = pwr1
@@ -61,14 +61,14 @@ object commands
     }
 
     fun setLift(){
-        val err = lift_target-lift.chub_slides.currentpos
+        val err = lift_target-lift.ehub_slides.currentpos
 
         if(!isLiftinTolerance())
             setLiftPowers(lift_pdf.update(err.toDouble()))
         else if(lift_target == home)
             setLiftPowers(0.0)
         else
-            setLiftPowers(-force * sign(err.toDouble()))
+            setLiftPowers(force * sign(err.toDouble()))
     }
 
 

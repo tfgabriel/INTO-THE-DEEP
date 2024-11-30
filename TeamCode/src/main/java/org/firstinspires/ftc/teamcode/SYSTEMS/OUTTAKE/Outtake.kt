@@ -7,7 +7,7 @@ class Outtake {
     var ehub_arm = hardwareMap.servo.get("EHUB_ARM_OUTTAKE")
 
     var positioner = hardwareMap.servo.get("POSITIONER")
-    var wrist = hardwareMap.servo.get("WRIST_OUTTAKE")
+    //var wrist = hardwareMap.servo.get("WRIST_OUTTAKE")
 
     var chub_claw = hardwareMap.servo.get("CHUB_CLAW")
     var ehub_claw = hardwareMap.servo.get("EHUB_CLAW")

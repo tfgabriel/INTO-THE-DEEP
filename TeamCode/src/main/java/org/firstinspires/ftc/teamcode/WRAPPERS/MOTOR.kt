@@ -9,15 +9,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 
 class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
-    val motor: PhotonDcMotor = hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
-    //val motor = hardwareMap.dcMotor.get(name)
+    //val motor: PhotonDcMotor = hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
+    val motor = hardwareMap.dcMotor.get(name)
     init{
-        motor.mode = if(encoder){
-            DcMotor.RunMode.STOP_AND_RESET_ENCODER
-            DcMotor.RunMode.RUN_USING_ENCODER
+        if(encoder){
+            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
         else
-            DcMotor.RunMode.RUN_WITHOUT_ENCODER
+            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         if(reversed)
@@ -30,10 +31,12 @@ class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
             return motor.currentPosition
         }
 
-    val voltage: Double
+    /*val voltage: Double
         get(){
             return motor.getCurrent(CurrentUnit.MILLIAMPS)
         }
+
+     */
 
 
 

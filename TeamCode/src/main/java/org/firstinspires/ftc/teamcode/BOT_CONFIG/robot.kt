@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.BOT_CONFIG
 
 import android.graphics.Color
 import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.p2p
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.pose_set
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.voltage_sensor
 import org.firstinspires.ftc.teamcode.LOCALIZATION.Sparkfun
 import org.firstinspires.ftc.teamcode.P2P.P2P
@@ -68,6 +70,7 @@ class robot(var isAuto: Boolean, var isRed: Boolean) {
         imew.reset()
         dashboard = FtcDashboard.getInstance()
         telemetry = dashboard.telemetry
+        telemetry_packet = TelemetryPacket()
 
         //voltage_sensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
     }

@@ -1,7 +1,13 @@
 package org.firstinspires.ftc.teamcode.TELEOP
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
+import com.qualcomm.hardware.limelightvision.Limelight3A
+import com.qualcomm.hardware.lynx.LynxModule
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
@@ -11,11 +17,18 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.EXTENDO_STATE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.LIFT_STATE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.WITH_PID
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.dashboard
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.expansion_hub
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
+import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
@@ -28,11 +41,26 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_testing
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_testing
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_transfer
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_mid
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_testing
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_transfer
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_up
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power_testing
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
@@ -41,8 +69,14 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.proportional
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
+import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.WRAPPERS.CR_SERVO
+import org.firstinspires.ftc.teamcode.WRAPPERS.MOTOR
 import kotlin.math.abs
 import kotlin.math.sign
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
@@ -79,16 +113,19 @@ class extendo_test: LinearOpMode(){
         while(!isStopRequested){
             setExtendoTarget(EXTENDO_STATE)
             extendo_pdf = PDF(extendo_vars.proportional, extendo_vars.derivative, extendo_vars.force)
-
-            setExtendo()
+            // Beware, the motor might heat up
+            send_toall("POWER", extendo.chub_rails.power)
+            send_toall("POS", extendo.chub_rails.currentpos)
             send_toall("ERR", extendo_target- extendo.chub_rails.currentpos)
             send_toall("PID VALUE", extendo_pdf.update((extendo_target- extendo.chub_rails.currentpos).toDouble()))
+            setExtendo(0.0)
             robot.update()
         }
     }
 
 }
 
+var test_pid = false
 @Photon
 @TeleOp
 class lift_test: LinearOpMode(){
@@ -102,8 +139,11 @@ class lift_test: LinearOpMode(){
             setLiftTarget(LIFT_STATE)
             lift_pdf = PDF(lift_vars.proportional, lift_vars.derivative, lift_vars.force)
             setLift()
-            send_toall("ERR", lift_target-lift.chub_slides.currentpos)
-            send_toall("PID VALUE", lift_pdf.update((lift_target-lift.chub_slides.currentpos).toDouble()))
+            send_toall("IS IN TOLERANCE", lift_target-lift.ehub_slides.currentpos < tolerance)
+            send_toall("VALUE",  lift_target-lift.ehub_slides.currentpos * lift_vars.proportional)
+            send_toall("POS", lift.ehub_slides.currentpos)
+            send_toall("ERR", lift_target-lift.ehub_slides.currentpos)
+            send_toall("PID VALUE", lift_pdf.update((lift_target-lift.ehub_slides.currentpos).toDouble()))
             robot.update()
         }
     }
@@ -142,6 +182,7 @@ class set_extendo_f: LinearOpMode(){
     }
 }
 
+@Disabled
 @Photon
 @TeleOp
 class find_lift_positions: LinearOpMode(){
@@ -173,3 +214,494 @@ class find_extendo_positions: LinearOpMode(){
         }
     }
 }
+
+@TeleOp
+class are_servos_alive: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+
+        val servo1 = hardwareMap.servo.get("POSITIONER")
+        val servo2 = hardwareMap.servo.get("CHUB_CLAW")
+        val servo3 = hardwareMap.servo.get("EHUB_CLAW")
+        val servo4 = hardwareMap.servo.get("CHUB_ARM")
+        val servo5 = hardwareMap.servo.get("EHUB_ARM")
+
+        var test1: Boolean = false
+        var test2: Boolean = false
+        var test3: Boolean = false
+        var test4: Boolean = false
+        var test5: Boolean = false
+
+        waitForStart()
+        while(!isStopRequested){
+            if(gamepad1.x && !test1){
+                servo1.position = 0.5
+            }
+            test1 = gamepad1.x
+
+            if(gamepad1.b && !test2) {
+                servo2.position = 0.5
+            }
+            test2 = gamepad1.b
+            if(gamepad1.y && !test3) {
+                servo3.position = 0.5
+            }
+            test3 = gamepad1.y
+
+            if(gamepad1.a && !test4) {
+                servo4.position = 0.5
+            }
+            test4 = gamepad1.a
+
+            if(gamepad1.dpad_up && !test5) {
+                servo5.position = 0.5
+            }
+            test5 = gamepad1.dpad_up
+
+            robot.update()
+        }
+    }
+
+}
+
+@TeleOp
+class are_intake_servos_alive: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+
+        val servo1 = hardwareMap.servo.get("EHUB_ARM")
+        val servo2 = hardwareMap.servo.get("CHUB_ARM")
+        val servo3 = hardwareMap.servo.get("WRIST")
+        val servo4 = hardwareMap.crservo.get("CHUB_INTAKER")
+        val servo5 = hardwareMap.crservo.get("EHUB_INTAKER")
+
+        var test1: Boolean = false
+        var test2: Boolean = false
+        var test3: Boolean = false
+        var test4: Boolean = false
+        var test5: Boolean = false
+        while (!isStopRequested){
+            if(gamepad1.x && !test1){
+                servo1.position = 0.5
+            }
+            test1 = gamepad1.x
+
+            if(gamepad1.b && !test2) {
+                servo2.position = 0.5
+            }
+            test2 = gamepad1.b
+            if(gamepad1.y && !test3) {
+                servo3.position = 0.5
+            }
+            test3 = gamepad1.y
+
+            if(gamepad1.a && !test4) {
+                servo4.power = 0.5
+            }
+            test4 = gamepad1.a
+
+            if(gamepad1.dpad_up && !test5) {
+                servo5.power = 0.5
+            }
+            test5 = gamepad1.dpad_up
+            robot.update()
+        }
+    }
+}
+
+@Disabled
+@Photon
+@TeleOp
+class slides_testyyyy: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        val chub_slide = MOTOR("CHUB_SLIDE", false, false)
+        val ehub_slide = MOTOR("EHUB_SLIDE", true, true)
+        var slide_power: Double
+        waitForStart()
+        while(!isStopRequested){
+            send_toall("LEFT STICK Y", gamepad2.left_stick_y.toDouble())
+            slide_power = -gamepad2.left_stick_y.toDouble()
+            chub_slide.power = slide_power
+            ehub_slide.power = slide_power
+
+            robot.update()
+        }
+    }
+
+}
+
+@TeleOp
+class extendo_testyyyy: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        var extendo_motor = hardwareMap.dcMotor.get("EXTENDO_MOTOR")
+        var extendo_power: Double
+        waitForStart()
+        while(!isStopRequested){
+            extendo_power = gamepad2.left_stick_y.toDouble()
+            extendo_motor.power = extendo_power
+
+            robot.update()
+        }
+    }
+
+}
+
+@TeleOp
+class intake_testyyyy: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        val servo1 = hardwareMap.servo.get("EHUB_ARM")
+        val servo2 = hardwareMap.servo.get("CHUB_ARM")
+        val servo3 = hardwareMap.servo.get("WRIST")
+        val servo4 = hardwareMap.crservo.get("CHUB_INTAKER")
+        val servo5 = hardwareMap.crservo.get("EHUB_INTAKER")
+
+        var test1: Boolean = false
+        var test2: Boolean = false
+        var test3: Boolean = false
+        var test4: Boolean = false
+        var test5: Boolean = false
+        var a: Boolean = false
+        waitForStart()
+        while(!isStopRequested){
+            if(gamepad1.y && !test1){
+                servo1.position = intake_vars.ehub_arm_intake
+                servo2.position = intake_vars.chub_arm_intake
+            }
+            test1 = gamepad1.y
+
+            if(gamepad1.a && !test2){
+                servo3.position = intake_vars.wrist_testing
+            }
+            test2 = gamepad1.a
+
+            if(gamepad1.x && !test4){
+                servo4.power = 1.0
+                servo5.power = 1.0
+                a = true
+            }
+            test4 = gamepad1.x
+
+            if(gamepad1.b && !test3){
+                servo4.power = -1.0
+                servo5.power = -1.0
+                a = false
+            }
+            test3 = gamepad1.b
+
+            send_toall("chub_arm position", servo2.position)
+            robot.update()
+        }
+    }
+
+}
+
+@TeleOp
+class camera_testyyyy: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        val limelight = hardwareMap.get(Limelight3A::class.java,"limelight")
+        limelight.start()
+        limelight.pipelineSwitch(0)
+        waitForStart()
+        while(!isStopRequested){
+            send_toall("X_ANGLE_OFFSET", limelight.latestResult.tx)
+            send_toall("Y_ANGLE_OFFSET", limelight.latestResult.ty)
+            send_toall("COLOR", limelight.latestResult.colorResults)
+
+            robot.update()
+        }
+    }
+
+}
+
+@TeleOp
+class outtake_testyyyy: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        val servo1 = hardwareMap.servo.get("EHUB_ARM")
+        val servo2 = hardwareMap.servo.get("CHUB_ARM")
+        val servo3 = hardwareMap.servo.get("POSITIONER")
+        val servo4 = hardwareMap.servo.get("CHUB_CLAW")
+        val servo5 = hardwareMap.servo.get("EHUB_CLAW")
+
+        var test1: Boolean = false
+        var test2: Boolean = false
+        var test3: Boolean = false
+        var test4: Boolean = false
+        var test5: Boolean = false
+        while(!isStopRequested){
+            if(gamepad1.y && !test1) {
+                servo2.position = outtake_vars.chub_arm_testing
+            }
+            test1 = gamepad1.y
+            //servo3.position = outtake_vars.chub_arm_testing
+
+            if(gamepad1.b && !test2){
+                servo3.position = outtake_vars.positioner_testing
+            }
+            test2 = gamepad1.b
+
+            if(gamepad1.x && !test3){
+                servo4.position = outtake_vars.chub_claw_testing
+                servo5.position = outtake_vars.ehub_claw_testing
+            }
+            test3 = gamepad1.x
+
+            send_toall("chub_arm position", servo2.position)
+            robot.update()
+        }
+    }
+
+}
+
+@TeleOp
+class imew_checker: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        chassis = Chassis()
+        lift = Lift()
+
+        waitForStart()
+        while(!isStopRequested){
+            chassis_vars.h_PDF = PDF(chassis_vars.p, chassis_vars.d, chassis_vars.f)
+
+            send_toall("IMEW", imew.yaw)
+            send_toall("FORWARDS POWER", gamepad1.left_stick_y)
+            send_toall("STRAFE POWER", gamepad1.left_stick_x)
+            send_toall("ROTATION POWER", gamepad1.right_stick_x)
+            send_toall("SLOWDOWN", gamepad1.left_trigger)
+
+            if(gamepad1.ps && !PS1){
+                targetheading = 0.0
+                imew.reset()
+            }
+            PS1 = gamepad1.ps
+
+            if(abs(gamepad1.right_stick_x) > 0.005){
+                targetheading = imew.yaw
+                ep.reset()
+            } else {
+                while(ep.milliseconds() <= chassis_vars.heading_timeout){
+                    targetheading = imew.yaw
+                }
+            }
+
+            send_toall("TARGETHEADING", targetheading)
+
+            //chassis.fc_drive(gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
+            send_toall("diff", ang_diff(targetheading, imew.yaw))
+            send_toall("pid value", chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)))
+
+            robot.update()
+        }
+    }
+
+}
+
+@TeleOp
+class teletest: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        linearopmode = this
+        robot_vars.hardwareMap = linearopmode.hardwareMap
+
+        val lynxModules = robot_vars.hardwareMap.getAll(LynxModule::class.java)
+        for (module in lynxModules) {
+            module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
+        }
+        if (lynxModules[0].isParent && LynxConstants.isEmbeddedSerialNumber(lynxModules[0].serialNumber)) {
+            control_hub = lynxModules[0]
+            expansion_hub = lynxModules[1]
+        } else {
+            control_hub = lynxModules[1]
+            expansion_hub = lynxModules[0]
+        }
+
+        imew = ThreadedIMU("IMU")
+        imew.init()
+        imew.reset()
+
+
+        dashboard = FtcDashboard.getInstance()
+        robot_vars.telemetry = dashboard.telemetry
+        telemetry_packet = TelemetryPacket()
+
+        waitForStart()
+        while(!isStopRequested){
+
+        }
+    }
+
+}
+
+
+var aaaaaa = false
+
+@TeleOp
+class servoTEST: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        intake = Intake()
+        waitForStart()
+        while(!isStopRequested){
+            if(gamepad2.y && !test_place) {
+                intake.chub_arm.position = 0.0
+                intake.ehub_arm.position = 1.0
+                intake.wrist.position = intake_vars.wrist_testing
+            }
+            test_place = gamepad2.y
+
+        }
+    }
+}
+
+@TeleOp
+class servoTTTT: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        intake = Intake()
+        outtake = Outtake()
+        waitForStart()
+        while(!isStopRequested){
+            if(gamepad2.y && !test_place) {
+                intake.ehub_arm.position = intake_vars.ehub_arm_intake
+                intake.chub_arm.position = chub_arm_intake
+                intake.fourbar.position = 0.95
+            }
+            test_place = gamepad2.y
+
+            if(gamepad2.b && !test_pickup) {
+                intake.chub_arm.position = chub_arm_transfer
+                intake.ehub_arm.position = ehub_arm_transfer
+                intake.fourbar.position = 0.93
+
+            }
+            test_pickup = gamepad2.b
+
+            if(gamepad2.x && !test_open) {
+                outtake.chub_arm.position = outtake_vars.chub_arm_pickup
+                outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
+
+            }
+            test_open = gamepad2.x
+
+            if(gamepad2.a && !test_close) {
+                intake.chub_intaker.power = -1.0
+                intake.ehub_intaker.power = -1.0
+            }
+            test_close = gamepad2.a
+
+            if(gamepad2.dpad_down && !test_pid) {
+                intake.chub_intaker.power = 1.0
+                intake.ehub_intaker.power = 1.0
+            }
+            test_pid = gamepad2.dpad_down
+
+            if(gamepad2.dpad_up && !test_positioner) {
+                intake.chub_intaker.power = 0.0
+                intake.ehub_intaker.power = 0.0
+            }
+            test_positioner = gamepad2.dpad_up
+
+            if(gamepad2.dpad_left && !aaaaaa) {
+                intake.fourbar.position = 0.93
+            }
+            aaaaaa = gamepad2.dpad_left
+
+            intake.fourbar.position = 0.93
+
+            robot.update()
+        }
+    }
+
+}
+
+@TeleOp
+class wtf: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        val fourbar = robot_vars.hardwareMap.servo.get("FOURBAR")
+        val efbar = robot_vars.hardwareMap.servo.get("CHUB_ARM_INTAKE")
+        waitForStart()
+        while(!isStopRequested){
+            fourbar.position = 0.0
+            efbar.position = 0.0
+            robot.update()
+        }
+    }
+
+}
+@TeleOp
+class ecstendo: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        extendo = Extendo()
+        waitForStart()
+        while(!isStopRequested){
+            extendo.chub_rails.power = gamepad2.left_stick_y.toDouble()
+            send_toall("pos", extendo.chub_rails.currentpos)
+
+            robot.update()
+        }
+    }
+}
+
+@TeleOp
+class outtake_reset: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        outtake = Outtake()
+        waitForStart()
+        while(!isStopRequested){
+            if(gamepad2.circle && !test_positioner) {
+                outtake.chub_arm.position = outtake_vars.chub_arm_basket
+                outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
+
+            }
+            test_positioner = gamepad2.circle
+
+            if(gamepad2.square && !test_open) {
+                outtake.chub_arm.position = outtake_vars.chub_arm_place
+                outtake.ehub_arm.position = outtake_vars.ehub_arm_place
+            }
+            test_open = gamepad2.square
+
+            if(gamepad2.triangle && !test_pid) {
+                outtake.chub_arm.position = outtake_vars.chub_arm_pickup
+                outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
+            }
+            test_pid = gamepad2.triangle
+            robot.update()
+        }
+    }
+
+}
+
+//intake the whole time + retract arm + put wrist in home position
+//go from current pos to homed exam zone on extendo -> after in homed go to max + put 4bar in down position + spit
+//lift arm up in intermediary position then set it down + intake to pickup specimen
+//retract extendo to transfer zone + set 4bar in up transfer position
+//get camera data -> nearest sample orientation / distance
+//let camera / driver set extendo for next sample ???????????? if i can't automatically set the extendo pos for the next sample using the limelight
+//then i don't really know how i'd give manual access to the driver if the extendo is only set to running with pids or how would the driver
+//'guesstimate' how far the arm will land unless they somehow have very good depth perception and are well accustomed to the length of the arm
+//
+
+
+//left bumper -> lift to high chamber, right bumper -

@@ -28,7 +28,7 @@ class Chassis {
     }
 
     fun fc_drive(y: Double, x: Double, rx: Double, slow: Double){
-        val h = imew.yaw + imu_offset
-        rc_drive(cos(h)*y - sin(h)*x, sin(h)*y - cos(h)*x, rx, slow)
+        val h = imew.yaw
+        rc_drive(cos(h + imu_offset)*y - sin(h)*x, sin(h + imu_offset)*y - cos(h)*x, rx, slow)
     }
 }

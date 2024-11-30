@@ -6,6 +6,6 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 import org.firstinspires.ftc.teamcode.WRAPPERS.MOTOR
 
 class Lift {
-    var chub_slides = MOTOR("CHUB_SLIDE", true, false)
+    var chub_slides = MOTOR("CHUB_SLIDE", false, false)
     var ehub_slides = MOTOR("EHUB_SLIDE", true, true)
 }
