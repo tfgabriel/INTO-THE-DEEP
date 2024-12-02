@@ -56,4 +56,9 @@ object robot_vars {
     var READY_FOR_LEAVING: Boolean = false
     var READY_FOR_INTAKING: Boolean = false
     var READY_FOR_EXAMINING: Boolean = false
+
+    var servo_range = 355.0
+    var camera_ang = 0.0
+    var camera_distance_from_ground = 0.0
+    var cm_to_ticks = 0.0
 }

@@ -1,9 +1,16 @@
 package org.firstinspires.ftc.teamcode.ALGORITHMS
 
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera_ang
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera_distance_from_ground
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.cm_to_ticks
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.servo_range
 import java.lang.Math
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.atan
 import kotlin.math.floor
+import kotlin.math.hypot
+import kotlin.math.tan
 
 //a series of useful math functions i use throughout the code
 object Math {
@@ -17,4 +24,22 @@ object Math {
     fun ang_diff(ang1: Double, ang2: Double) = float_mod(ang2 - ang1 + PI, 2 * PI) - PI
 
     fun ang_norm(o1: Double) = float_mod(o1, 2 * Math.PI)
+
+    fun rect_center(ptVec: PointVec): Point{
+        var pt = Point();
+
+        for(i in 0..3){
+            pt += ptVec[i]
+        }
+
+        return pt
+    }
+
+    fun cam_ang_norm(angy: Double) = angy + camera_ang
+
+    fun ang_to_pos(pt1: Point, pt2: Point) = atan((pt2 - pt1).y / (pt2 - pt1).x) / servo_range
+
+    fun y_distance(angy: Double) = (tan(cam_ang_norm(angy)) * camera_distance_from_ground) / cm_to_ticks
+
+    fun x_distance(angx: Double, angy: Double) = tan(angx) * hypot(y_distance(angy) * cm_to_ticks, camera_distance_from_ground)
 }

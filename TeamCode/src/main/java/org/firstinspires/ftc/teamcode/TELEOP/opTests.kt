@@ -165,7 +165,7 @@ class opTest: LinearOpMode() {
             if(gamepad2.cross && !test_open) {
                 intake.ehub_arm.position = ehub_arm_specimen
                 intake.chub_arm.position = chub_arm_specimen
-                intake.fourbar.position = fourbar_up
+                //intake.fourbar.position = fourbar_up
             }
             test_open = gamepad2.cross
 
@@ -209,7 +209,7 @@ class opTest: LinearOpMode() {
                 intake.ehub_arm.position = ehub_arm_neutral
                 intake.chub_arm.position = chub_arm_neutral
                 intake.wrist.position = intake_vars.wrist_testing
-                intake.fourbar.position = 0.74
+                //intake.fourbar.position = 0.74
             }
             intake_sample = gamepad2.dpad_left
 
@@ -228,6 +228,32 @@ class opTest: LinearOpMode() {
             robot.update()
         }
     }
+}
+
+var a = false
+var b = false
+@TeleOp
+class mapispeel: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        val servo2 = hardwareMap.crservo.get("EHUB_INTAKER")
+        val servo = hardwareMap.servo.get("fourbar")
+        waitForStart()
+        while (!isStopRequested){
+            if(gamepad2.y && !a){
+                servo.position = 0.93
+            }
+            a = gamepad2.y
+
+            if(gamepad2.x && !b){
+                servo2.power = 1.0
+            }
+            b = gamepad2.x
+            robot.update()
+        }
+    }
+
 }
 
 

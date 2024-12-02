@@ -10,12 +10,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.rect_center
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.x_distance
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.y_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.EXTENDO_STATE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.LIFT_STATE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.WITH_PID
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.dashboard
@@ -47,12 +51,10 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_testing
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_testing
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_mid
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_testing
@@ -75,6 +77,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
+import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
 import org.firstinspires.ftc.teamcode.WRAPPERS.CR_SERVO
 import org.firstinspires.ftc.teamcode.WRAPPERS.MOTOR
 import kotlin.math.abs
@@ -567,6 +570,10 @@ class servoTEST: LinearOpMode(){
     }
 }
 
+
+var bbbbb = false
+var cccccc = false
+var dddd = false
 @TeleOp
 class servoTTTT: LinearOpMode(){
     override fun runOpMode() {
@@ -574,33 +581,34 @@ class servoTTTT: LinearOpMode(){
         robot.base_init(this)
         intake = Intake()
         outtake = Outtake()
+        lift = Lift()
+        extendo = Extendo()
         waitForStart()
         while(!isStopRequested){
             if(gamepad2.y && !test_place) {
-                intake.ehub_arm.position = intake_vars.ehub_arm_intake
                 intake.chub_arm.position = chub_arm_intake
-                intake.fourbar.position = 0.95
+                intake.ehub_arm.position = ehub_arm_intake
+                //intake.fourbar.position = fourbar_up
             }
             test_place = gamepad2.y
 
             if(gamepad2.b && !test_pickup) {
-                intake.chub_arm.position = chub_arm_transfer
-                intake.ehub_arm.position = ehub_arm_transfer
-                intake.fourbar.position = 0.93
-
+                intake.fourbar.position = fourbar_transfer
+                intake.wrist.position = wrist_neutral
             }
             test_pickup = gamepad2.b
 
             if(gamepad2.x && !test_open) {
-                outtake.chub_arm.position = outtake_vars.chub_arm_pickup
-                outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
-
+                intake.chub_arm.position = chub_arm_specimen
+                intake.ehub_arm.position = ehub_arm_specimen
+                intake.fourbar.position = fourbar_up
             }
             test_open = gamepad2.x
 
             if(gamepad2.a && !test_close) {
-                intake.chub_intaker.power = -1.0
-                intake.ehub_intaker.power = -1.0
+                intake.chub_arm.position = chub_arm_neutral
+                intake.ehub_arm.position = ehub_arm_neutral
+                intake.fourbar.position = fourbar_mid
             }
             test_close = gamepad2.a
 
@@ -611,18 +619,40 @@ class servoTTTT: LinearOpMode(){
             test_pid = gamepad2.dpad_down
 
             if(gamepad2.dpad_up && !test_positioner) {
-                intake.chub_intaker.power = 0.0
-                intake.ehub_intaker.power = 0.0
+                intake.chub_intaker.power = -1.0
+                intake.ehub_intaker.power = -1.0
             }
             test_positioner = gamepad2.dpad_up
 
             if(gamepad2.dpad_left && !aaaaaa) {
-                intake.fourbar.position = 0.93
+                intake.chub_intaker.power = 0.0
+                intake.ehub_intaker.power = 0.0
             }
             aaaaaa = gamepad2.dpad_left
 
-            intake.fourbar.position = 0.93
+            if(gamepad2.dpad_right && !bbbbb) {
+                outtake.chub_arm.position = outtake_vars.chub_arm_pickup
+                outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
+                outtake.positioner.position = outtake_vars.positioner_neutral
+                outtake.chub_claw.position = outtake_vars.chub_claw_open
+                outtake.ehub_claw.position = outtake_vars.ehub_claw_open
+            }
+            bbbbb = gamepad2.dpad_right
 
+            if(gamepad2.right_bumper && !cccccc) {
+                outtake.chub_claw.position = outtake_vars.chub_claw_close
+                outtake.ehub_claw.position = outtake_vars.ehub_claw_close
+            }
+            cccccc = gamepad2.right_bumper
+
+            if(gamepad2.left_bumper && !dddd) {
+                setLiftTarget(3)
+            }
+            dddd = gamepad2.left_bumper
+
+            extendo.chub_rails.power = gamepad2.left_stick_y.toDouble()
+            send_toall("pos", extendo.chub_rails.currentpos)
+            setLift()
             robot.update()
         }
     }
@@ -687,6 +717,54 @@ class outtake_reset: LinearOpMode(){
                 outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
             }
             test_pid = gamepad2.triangle
+            robot.update()
+        }
+    }
+
+}
+
+
+@TeleOp
+class cameruta: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        camera = Camera()
+        camera.limelight.start()
+        camera.limelight.pipelineSwitch(0)
+        waitForStart()
+        while(!isStopRequested){
+
+            send_toall("", "----------------------- CORNERS ------------------------")
+
+            send_toall("1X", camera.corners().p1.x)
+            send_toall("1Y", camera.corners().p1.y)
+
+            send_toall("2X", camera.corners().p2.x)
+            send_toall("2Y", camera.corners().p2.y)
+
+            send_toall("3X", camera.corners().p3.x)
+            send_toall("3Y", camera.corners().p3.y)
+
+            send_toall("4X", camera.corners().p4.x)
+            send_toall("4Y", camera.corners().p4.y)
+
+            send_toall("", "----------------------- MIDPOINT ------------------------")
+
+            send_toall("MIDPOINT X", rect_center(camera.corners()).x)
+            send_toall("MIDPOINT Y", rect_center(camera.corners()).y)
+
+            send_toall("", "----------------------- DISTANCES ------------------------")
+
+            send_toall("Y DIST", y_distance(camera.ang_Y))
+            send_toall("X DIST", x_distance(camera.ang_X, camera.ang_Y))
+
+            send_toall("", "----------------------- ANGLES ------------------------")
+
+            send_toall("SAMPLE OFF Y", camera.ang_Y)
+            send_toall("SAMPLE OFF X", camera.ang_X)
+
+
             robot.update()
         }
     }

@@ -12,7 +12,7 @@ class Intake {
     var ehub_arm = hardwareMap.servo.get("EHUB_ARM_INTAKE") // 1 - to submersible, 0 - to exam zone
 
     var wrist = hardwareMap.servo.get("WRIST_INTAKE")
-    var fourbar = hardwareMap.servo.get("FOURBAR")
+    var fourbar = hardwareMap.servo.get("fourbar")
 
     var chub_intaker = CR_SERVO("CHUB_INTAKER", true)
     var ehub_intaker = CR_SERVO("EHUB_INTAKER", true)

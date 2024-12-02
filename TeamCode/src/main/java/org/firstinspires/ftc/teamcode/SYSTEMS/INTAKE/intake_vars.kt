@@ -5,22 +5,22 @@ import com.acmerobotics.dashboard.config.Config
 @Config
 object intake_vars {
     @JvmField
-    var chub_arm_neutral: Double = 0.63
+    var chub_arm_neutral: Double = 0.57
     @JvmField
-    var chub_arm_intake: Double = 0.90
-    @JvmField
-    var chub_arm_transfer: Double = 0.94
+    var chub_arm_intake: Double = 0.96
+    //@JvmField
+    //var chub_arm_transfer: Double = 0.97
     @JvmField
     var chub_arm_specimen: Double = 0.70
 
     @JvmField
-    var ehub_arm_neutral: Double = 0.31
+    var ehub_arm_neutral: Double = 0.41
     @JvmField
-    var ehub_arm_intake: Double = 0.03
+    var ehub_arm_intake: Double = 0.073
+    //@JvmField
+    //var ehub_arm_transfer: Double = 0.03
     @JvmField
-    var ehub_arm_transfer: Double = 0.05
-    @JvmField
-    var ehub_arm_specimen: Double = 0.27
+    var ehub_arm_specimen: Double = 0.31
 
     var wrist_intake: Double = 0.42
     var wrist_neutral: Double = 0.55
@@ -29,9 +29,9 @@ object intake_vars {
     var intaker_spit_power: Double = -1.0
 
     var fourbar_intake: Double = 0.1
-    var fourbar_transfer: Double = 0.73
-    var fourbar_up: Double = 0.79
-    var fourbar_mid: Double = 0.74
+    var fourbar_transfer: Double = 0.85
+    var fourbar_up: Double = 0.8
+    var fourbar_mid: Double = 0.76
 
     @JvmField
     var fourbar_testing: Double = 0.0

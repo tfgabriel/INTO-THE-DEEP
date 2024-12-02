@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config
 object outtake_vars {
 
     //positioner offsets are ~0.31
-    var positioner_neutral: Double = 0.69
+    var positioner_neutral: Double = 0.7
     var positioner_chub: Double = 0.08
     var positioner_ehub: Double = 0.7
 
@@ -22,11 +22,11 @@ object outtake_vars {
     var chub_arm_basket: Double = 0.89
     //offsets ~0.15y
     var ehub_claw_open: Double = 0.8
-    var ehub_claw_close: Double = 0.57
+    var ehub_claw_close: Double = 0.52
     var ehub_claw_intermed: Double = 0.61
 
     var chub_claw_open: Double = 0.68
-    var chub_claw_close: Double = 0.39
+    var chub_claw_close: Double = 0.33
     var chub_claw_intermed: Double = 0.43
 
 
@@ -37,7 +37,7 @@ object outtake_vars {
     @JvmField
     var prepare_time_specimen: Double = 0.5
     @JvmField
-    var positioner_testing: Double = 0.0
+    var positioner_testing: Double = 0.7
     @JvmField
     var wrist_testing: Double = 0.0
     @JvmField

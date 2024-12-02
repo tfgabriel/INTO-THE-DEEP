@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Array
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_to_pos
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.pos_diff
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
@@ -15,11 +16,9 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakePower
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_specimen
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_mid
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_transfer
@@ -31,18 +30,18 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.spit_time
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.transverse_time
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
+import org.firstinspires.ftc.teamcode.TELEOP.isIntaking
 
 object commands {
-    ///0 = neutral, 1 = intake, 2 = specimen, 3 = transfer
+    ///0 = neutral, 1 = intake, 2 = specimen
     fun setArmStateIntake(state: Int): Command {
         val states = if(state == 0)
             Array(chub_arm_neutral, ehub_arm_neutral)
         else if(state == 1)
             Array(chub_arm_intake, ehub_arm_intake)
-        else if(state == 2)
-            Array(chub_arm_specimen, ehub_arm_specimen)
         else
-            Array(chub_arm_transfer, ehub_arm_transfer)
+            Array(chub_arm_specimen, ehub_arm_specimen)
+
 
         return SequentialCommand(
             InstantCommand{ intake.chub_arm.position = states[0] },
@@ -78,15 +77,15 @@ object commands {
 
 
         return ParallelCommand(
-            InstantCommand { intake.fourbar.position = states[0] }
+            //InstantCommand { intake.fourbar.position = states[0] }
         )
     }
 
     //if i have my cam open and my arm is going down, set the wrist according to the camera's feed, else, set it ready for transfer
     //the else if is there just not to constantly set the servo position even if it's already in the right position
     fun setWrist(){
-        if(camera.is_open && !pos_diff(intake.chub_arm.position, chub_arm_neutral))
-            intake.wrist.position = camera.servo_pos
+        if(camera.is_open && isIntaking)
+            intake.wrist.position = ang_to_pos(camera.corners().p1, camera.corners().p2)
         else if(!pos_diff(intake.wrist.position, wrist_neutral))
             intake.wrist.position = wrist_neutral
     }

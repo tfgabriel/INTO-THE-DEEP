@@ -25,3 +25,26 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
 
     fun distance(): Double = sqrt(x*x - y*y)
 }
+
+class Point(var x: Double, var y: Double){
+    constructor(): this(0.0, 0.0)
+
+    operator fun get(i: Int) = when (i) {
+        0 -> x
+        else -> y
+    }
+
+    operator fun minus(point: Point): Point = Point(x - point.x, y - point.y)
+
+    operator fun plus(point: Point): Point = Point(x + point.x, y + point.y)
+
+}
+
+class PointVec(var p1: Point, var p2: Point, var p3: Point, var p4: Point){
+    operator fun get(i: Int) = when (i) {
+        0 -> p1
+        1 -> p2
+        2 -> p3
+        else -> p4
+    }
+}
