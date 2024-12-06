@@ -47,6 +47,26 @@ object commands {
 
     }
 
+    fun setExtendoTargetCommand(state: Int): Command {
+
+        extendo_pdf = if (state != -1)
+            PDF(proportional, derivative, force)
+        else
+            PDF()
+
+        return InstantCommand {
+        extendo_target = if (state == 0)
+            max_examination
+        else if (state == 1)
+            home_examination
+        else if (state == 2)
+            home_submersible
+        else
+            max_submersible
+    }
+
+    }
+
     fun isExtendoinTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < tolerance
 
 

@@ -13,7 +13,7 @@ object lift_vars {
     @JvmField
     var low_chamber: Int = 350
     @JvmField
-    var high_chamber: Int = 1350
+    var high_chamber: Int = 1200
 
     @JvmField
     var low_basket: Int = 1550
@@ -36,7 +36,7 @@ object lift_vars {
     @JvmField
     var force: Double = 0.008
     @JvmField
-    var tolerance: Double = 5.0
+    var tolerance: Double = 3.0
 
     var lift_target: Int = 0
 }

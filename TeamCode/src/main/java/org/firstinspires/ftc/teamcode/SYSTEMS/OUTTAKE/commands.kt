@@ -32,12 +32,11 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawSta
 object simple_commands {
     /// O = close, 1 = open, 2 - intermediary
     fun setClawState(state: Int): Command {
-        val states: Array = if(state == 0)
-            Array(chub_claw_close, ehub_claw_close)
-        else if(state == 1)
-            Array(chub_claw_open, ehub_claw_open)
-        else
-            Array(chub_claw_intermed, ehub_claw_intermed)
+        val states: Array = when (state) {
+            0 -> Array(chub_claw_close, ehub_claw_close)
+            1 -> Array(chub_claw_open, ehub_claw_open)
+            else -> Array(chub_claw_intermed, ehub_claw_intermed)
+        }
 
         return ParallelCommand(
             InstantCommand{ outtake.chub_claw.position = states[0]},
@@ -47,12 +46,11 @@ object simple_commands {
 
     /// -1 = chub, 0 = neutral, 1 = ehub
     fun setPositionerState(state: Int): Command{
-        val states: Array = if(state == 0)
-            Array(positioner_neutral)
-        else if(state == -1)
-            Array(positioner_chub)
-        else
-            Array(positioner_ehub)
+        val states: Array = when (state) {
+            0 -> Array(positioner_neutral)
+            -1 -> Array(positioner_chub)
+            else -> Array(positioner_ehub)
+        }
 
         return SequentialCommand(
             InstantCommand{ outtake.positioner.position = states[0] }
@@ -61,12 +59,11 @@ object simple_commands {
 
     /// 0 = pickup, 1 = chamber, 2 = basket
     fun setArmState(state: Int): Command{
-        val states: Array = if(state == 0)
-            Array(chub_arm_pickup, ehub_arm_pickup)
-        else if(state == 1)
-            Array(chub_arm_place, ehub_arm_place)
-        else
-            Array(chub_arm_basket, ehub_arm_basket)
+        val states: Array = when (state) {
+            0 -> Array(chub_arm_pickup, ehub_arm_pickup)
+            1 -> Array(chub_arm_place, ehub_arm_place)
+            else -> Array(chub_arm_basket, ehub_arm_basket)
+        }
 
         return ParallelCommand(
             InstantCommand{ outtake.chub_arm.position = states[0] },

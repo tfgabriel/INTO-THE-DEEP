@@ -4,9 +4,11 @@ import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.pos_diff
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.READY_FOR_TRANSFER
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.WITH_PID
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
@@ -22,6 +24,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakePower
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
@@ -33,15 +36,18 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutra
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_up
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.complex_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
+import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
 import kotlin.math.abs
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
 
@@ -73,6 +79,10 @@ var isExtendoAtExam = false
 var isIntaking = false
 var intake_sample = false
 var snatch_sample = false
+var curu = false
+var curu2 = false
+
+var k = false
 
 @Photon
 @TeleOp
@@ -85,7 +95,11 @@ class opTest: LinearOpMode() {
         extendo = Extendo()
         outtake = Outtake()
         intake = Intake()
-
+        camera = Camera()
+        setExtendoTarget(1)
+        k = true
+        intake.wrist.position = wrist_neutral
+        outtake.positioner.position = positioner_neutral
         waitForStart()
         while(!isStopRequested){
             ///imu reset
@@ -140,90 +154,126 @@ class opTest: LinearOpMode() {
             }
             lift_testy0 = gamepad2.left_bumper && gamepad2.right_bumper
 
-            ///update lift
-            setLift()
 
             //outtake, sets the outtake in placing position for the lift
             if(gamepad2.circle && !outtaking){
-                if(isSpecimen)
-                    current_command = complex_commands.prepare_specimen()
+
+                current_command = if(isSpecimen)
+                    complex_commands.prepare_specimen()
                 else
-                    current_command = complex_commands.prepare_sample()
+                    complex_commands.prepare_sample()
             }
             outtaking =gamepad2.circle
 
             //set intake & extendo to transfer
-            if(gamepad2.square && !transfer_extendo && isExtendoAtExam){
-                setExtendoTarget(2)
-                current_command = intake_commands.setup_intake_for_transfer()
-
-                isIntakeDown = false
-                isExtendoAtExam = false
+            if(gamepad2.square && !transfer_extendo){
+                isIntaking = true
             }
             transfer_extendo = gamepad2.square
 
-            if(gamepad2.cross && !test_open) {
-                intake.ehub_arm.position = ehub_arm_specimen
-                intake.chub_arm.position = chub_arm_specimen
-                //intake.fourbar.position = fourbar_up
+            if(gamepad1.triangle && !curu){
+                current_command = intake_commands.prepare_to_intake()
             }
-            test_open = gamepad2.cross
+            curu = gamepad1.triangle
 
+            if(gamepad1.circle && !curu2){
+                current_command = intake_commands.intake()
+            }
+            curu2 = gamepad1.circle
 
             //transfer from intake to outtake
-            if(gamepad2.triangle && !transfer && isLiftDown /* && !isExtendoAtExam*/){
-                //current_command = complex_commands.transfer()
+            if(gamepad2.triangle && !transfer && isLiftDown){
                 current_command = setClawState(0)
             }
             transfer = gamepad2.triangle
 
-            //go with extendo to exam zone
+            //extendo to transfer
+            if(gamepad2.dpad_up && !slay){
+                current_command = intake_commands.transfer()
+                //setExtendoTarget(2)
+            }
+            slay = gamepad2.dpad_up
+
+            //stop intake
             if(gamepad2.dpad_down && !at_exam){
-                /*isIntaking = false
-                current_command = intake_commands.setup_intake_for_specimen()
-                setExtendoTarget(0)
-
-                isExtendoAtExam = true
-
-                 */
-                intake.chub_intaker.power = 1.0
-                intake.ehub_intaker.power = 1.0
+                current_command = setIntakePower(0)
             }
             at_exam = gamepad2.dpad_down
 
-            //intake specimen
-            if(gamepad2.dpad_up && !intake_specimen /*&& isExtendoAtExam */){
-                //current_command = intake_commands.intake_specimen()
-                intake.chub_intaker.power = -1.0
-                intake.ehub_intaker.power = -1.0
-            }
-            intake_specimen = gamepad2.dpad_up
-
             //intake
-            if(gamepad2.dpad_left && !intake_sample /*&& !isExtendoAtExam*/){
-                /*isIntaking = true
-                current_command = intake_commands.intake_sample()
+            if(gamepad2.dpad_left && !intake_sample ){
+                isIntaking = true
 
-                 */
+                setExtendoTarget(3)
 
-                intake.ehub_arm.position = ehub_arm_neutral
-                intake.chub_arm.position = chub_arm_neutral
-                intake.wrist.position = intake_vars.wrist_testing
-                //intake.fourbar.position = 0.74
+                sleep(300)
+                intake.ehub_arm.position = intake_vars.ehub_arm_specimen
+                intake.chub_arm.position = intake_vars.chub_arm_specimen
+                intake.fourbar.position = intake_vars.fourbar_intake
+
+                sleep(200)
+                intake.ehub_arm.position = intake_vars.ehub_arm_intake
+                intake.chub_arm.position = intake_vars.chub_arm_intake
+
+                intake.chub_intaker.power = 1.0
+                intake.ehub_intaker.power = 1.0
+
             }
             intake_sample = gamepad2.dpad_left
 
+            //intake but for specimens
+
+            if(gamepad2.cross && !slay2){
+                isIntaking = false
+                setExtendoTarget(0)
+                current_command = intake_commands.sample_spit()
+
+            }
+            slay2 = gamepad2.cross
+
+            if(gamepad2.dpad_right && !intake_specimen){
+                isIntaking = false
+                current_command = intake_commands.specimen_intake()
+
+            }
+            intake_specimen = gamepad2.dpad_right
+
+            //stop intake
+            if(gamepad2.dpad_down && !at_exam){
+                current_command = setIntakePower(0)
+            }
+            at_exam = gamepad2.dpad_down
+
+
+            ///update lift
+            setLift()
             ///update extendo with either pid or manual input
             setExtendo(gamepad2.left_stick_y.toDouble())
+            ///set wrist according to the camera
+            //setWrist()
+
+            if(gamepad2.left_trigger > 0.002){
+                if(!pos_diff(intake.wrist.position, 0.0))
+                intake.wrist.position -= 0.1
+                else
+                    intake.wrist.position = wrist_neutral
+
+            }
+
+            if(gamepad2.right_trigger > 0.002){
+                if(!pos_diff(intake.wrist.position, 1.0))
+                    intake.wrist.position += 0.1
+                else
+                    intake.wrist.position = wrist_neutral
+
+            }
+
             ///commandbase
             if(current_command != null){
                 if(current_command!!.run(telemetry_packet)){
                     current_command = null
                 }
             }
-
-            ///set wrist according to the camera
-            //setWrist()
 
             robot.update()
         }

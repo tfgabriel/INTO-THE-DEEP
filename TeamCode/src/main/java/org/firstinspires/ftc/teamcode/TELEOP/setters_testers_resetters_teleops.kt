@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TELEOP
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
+import com.qualcomm.hardware.limelightvision.LLFieldMap
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
@@ -51,10 +52,12 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_testing
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_testing
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_mid
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_testing
@@ -63,6 +66,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_up
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power_testing
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_testing
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
@@ -116,7 +120,6 @@ class extendo_test: LinearOpMode(){
         while(!isStopRequested){
             setExtendoTarget(EXTENDO_STATE)
             extendo_pdf = PDF(extendo_vars.proportional, extendo_vars.derivative, extendo_vars.force)
-            // Beware, the motor might heat up
             send_toall("POWER", extendo.chub_rails.power)
             send_toall("POS", extendo.chub_rails.currentpos)
             send_toall("ERR", extendo_target- extendo.chub_rails.currentpos)
@@ -202,7 +205,6 @@ class find_lift_positions: LinearOpMode(){
     }
 }
 
-@Photon
 @TeleOp
 class find_extendo_positions: LinearOpMode(){
     override fun runOpMode() {
@@ -574,6 +576,7 @@ class servoTEST: LinearOpMode(){
 var bbbbb = false
 var cccccc = false
 var dddd = false
+var eee = false
 @TeleOp
 class servoTTTT: LinearOpMode(){
     override fun runOpMode() {
@@ -588,29 +591,22 @@ class servoTTTT: LinearOpMode(){
             if(gamepad2.y && !test_place) {
                 intake.chub_arm.position = chub_arm_intake
                 intake.ehub_arm.position = ehub_arm_intake
-                //intake.fourbar.position = fourbar_up
+                intake.fourbar.position = fourbar_up
             }
             test_place = gamepad2.y
 
             if(gamepad2.b && !test_pickup) {
-                intake.fourbar.position = fourbar_transfer
-                intake.wrist.position = wrist_neutral
+                intake.fourbar.position = fourbar_testing
+                intake.wrist.position = wrist_testing
             }
             test_pickup = gamepad2.b
 
             if(gamepad2.x && !test_open) {
-                intake.chub_arm.position = chub_arm_specimen
-                intake.ehub_arm.position = ehub_arm_specimen
+                intake.chub_arm.position = chub_arm_transfer
+                intake.ehub_arm.position = ehub_arm_transfer
                 intake.fourbar.position = fourbar_up
             }
             test_open = gamepad2.x
-
-            if(gamepad2.a && !test_close) {
-                intake.chub_arm.position = chub_arm_neutral
-                intake.ehub_arm.position = ehub_arm_neutral
-                intake.fourbar.position = fourbar_mid
-            }
-            test_close = gamepad2.a
 
             if(gamepad2.dpad_down && !test_pid) {
                 intake.chub_intaker.power = 1.0
@@ -619,8 +615,9 @@ class servoTTTT: LinearOpMode(){
             test_pid = gamepad2.dpad_down
 
             if(gamepad2.dpad_up && !test_positioner) {
-                intake.chub_intaker.power = -1.0
-                intake.ehub_intaker.power = -1.0
+                //outtake.chub_arm.position = outtake_vars.chub_arm_testing
+                outtake.ehub_arm.position = outtake_vars.ehub_arm_testing
+                //outtake.positioner.position = outtake_vars.positioner_neutral
             }
             test_positioner = gamepad2.dpad_up
 
@@ -650,6 +647,11 @@ class servoTTTT: LinearOpMode(){
             }
             dddd = gamepad2.left_bumper
 
+            if(gamepad2.a && !eee) {
+                setLiftTarget(0)
+            }
+            eee = gamepad2.a
+
             extendo.chub_rails.power = gamepad2.left_stick_y.toDouble()
             send_toall("pos", extendo.chub_rails.currentpos)
             setLift()
@@ -660,31 +662,17 @@ class servoTTTT: LinearOpMode(){
 }
 
 @TeleOp
-class wtf: LinearOpMode(){
-    override fun runOpMode() {
-        val robot = robot(false)
-        robot.base_init(this)
-        val fourbar = robot_vars.hardwareMap.servo.get("FOURBAR")
-        val efbar = robot_vars.hardwareMap.servo.get("CHUB_ARM_INTAKE")
-        waitForStart()
-        while(!isStopRequested){
-            fourbar.position = 0.0
-            efbar.position = 0.0
-            robot.update()
-        }
-    }
-
-}
-@TeleOp
 class ecstendo: LinearOpMode(){
     override fun runOpMode() {
         val robot = robot(false)
         robot.base_init(this)
         extendo = Extendo()
+        val servo = hardwareMap.servo.get("wrist")
         waitForStart()
         while(!isStopRequested){
             extendo.chub_rails.power = gamepad2.left_stick_y.toDouble()
             send_toall("pos", extendo.chub_rails.currentpos)
+
 
             robot.update()
         }
@@ -697,24 +685,22 @@ class outtake_reset: LinearOpMode(){
         val robot = robot(false)
         robot.base_init(this)
         outtake = Outtake()
+        intake = Intake()
         waitForStart()
         while(!isStopRequested){
             if(gamepad2.circle && !test_positioner) {
-                outtake.chub_arm.position = outtake_vars.chub_arm_basket
-                outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
-
+                intake.chub_arm.position = chub_arm_intake
             }
             test_positioner = gamepad2.circle
 
             if(gamepad2.square && !test_open) {
-                outtake.chub_arm.position = outtake_vars.chub_arm_place
-                outtake.ehub_arm.position = outtake_vars.ehub_arm_place
+                intake.ehub_arm.position = ehub_arm_intake
             }
             test_open = gamepad2.square
 
             if(gamepad2.triangle && !test_pid) {
-                outtake.chub_arm.position = outtake_vars.chub_arm_pickup
-                outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
+                intake.fourbar.position = fourbar_transfer
+                intake.wrist.position = wrist_neutral
             }
             test_pid = gamepad2.triangle
             robot.update()
@@ -732,40 +718,49 @@ class cameruta: LinearOpMode(){
         camera = Camera()
         camera.limelight.start()
         camera.limelight.pipelineSwitch(0)
+
+
+        // LLFieldMap pentru Autonom please :()()()()()
+
         waitForStart()
         while(!isStopRequested){
 
-            send_toall("", "----------------------- CORNERS ------------------------")
+            send_toall("alive", camera.limelight.isRunning)
 
-            send_toall("1X", camera.corners().p1.x)
-            send_toall("1Y", camera.corners().p1.y)
+            send_toall("ahem", camera.limelight.status)
 
-            send_toall("2X", camera.corners().p2.x)
-            send_toall("2Y", camera.corners().p2.y)
+            if(gamepad2.y && !isIntaking) {
+                send_toall("", "----------------------- CORNERS ------------------------")
 
-            send_toall("3X", camera.corners().p3.x)
-            send_toall("3Y", camera.corners().p3.y)
+                send_toall("1X", camera.corners().p1.x)
+                send_toall("1Y", camera.corners().p1.y)
 
-            send_toall("4X", camera.corners().p4.x)
-            send_toall("4Y", camera.corners().p4.y)
+                send_toall("2X", camera.corners().p2.x)
+                send_toall("2Y", camera.corners().p2.y)
 
-            send_toall("", "----------------------- MIDPOINT ------------------------")
+                send_toall("3X", camera.corners().p3.x)
+                send_toall("3Y", camera.corners().p3.y)
 
-            send_toall("MIDPOINT X", rect_center(camera.corners()).x)
-            send_toall("MIDPOINT Y", rect_center(camera.corners()).y)
+                send_toall("4X", camera.corners().p4.x)
+                send_toall("4Y", camera.corners().p4.y)
+                send_toall("", "----------------------- MIDPOINT ------------------------")
 
-            send_toall("", "----------------------- DISTANCES ------------------------")
+                send_toall("MIDPOINT X", rect_center(camera.corners()).x)
+                send_toall("MIDPOINT Y", rect_center(camera.corners()).y)
 
-            send_toall("Y DIST", y_distance(camera.ang_Y))
-            send_toall("X DIST", x_distance(camera.ang_X, camera.ang_Y))
+                send_toall("", "----------------------- DISTANCES ------------------------")
 
-            send_toall("", "----------------------- ANGLES ------------------------")
+                send_toall("Y DIST", y_distance(camera.ang_Y))
+                send_toall("X DIST", x_distance(camera.ang_X, camera.ang_Y))
 
-            send_toall("SAMPLE OFF Y", camera.ang_Y)
-            send_toall("SAMPLE OFF X", camera.ang_X)
+                send_toall("", "----------------------- ANGLES ------------------------")
 
+                send_toall("SAMPLE OFF Y", camera.ang_Y)
+                send_toall("SAMPLE OFF X", camera.ang_X)
 
-            robot.update()
+                robot.update()
+            }
+            isIntaking = gamepad2.y
         }
     }
 

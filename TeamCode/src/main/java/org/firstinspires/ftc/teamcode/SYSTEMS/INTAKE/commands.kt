@@ -10,15 +10,18 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTargetCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakePower
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_specimen
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_mid
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_transfer
@@ -33,14 +36,14 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
 import org.firstinspires.ftc.teamcode.TELEOP.isIntaking
 
 object commands {
-    ///0 = neutral, 1 = intake, 2 = specimen
+    ///0 = neutral, 1 = intake, 2 = specimen, 3 = transfer
     fun setArmStateIntake(state: Int): Command {
-        val states = if(state == 0)
-            Array(chub_arm_neutral, ehub_arm_neutral)
-        else if(state == 1)
-            Array(chub_arm_intake, ehub_arm_intake)
-        else
-            Array(chub_arm_specimen, ehub_arm_specimen)
+        val states = when (state) {
+            0 -> Array(chub_arm_neutral, ehub_arm_neutral)
+            1 -> Array(chub_arm_intake, ehub_arm_intake)
+            2 -> Array(chub_arm_specimen, ehub_arm_specimen)
+            else -> Array(chub_arm_transfer, ehub_arm_transfer)
+        }
 
 
         return SequentialCommand(
@@ -51,12 +54,11 @@ object commands {
 
     ///-1 = spit, 0 = stop, 1 = intake
     fun setIntakePower(state: Int): Command{
-        val states = if(state == 1)
-            Array(intaker_power)
-        else if(state == -1)
-            Array(intaker_spit_power)
-        else
-            Array()
+        val states = when (state) {
+            1 -> Array(intaker_power)
+            -1 -> Array(intaker_spit_power)
+            else -> Array()
+        }
 
         return ParallelCommand(
             InstantCommand { intake.chub_intaker.power = states[0] },
@@ -66,18 +68,17 @@ object commands {
 
     //0 - intake, 1 - up, 2 - mid, 3 - transfer
     fun setFourbar(state: Int): Command{
-        val states = if(state == 0)
-            Array(fourbar_intake)
-        else if(state == 1)
-            Array(fourbar_up)
-        else if(state == 2)
-            Array(fourbar_mid)
-        else
-            Array(fourbar_transfer)
+        val states = when (state) {
+            0 -> Array(fourbar_intake)
+            1 -> Array(fourbar_up)
+            2 -> Array(fourbar_mid)
+            4-> Array(fourbar_transfer)
+            else -> Array(0.66)
+        }
 
 
         return ParallelCommand(
-            //InstantCommand { intake.fourbar.position = states[0] }
+            InstantCommand { intake.fourbar.position = states[0] }
         )
     }
 
@@ -138,6 +139,53 @@ object intake_commands{
             SleepCommand(0.2),
             setArmStateIntake(3),
             setFourbar(3)
+        )
+    }
+
+    fun sample_spit(): Command{
+        return SequentialCommand(
+            ParallelCommand(
+                setArmStateIntake(2),
+                setFourbar(1)
+            ),
+            SleepCommand(transverse_time),
+            setIntakePower(-1)
+        )
+    }
+
+    fun specimen_intake(): Command{
+        return SequentialCommand(
+            ParallelCommand(
+                setFourbar(2),
+                setArmStateIntake(0)
+            ),
+            setIntakePower(1)
+        )
+    }
+
+    fun transfer(): Command{
+        return SequentialCommand(
+            setArmStateIntake(3),
+            setFourbar(4),
+            SleepCommand(0.3),
+            setExtendoTargetCommand(2),
+            SleepCommand(0.15),
+            setFourbar(5)
+            )
+    }
+
+    fun intake(): Command{
+        return SequentialCommand(
+            //SleepCommand(0.3),
+            setArmStateIntake(1),
+            setIntakePower(1)
+        )
+    }
+
+    fun prepare_to_intake(): Command{
+        return SequentialCommand(
+            setArmStateIntake(2),
+            setFourbar(0)
         )
     }
 }

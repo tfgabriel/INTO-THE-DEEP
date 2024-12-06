@@ -13,13 +13,13 @@ object outtake_vars {
     var wrist_neutral: Double = 0.086
     var wrist_intake: Double = 0.0
 
-    var ehub_arm_pickup: Double = 0.25
-    var ehub_arm_place: Double = 0.09
-    var ehub_arm_basket: Double = 0.0
+    var ehub_arm_pickup: Double = 0.62
+    var ehub_arm_place: Double = 0.78
+    var ehub_arm_basket: Double = 0.87
 
-    var chub_arm_pickup: Double = 0.625
-    var chub_arm_place: Double = 0.79
-    var chub_arm_basket: Double = 0.89
+    var chub_arm_pickup: Double = 0.25
+    var chub_arm_place: Double = 0.075
+    var chub_arm_basket: Double = 0.0
     //offsets ~0.15y
     var ehub_claw_open: Double = 0.8
     var ehub_claw_close: Double = 0.52
