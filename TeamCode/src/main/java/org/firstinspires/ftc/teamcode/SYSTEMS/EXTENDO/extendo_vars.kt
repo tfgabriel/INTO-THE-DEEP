@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 object extendo_vars {
     // NOT YET FINISHED
     @JvmField
-    var max_submersible: Int = 930
+    var max_submersible: Int = 750
     @JvmField
     var home_submersible: Int = 220
 
@@ -16,19 +16,25 @@ object extendo_vars {
     @JvmField
     var home_examination: Int = 0
 
+    @JvmField
+    var manual_tresh: Int = 350
+
     var extendo_pdf: PDF = PDF()
 
     @JvmField
     // Might get changed
-    var proportional: Double = 0.005
+    var proportional: Double = 0.009
     @JvmField
     // To be changed
-    var derivative: Double = 0.0
+    var derivative: Double = 0.002
     @JvmField
     // To be changed
     var force: Double = 0.0
     @JvmField
-    var tolerance: Double = 3.0
+    var tolerance: Double = 5.0
 
     var extendo_target: Int = 0
+
+    @JvmField
+    var modify_tresh: Int = 50
 }

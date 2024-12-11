@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config
 object outtake_vars {
 
     //positioner offsets are ~0.31
-    var positioner_neutral: Double = 0.7
+    var positioner_neutral: Double = 0.73
     var positioner_chub: Double = 0.08
     var positioner_ehub: Double = 0.7
 

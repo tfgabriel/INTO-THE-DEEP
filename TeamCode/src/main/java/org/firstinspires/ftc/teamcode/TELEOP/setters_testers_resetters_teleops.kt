@@ -33,6 +33,9 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
+import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
+import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
+import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
@@ -40,13 +43,18 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolera
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoPowers
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTarget
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTargetCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.derivative
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.modify_tresh
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
@@ -88,6 +96,7 @@ import kotlin.math.abs
 import kotlin.math.sign
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
 
+@Disabled
 @TeleOp
 class servo_resetter: LinearOpMode(){
 
@@ -108,6 +117,7 @@ class servo_resetter: LinearOpMode(){
 
 }
 
+@Disabled
 @Photon
 @TeleOp
 class extendo_test: LinearOpMode(){
@@ -132,6 +142,7 @@ class extendo_test: LinearOpMode(){
 }
 
 var test_pid = false
+@Disabled
 @Photon
 @TeleOp
 class lift_test: LinearOpMode(){
@@ -156,6 +167,7 @@ class lift_test: LinearOpMode(){
 
 }
 
+@Disabled
 @Photon
 @TeleOp
 class set_lift_f: LinearOpMode(){
@@ -172,6 +184,7 @@ class set_lift_f: LinearOpMode(){
     }
 }
 
+@Disabled
 @Photon
 @TeleOp
 class set_extendo_f: LinearOpMode(){
@@ -205,6 +218,7 @@ class find_lift_positions: LinearOpMode(){
     }
 }
 
+@Disabled
 @TeleOp
 class find_extendo_positions: LinearOpMode(){
     override fun runOpMode() {
@@ -220,6 +234,7 @@ class find_extendo_positions: LinearOpMode(){
     }
 }
 
+@Disabled
 @TeleOp
 class are_servos_alive: LinearOpMode(){
     override fun runOpMode() {
@@ -270,6 +285,7 @@ class are_servos_alive: LinearOpMode(){
 
 }
 
+@Disabled
 @TeleOp
 class are_intake_servos_alive: LinearOpMode(){
     override fun runOpMode() {
@@ -339,6 +355,7 @@ class slides_testyyyy: LinearOpMode(){
 
 }
 
+@Disabled
 @TeleOp
 class extendo_testyyyy: LinearOpMode(){
     override fun runOpMode() {
@@ -357,6 +374,7 @@ class extendo_testyyyy: LinearOpMode(){
 
 }
 
+@Disabled
 @TeleOp
 class intake_testyyyy: LinearOpMode(){
     override fun runOpMode() {
@@ -408,6 +426,7 @@ class intake_testyyyy: LinearOpMode(){
 
 }
 
+@Disabled
 @TeleOp
 class camera_testyyyy: LinearOpMode(){
     override fun runOpMode() {
@@ -428,6 +447,7 @@ class camera_testyyyy: LinearOpMode(){
 
 }
 
+@Disabled
 @TeleOp
 class outtake_testyyyy: LinearOpMode(){
     override fun runOpMode() {
@@ -469,6 +489,7 @@ class outtake_testyyyy: LinearOpMode(){
 
 }
 
+@Disabled
 @TeleOp
 class imew_checker: LinearOpMode(){
     override fun runOpMode() {
@@ -514,6 +535,7 @@ class imew_checker: LinearOpMode(){
 
 }
 
+@Disabled
 @TeleOp
 class teletest: LinearOpMode(){
     override fun runOpMode() {
@@ -553,6 +575,7 @@ class teletest: LinearOpMode(){
 
 var aaaaaa = false
 
+@Disabled
 @TeleOp
 class servoTEST: LinearOpMode(){
     override fun runOpMode() {
@@ -609,8 +632,8 @@ class servoTTTT: LinearOpMode(){
             test_open = gamepad2.x
 
             if(gamepad2.dpad_down && !test_pid) {
-                intake.chub_intaker.power = 1.0
-                intake.ehub_intaker.power = 1.0
+               // intake.chub_intaker.power = 1.0
+               // intake.ehub_intaker.power = 1.0
             }
             test_pid = gamepad2.dpad_down
 
@@ -622,8 +645,8 @@ class servoTTTT: LinearOpMode(){
             test_positioner = gamepad2.dpad_up
 
             if(gamepad2.dpad_left && !aaaaaa) {
-                intake.chub_intaker.power = 0.0
-                intake.ehub_intaker.power = 0.0
+               // intake.chub_intaker.power = 0.0
+               // intake.ehub_intaker.power = 0.0
             }
             aaaaaa = gamepad2.dpad_left
 
@@ -661,6 +684,7 @@ class servoTTTT: LinearOpMode(){
 
 }
 
+@Disabled
 @TeleOp
 class ecstendo: LinearOpMode(){
     override fun runOpMode() {
@@ -679,6 +703,7 @@ class ecstendo: LinearOpMode(){
     }
 }
 
+@Disabled
 @TeleOp
 class outtake_reset: LinearOpMode(){
     override fun runOpMode() {
@@ -709,7 +734,7 @@ class outtake_reset: LinearOpMode(){
 
 }
 
-
+@Disabled
 @TeleOp
 class cameruta: LinearOpMode(){
     override fun runOpMode() {
@@ -777,4 +802,93 @@ class cameruta: LinearOpMode(){
 //
 
 
-//left bumper -> lift to high chamber, right bumper -
+//leftt bumper -> lift to high chamber, right bumper -
+var curu7 = false
+var curu8 = false
+var curu9 = false
+var curu10= false
+var curu1 = false
+@TeleOp
+class teser: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        chassis = Chassis()
+        intake = Intake()
+        outtake = Outtake()
+        lift = Lift()
+        extendo = Extendo()
+        waitForStart()
+        while(!isStopRequested) {
+
+            if (gamepad2.triangle && !curu) {
+                setExtendoTarget(1)
+            }
+            curu = gamepad2.triangle
+
+            if (gamepad2.circle && !curu2) {
+                setArmStateIntake(2)
+            }
+            curu2 = gamepad2.circle
+
+            if (gamepad2.cross && !curu3) {
+                setArmStateIntake(1)
+            }
+            curu3 = gamepad2.cross
+
+            if (gamepad2.square && !curu4) {
+               setArmStateIntake(0)
+            }
+            curu4 = gamepad2.square
+
+            if(gamepad2.dpad_down && !curu6){
+                current_command = setFourbar(5)
+            }
+            curu6 = gamepad2.dpad_down
+
+            if (gamepad1.triangle && !curu1) {
+                intake.ehub_arm.position = intake_vars.ehub_arm_neutral
+            }
+            curu1 = gamepad1.triangle
+
+            if (gamepad1.circle && !curu7) {
+                intake.chub_arm.position = intake_vars.chub_arm_neutral
+            }
+            curu7 = gamepad1.circle
+
+            if (gamepad1.cross && !curu8) {
+                intake.fourbar.position = intake_vars.fourbar_testing
+            }
+            curu8 = gamepad1.cross
+
+            if (gamepad1.square && !curu9) {
+                intake.wrist.position = intake_vars.wrist_testing
+            }
+            curu9 = gamepad1.square
+
+            if(gamepad1.dpad_down && !curu10){
+                intake.claws.position = intake_vars.claws_closed
+            }
+            curu10 = gamepad1.dpad_down
+
+            if(abs(gamepad2.right_stick_y) > 0.001){
+                extendo_target = extendo.chub_rails.currentpos
+            }
+
+            if(extendo.chub_rails.currentpos >= extendo_vars.home_examination && extendo.chub_rails.currentpos <= extendo_vars.home_submersible ){
+                current_command = setArmStateIntake(3)
+            }
+
+            setExtendo(gamepad2.right_stick_y.toDouble())
+            if (current_command != null) {
+                if (current_command!!.run(telemetry_packet)) {
+                    current_command = null
+                }
+            }
+
+            robot.update()
+        }
+
+    }
+
+}

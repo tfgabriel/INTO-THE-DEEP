@@ -5,23 +5,23 @@ import com.acmerobotics.dashboard.config.Config
 @Config
 object intake_vars {
     @JvmField
-    var chub_arm_neutral: Double = 0.25
+    var chub_arm_neutral: Double = 0.59
     @JvmField
-    var chub_arm_intake: Double = 0.6
-    var chub_arm_transfer: Double = 0.65
+    var chub_arm_intake: Double = 0.94
+    var chub_arm_transfer: Double = 0.92
     @JvmField
-    var chub_arm_specimen: Double = 0.35
+    var chub_arm_specimen: Double = 0.61
 
     @JvmField
-    var ehub_arm_neutral: Double = 0.3
+    var ehub_arm_neutral: Double = 0.43
     @JvmField
     var ehub_arm_intake: Double = 0.00
-    var ehub_arm_transfer: Double = 0.00
+    var ehub_arm_transfer: Double = 0.12
     @JvmField
-    var ehub_arm_specimen: Double = 0.23
+    var ehub_arm_specimen: Double = 0.39
 
-    var wrist_intake: Double = 0.42
-    var wrist_neutral: Double = 0.48
+    var wrist_intake: Double = 0.37
+    var wrist_neutral: Double = 0.67
 
     var intaker_power: Double = 1.0
     var intaker_spit_power: Double = -1.0
@@ -29,8 +29,10 @@ object intake_vars {
     var fourbar_intake: Double = 0.0
     @JvmField
     var fourbar_transfer: Double = 0.64
-    var fourbar_up: Double = 0.85
+    var fourbar_up: Double = 0.75
     var fourbar_mid: Double = 0.7
+    @JvmField
+    var fourbar_deaaa: Double = 0.64
 
     @JvmField
     var fourbar_testing: Double = 0.8
@@ -44,10 +46,14 @@ object intake_vars {
     var intaker_power_testing: Double = 0.0
 
     @JvmField
-    var transverse_time: Double = 0.5
+    var transverse_time: Double = 0.7
     @JvmField
     var spit_time: Double = 0.5
     @JvmField
     var intake_time:Double = 0.3
 
+    @JvmField
+    var claws_open: Double = 0.57
+    @JvmField
+    var claws_closed: Double = 0.41
 }

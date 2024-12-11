@@ -36,7 +36,13 @@ object lift_vars {
     @JvmField
     var force: Double = 0.008
     @JvmField
-    var tolerance: Double = 3.0
+    var tolerance: Double = 7.0
 
     var lift_target: Int = 0
+
+    @JvmField
+    var lazy_coef: Double = 0.003
+
+    @JvmField
+    var rebepe: Double = 0.00005
 }

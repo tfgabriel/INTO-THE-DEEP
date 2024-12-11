@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_basket
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_chamber
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_rung
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lazy_coef
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.low_basket
@@ -35,66 +36,62 @@ object commands
         else
             PDF()
 
-        lift_target = if(state == 0)
-            home
-        else if(state == 1)
-            low_chamber
-        else if(state == 2)
-            low_rung
-        else if(state == 3)
-            high_chamber
-        else if(state == 4)
-            high_rung
-        else if(state == 5)
-            low_basket
-        else if(state == 6)
-            high_basket
+        lift_target = when (state) {
+            0 -> home
+            1 -> low_chamber
+            2 -> low_rung
+            3 -> high_chamber
+            4 -> high_rung
+            5 -> low_basket
+            6 -> high_basket
+            else -> max_extension
+        }
+    }
+
+    fun setLiftTargetCommand(state: Int): Command{
+        //emergency stop in case i start a campfire
+        lift_pdf = if(state != -1)
+            PDF(proportional, derivative, force)
         else
-            max_extension
+            PDF()
+
+        return InstantCommand {
+            lift_target = when (state) {
+                0 -> home
+                1 -> low_chamber
+                2 -> low_rung
+                3 -> high_chamber
+                4 -> high_rung
+                5 -> low_basket
+                6 -> high_basket
+                else -> max_extension
+            }
+        }
     }
 
     fun isLiftinTolerance() = abs(lift_target-lift.ehub_slides.currentpos) < tolerance
+    fun isLiftinHomeTolerance() = abs(lift_target - lift.ehub_slides.currentpos) < 40.0
 
     fun setLiftPowers(pwr1: Double){
-        lift.chub_slides.power = pwr1
+        lift.chub_slides.power = pwr1 + if(abs(lift.chub_slides.currentpos - lift.ehub_slides.power) < 4 || isLiftinTolerance()) 0.0 else (lift.chub_slides.currentpos - lift.ehub_slides.power) * lift_vars.rebepe
         lift.ehub_slides.power = pwr1
     }
 
     fun setLift(){
         val err = lift_target-lift.ehub_slides.currentpos
 
-        if(!isLiftinTolerance())
-            setLiftPowers(lift_pdf.update(err.toDouble()))
+        if(!isLiftinTolerance()){
+            if(lift_target != home)
+                setLiftPowers(lift_pdf.update(err.toDouble()))
+            else if(!isLiftinHomeTolerance())
+                setLiftPowers(-0.9)
+            else
+                setLiftPowers(0.0)
+        }
         else if(lift_target == home)
             setLiftPowers(0.0)
         else
             setLiftPowers(force * sign(err.toDouble()))
-    }
-
-
-
-    //not sure if i wanna run my lifts on commandbase
-    fun setLiftState(): Command{
-        val err = lift_target-lift.chub_slides.currentpos
-
-        //if i'm not inside the tolerance, i'm running the pdf, else i'm just running the f
-        return if (abs(err) > tolerance)
-
-            ParallelCommand(
-                RunUntilCommand(
-                    InstantCommand { lift.chub_slides.power = lift_pdf.update(err.toDouble())},
-                    InstantCommand { err < tolerance}
-                ),
-                RunUntilCommand(
-                    InstantCommand { lift.ehub_slides.power = lift_pdf.update(err.toDouble())},
-                    InstantCommand { err < tolerance }
-                ), WaitUntilCommand { err < tolerance}
-            )
-        else
-            ParallelCommand(
-                InstantCommand { lift.chub_slides.power = sign(err.toDouble()) * force },
-                InstantCommand { lift.ehub_slides.power = sign(err.toDouble()) * force }
-            )
     }
 
 }

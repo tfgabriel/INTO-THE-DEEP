@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakePower
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_basket
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_pickup
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_place
@@ -91,9 +90,7 @@ object complex_commands{
 
     fun transfer(): Command{
         return SequentialCommand(
-            setIntakePower(-1),
             setClawState(0),
-            setIntakePower(0)
         )
     }
 
@@ -121,16 +118,23 @@ object complex_commands{
     //prepare to place
     fun prepare_specimen(): Command{
         return SequentialCommand(
-            SleepCommand(prepare_time_specimen),
             setArmState(1)
         )
     }
 
     fun prepare_sample(): Command{
         return SequentialCommand(
-            SleepCommand(prepare_time_sample),
             setArmState(2)
         )
     }
+
+
+    fun reset_outtake(): Command{
+        return SequentialCommand(
+            setArmState(0),
+            setClawState(1)
+        )
+    }
+
 
 }

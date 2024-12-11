@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TELEOP
 
 import com.outoftheboxrobotics.photoncore.Photon
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
@@ -22,9 +23,9 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTarget
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.manual_tresh
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakePower
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
@@ -40,6 +41,8 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.complex_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
@@ -81,7 +84,10 @@ var intake_sample = false
 var snatch_sample = false
 var curu = false
 var curu2 = false
-
+var curu3 = false
+var curu4 = false
+var curu5 = false
+var curu6 = false
 var k = false
 
 @Photon
@@ -95,13 +101,22 @@ class opTest: LinearOpMode() {
         extendo = Extendo()
         outtake = Outtake()
         intake = Intake()
-        camera = Camera()
-        setExtendoTarget(1)
+        //setExtendoTarget(1)
         k = true
         intake.wrist.position = wrist_neutral
         outtake.positioner.position = positioner_neutral
+       // intake.chub_arm.position = intake_vars.chub_arm_intake
+       // intake.ehub_arm.position = intake_vars.ehub_arm_intake
+
+        outtake.chub_arm.position = outtake_vars.chub_arm_pickup
+        outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
+
+        outtake.ehub_claw.position = outtake_vars.ehub_claw_close
+        outtake.chub_claw.position = outtake_vars.chub_claw_close
+
         waitForStart()
         while(!isStopRequested){
+
             ///imu reset
             if(gamepad1.ps && !PS1){
                 imew.reset()
@@ -122,28 +137,30 @@ class opTest: LinearOpMode() {
 
             ///chassis
             chassis.fc_drive(gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
+            //chassis.rc_drive(gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
+
             send_toall("diff", ang_diff(targetheading, imew.yaw))
             send_toall("pid value", chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)))
 
 
             //lift
-            if(gamepad2.right_bumper && !lift_testy3){
+            if(gamepad1.right_bumper && !lift_testy3){
                 isSpecimen = true
                 isLiftDown = false
 
                 setLiftTarget(3)
             }
-            lift_testy3 = gamepad2.right_bumper
+            lift_testy3 = gamepad1.right_bumper
 
-            if(gamepad2.left_bumper && !lift_testy6){
+            if(gamepad1.left_bumper && !lift_testy6){
                 isSpecimen = false
                 isLiftDown = false
 
                 setLiftTarget(6)
             }
-            lift_testy6 = gamepad2.right_bumper
+            lift_testy6 = gamepad1.right_bumper
 
-            if((gamepad2.left_bumper && gamepad2.right_bumper) && !lift_testy0){
+            if(gamepad1.square && !lift_testy0){
                 setLiftTarget(0)
                 current_command = if(isSpecimen)
                     complex_commands.place_specimen()
@@ -152,40 +169,48 @@ class opTest: LinearOpMode() {
 
                 isLiftDown = true
             }
-            lift_testy0 = gamepad2.left_bumper && gamepad2.right_bumper
+            lift_testy0 = gamepad1.square
 
 
             //outtake, sets the outtake in placing position for the lift
-            if(gamepad2.circle && !outtaking){
+            if(gamepad1.circle && !outtaking){
 
                 current_command = if(isSpecimen)
                     complex_commands.prepare_specimen()
                 else
                     complex_commands.prepare_sample()
             }
-            outtaking =gamepad2.circle
+            outtaking =gamepad1.circle
 
-            //set intake & extendo to transfer
+            if(gamepad1.triangle && !curu5){
+                current_command = complex_commands.reset_outtake()
+            }
+            curu5 = gamepad1.triangle
+
+
+
+            //transfer from intake to outtake
+            if(gamepad2.triangle && !transfer){
+                current_command = setClawState(0)
+            }
+            transfer = gamepad2.triangle
+
+            //intake but for specimens
+            if(gamepad2.cross && !slay2){
+                isIntaking = false
+                if(extendo.chub_rails.currentpos > 250)
+                    current_command = intake_commands.reset_arm_and_intake()
+                else
+                    current_command = intake_commands.specimen_intake()
+
+            }
+            slay2 = gamepad2.cross
+
+            //set intake & extendo to intake
             if(gamepad2.square && !transfer_extendo){
                 isIntaking = true
             }
             transfer_extendo = gamepad2.square
-
-            if(gamepad1.triangle && !curu){
-                current_command = intake_commands.prepare_to_intake()
-            }
-            curu = gamepad1.triangle
-
-            if(gamepad1.circle && !curu2){
-                current_command = intake_commands.intake()
-            }
-            curu2 = gamepad1.circle
-
-            //transfer from intake to outtake
-            if(gamepad2.triangle && !transfer && isLiftDown){
-                current_command = setClawState(0)
-            }
-            transfer = gamepad2.triangle
 
             //extendo to transfer
             if(gamepad2.dpad_up && !slay){
@@ -194,56 +219,42 @@ class opTest: LinearOpMode() {
             }
             slay = gamepad2.dpad_up
 
-            //stop intake
-            if(gamepad2.dpad_down && !at_exam){
-                current_command = setIntakePower(0)
-            }
-            at_exam = gamepad2.dpad_down
-
             //intake
             if(gamepad2.dpad_left && !intake_sample ){
-                isIntaking = true
-
-                setExtendoTarget(3)
-
-                sleep(300)
-                intake.ehub_arm.position = intake_vars.ehub_arm_specimen
-                intake.chub_arm.position = intake_vars.chub_arm_specimen
-                intake.fourbar.position = intake_vars.fourbar_intake
-
-                sleep(200)
-                intake.ehub_arm.position = intake_vars.ehub_arm_intake
-                intake.chub_arm.position = intake_vars.chub_arm_intake
-
-                intake.chub_intaker.power = 1.0
-                intake.ehub_intaker.power = 1.0
-
+                current_command = intake_commands.intake()
             }
             intake_sample = gamepad2.dpad_left
 
-            //intake but for specimens
-
-            if(gamepad2.cross && !slay2){
+            if(gamepad2.right_bumper && !intake_specimen){
                 isIntaking = false
                 setExtendoTarget(0)
                 current_command = intake_commands.sample_spit()
-
             }
-            slay2 = gamepad2.cross
-
-            if(gamepad2.dpad_right && !intake_specimen){
-                isIntaking = false
-                current_command = intake_commands.specimen_intake()
-
-            }
-            intake_specimen = gamepad2.dpad_right
+            intake_specimen = gamepad2.right_bumper
 
             //stop intake
             if(gamepad2.dpad_down && !at_exam){
-                current_command = setIntakePower(0)
+               // current_command = setIntakePower(-1)
             }
             at_exam = gamepad2.dpad_down
 
+            if(gamepad2.left_trigger > 0.002 && !curu3){
+                if(!pos_diff(intake.wrist.position, 0.0))
+                    intake.wrist.position -= 0.1
+                else
+                    intake.wrist.position = wrist_neutral
+
+            }
+            curu3 = gamepad2.left_trigger > 0.002
+
+            if(gamepad2.right_trigger > 0.002 && !curu4){
+                if(!pos_diff(intake.wrist.position, 1.0))
+                    intake.wrist.position += 0.1
+                else
+                    intake.wrist.position = wrist_neutral
+
+            }
+            curu4 = gamepad2.right_trigger > 0.002
 
             ///update lift
             setLift()
@@ -251,22 +262,6 @@ class opTest: LinearOpMode() {
             setExtendo(gamepad2.left_stick_y.toDouble())
             ///set wrist according to the camera
             //setWrist()
-
-            if(gamepad2.left_trigger > 0.002){
-                if(!pos_diff(intake.wrist.position, 0.0))
-                intake.wrist.position -= 0.1
-                else
-                    intake.wrist.position = wrist_neutral
-
-            }
-
-            if(gamepad2.right_trigger > 0.002){
-                if(!pos_diff(intake.wrist.position, 1.0))
-                    intake.wrist.position += 0.1
-                else
-                    intake.wrist.position = wrist_neutral
-
-            }
 
             ///commandbase
             if(current_command != null){
@@ -282,6 +277,7 @@ class opTest: LinearOpMode() {
 
 var a = false
 var b = false
+@Disabled
 @TeleOp
 class mapispeel: LinearOpMode(){
     override fun runOpMode() {

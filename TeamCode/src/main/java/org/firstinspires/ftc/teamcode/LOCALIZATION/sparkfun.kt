@@ -30,13 +30,27 @@ class Sparkfun {
             return Pose(x, y, h)
         }
 
-    var scalars: Array = Array()
+    val scalars: Array
         get(){
             return Array(sparkfun.linearScalar, sparkfun.angularScalar)
+        }
+
+    var lin: Double = 1.0
+        get(){
+            return sparkfun.linearScalar
         }
         set(value){
             field = value
         }
+
+    var ang: Double = 1.0
+        get(){
+            return sparkfun.angularScalar
+        }
+        set(value){
+            field = value
+        }
+
 
     var offsets: Array = Array()
         get(){

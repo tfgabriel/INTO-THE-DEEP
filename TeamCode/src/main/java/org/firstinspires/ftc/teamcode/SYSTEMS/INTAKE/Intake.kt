@@ -14,8 +14,5 @@ class Intake {
     var wrist = hardwareMap.servo.get("WRIST_INTAKE")
     var fourbar = hardwareMap.servo.get("fourbar")
 
-    var chub_intaker = CR_SERVO("CHUB_INTAKER", true)
-    var ehub_intaker = CR_SERVO("EHUB_INTAKER", true)
-
-
+    var claws = hardwareMap.servo.get("CLAWS")
 }

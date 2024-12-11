@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examinat
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_submersible
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.modify_tresh
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
@@ -44,7 +45,6 @@ object commands {
             home_submersible
         else
             max_submersible
-
     }
 
     fun setExtendoTargetCommand(state: Int): Command {
@@ -85,12 +85,11 @@ object commands {
     fun setExtendo(gamepad_power: Double){
         val err = extendo_target - extendo.chub_rails.currentpos
 
-        if(isIntaking){
-            setExtendoPowers(gamepad_power)
-        }else if(!isExtendoinTolerance())
-            setExtendoPowers(extendo_pdf.update(err.toDouble()))
+
+        if(!isExtendoinTolerance())
+            setExtendoPowers(extendo_pdf.update(err.toDouble()) + gamepad_power * 0.5)
         else
-            setExtendoPowers(force * sign(err.toDouble()))
+            setExtendoPowers(force * sign(err.toDouble()) + gamepad_power * 0.5)
     }
 
 
