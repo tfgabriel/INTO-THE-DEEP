@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 
+
 class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
     //val motor: PhotonDcMotor = hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
     val motor = hardwareMap.dcMotor.get(name)
@@ -30,13 +31,6 @@ class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
         get(){
             return motor.currentPosition
         }
-
-    /*val voltage: Double
-        get(){
-            return motor.getCurrent(CurrentUnit.MILLIAMPS)
-        }
-
-     */
 
 
 

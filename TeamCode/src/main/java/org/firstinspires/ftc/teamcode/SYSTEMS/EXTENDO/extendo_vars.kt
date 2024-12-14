@@ -11,6 +11,7 @@ object extendo_vars {
     @JvmField
     var home_submersible: Int = 220
 
+
     @JvmField
     var max_examination: Int = -280
     @JvmField

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TELEOP
 
+import android.webkit.ServiceWorkerClient
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
@@ -33,8 +34,10 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
+import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
+import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars
@@ -50,11 +53,15 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.modify_tresh
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setClawIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWristCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
@@ -86,7 +93,11 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.complex_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setPositionerState
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
@@ -808,6 +819,12 @@ var curu8 = false
 var curu9 = false
 var curu10= false
 var curu1 = false
+
+var isToExam = false
+var isTakingSpecimen = false
+var isTransferring = false
+var isToIntake = false
+var current_command2: Command? = null
 @TeleOp
 class teser: LinearOpMode(){
     override fun runOpMode() {
@@ -818,38 +835,76 @@ class teser: LinearOpMode(){
         outtake = Outtake()
         lift = Lift()
         extendo = Extendo()
+        camera = Camera()
+        current_command = InstantCommand{}
+        setExtendoTarget(1)
         waitForStart()
+        outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
+        outtake.chub_arm.position = outtake_vars.chub_arm_pickup
+
+        outtake.positioner.position = outtake_vars.positioner_neutral
         while(!isStopRequested) {
 
             if (gamepad2.triangle && !curu) {
-                setExtendoTarget(1)
+                isToExam = true
+                setExtendoTarget(0)
+                current_command = SequentialCommand(
+                    WaitUntilCommand { isExtendoinTolerance() },
+                    setArmStateIntake(2),
+                    setFourbar(1)
+                )
             }
             curu = gamepad2.triangle
 
             if (gamepad2.circle && !curu2) {
-                setArmStateIntake(2)
+                current_command = setClawIntakeState(0)
             }
             curu2 = gamepad2.circle
 
             if (gamepad2.cross && !curu3) {
-                setArmStateIntake(1)
+                isTakingSpecimen = true
+
+
+                current_command = SequentialCommand(
+                    setFourbar(1),
+                    setArmStateIntake(0),
+                    SleepCommand(0.2),
+                    setClawIntakeState(1),
+                    SleepCommand(0.3),
+                    setArmStateIntake(3),
+                    setFourbar(4),
+                    setWrist(),
+                )
             }
             curu3 = gamepad2.cross
 
             if (gamepad2.square && !curu4) {
-               setArmStateIntake(0)
+                current_command2 = SequentialCommand(
+                    setArmState(0),
+                    setPositionerState(0),
+                    setClawState(1)
+                )
             }
             curu4 = gamepad2.square
 
             if(gamepad2.dpad_down && !curu6){
-                current_command = setFourbar(5)
+                isTransferring = true
+                setExtendoTarget(2)
+                current_command2 = SequentialCommand(
+                    SleepCommand(0.7),
+                    setFourbar(6),
+                    SleepCommand(0.2),
+                    setClawState(0),
+                    SleepCommand(0.4),
+                    setClawIntakeState(0)
+                )
             }
             curu6 = gamepad2.dpad_down
 
-            if (gamepad1.triangle && !curu1) {
-                intake.ehub_arm.position = intake_vars.ehub_arm_neutral
+            if (gamepad2.dpad_right && !curu1) {
+
             }
-            curu1 = gamepad1.triangle
+            curu1 = gamepad2.dpad_right
 
             if (gamepad1.circle && !curu7) {
                 intake.chub_arm.position = intake_vars.chub_arm_neutral
@@ -866,25 +921,90 @@ class teser: LinearOpMode(){
             }
             curu9 = gamepad1.square
 
-            if(gamepad1.dpad_down && !curu10){
-                intake.claws.position = intake_vars.claws_closed
+            if(gamepad2.dpad_up && !curu10){
+                current_command2 = if(isSpecimen)
+                    complex_commands.prepare_specimen()
+                else
+                    complex_commands.prepare_sample()
             }
-            curu10 = gamepad1.dpad_down
+            curu10 = gamepad2.dpad_up
 
             if(abs(gamepad2.right_stick_y) > 0.001){
                 extendo_target = extendo.chub_rails.currentpos
             }
 
-            if(extendo.chub_rails.currentpos >= extendo_vars.home_examination && extendo.chub_rails.currentpos <= extendo_vars.home_submersible ){
-                current_command = setArmStateIntake(3)
+            if(extendo.chub_rails.currentpos in home_examination - 150 .. home_submersible + 200){
+                if(isToExam) {
+                    setExtendoTarget(0)
+                    current_command = SequentialCommand(
+                        setArmStateIntake(3),
+                        setFourbar(4),
+                        WaitUntilCommand { isExtendoinTolerance() },
+                        setFourbar(1),
+                        setArmStateIntake(2)
+                    )
+                    isToExam = false
+                } else if(isTransferring){
+                    current_command = SequentialCommand(
+                        SleepCommand(0.5),
+                        setClawState(0),
+                        SleepCommand(0.4),
+                        setClawIntakeState(0)
+                    )
+                    setExtendoTarget(2)
+                    isTransferring = false
+                }
+                else
+                    current_command = SequentialCommand(
+                        setArmStateIntake(3),
+                        setFourbar(4),
+                        setWrist()
+                    )
+
             }
 
+            if(gamepad2.right_bumper && !lift_testy3){
+                isSpecimen = true
+                isLiftDown = false
+
+                setLiftTarget(3)
+            }
+            lift_testy3 = gamepad2.right_bumper
+
+            if(gamepad2.left_bumper && !lift_testy6){
+                isSpecimen = false
+                isLiftDown = false
+
+                setLiftTarget(6)
+            }
+            lift_testy6 = gamepad2.right_bumper
+
+            if(gamepad2.dpad_left && !lift_testy0){
+                current_command2 = if(isSpecimen)
+                    complex_commands.place_specimen()
+                else
+                    complex_commands.place_sample()
+                setLiftTarget(0)
+                isLiftDown = true
+            }
+            lift_testy0 = gamepad2.dpad_left
+
+            setLift()
             setExtendo(gamepad2.right_stick_y.toDouble())
+
             if (current_command != null) {
                 if (current_command!!.run(telemetry_packet)) {
                     current_command = null
                 }
             }
+
+            if (current_command2 != null) {
+                if (current_command2!!.run(telemetry_packet)) {
+                    current_command2 = null
+                }
+            }
+
+            send_toall("lkjhgfds", extendo.chub_rails.currentpos)
 
             robot.update()
         }

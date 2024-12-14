@@ -13,7 +13,10 @@ object lift_vars {
     @JvmField
     var low_chamber: Int = 350
     @JvmField
-    var high_chamber: Int = 1200
+    var high_chamber: Int = 1300
+
+    @JvmField
+    var transfer: Int = 500
 
     @JvmField
     var low_basket: Int = 1550
@@ -44,5 +47,5 @@ object lift_vars {
     var lazy_coef: Double = 0.003
 
     @JvmField
-    var rebepe: Double = 0.00005
+    var rebepe: Double = 0.00002
 }

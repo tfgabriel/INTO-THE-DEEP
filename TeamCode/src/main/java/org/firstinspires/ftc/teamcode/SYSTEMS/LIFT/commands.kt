@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.low_rung
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.max_extension
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.transfer
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -44,7 +45,8 @@ object commands
             4 -> high_rung
             5 -> low_basket
             6 -> high_basket
-            else -> max_extension
+            7-> max_extension
+            else -> transfer
         }
     }
 
@@ -64,7 +66,8 @@ object commands
                 4 -> high_rung
                 5 -> low_basket
                 6 -> high_basket
-                else -> max_extension
+                7 -> max_extension
+                else -> transfer
             }
         }
     }

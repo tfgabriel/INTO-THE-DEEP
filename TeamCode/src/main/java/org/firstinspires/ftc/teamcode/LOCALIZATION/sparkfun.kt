@@ -35,7 +35,7 @@ class Sparkfun {
             return Array(sparkfun.linearScalar, sparkfun.angularScalar)
         }
 
-    var lin: Double = 1.0
+    var lin_scal: Double = 1.0
         get(){
             return sparkfun.linearScalar
         }
@@ -43,7 +43,7 @@ class Sparkfun {
             field = value
         }
 
-    var ang: Double = 1.0
+    var ang_scal: Double = 1.0
         get(){
             return sparkfun.angularScalar
         }

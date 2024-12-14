@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE
 
+import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.pos_diff
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
@@ -15,4 +16,5 @@ class Intake {
     var fourbar = hardwareMap.servo.get("fourbar")
 
     var claws = hardwareMap.servo.get("CLAWS")
+
 }

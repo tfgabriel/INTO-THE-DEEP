@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 
 interface Command {
     fun run(packet: TelemetryPacket): Boolean
+
 }
 
 class InstantCommand(val lambdaCommand: LambdaCommand): Command {

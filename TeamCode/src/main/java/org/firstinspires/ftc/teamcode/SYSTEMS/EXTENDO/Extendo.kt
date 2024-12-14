@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO
 
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap

@@ -28,6 +28,8 @@ import org.firstinspires.ftc.teamcode.P2P.p2p_vars.y_d
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.y_err
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.y_f
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.y_p
+import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sign
 import kotlin.math.sin
@@ -42,27 +44,27 @@ class P2P {
         path = current_path
     }
 
-    fun isBotinTolerance() = err.distance() < tolerance && h_err < angular_tolerance
+    fun isBotinTolerance() = err.distance() < tolerance && abs(h_err) < angular_tolerance
 
     fun update() {
-        current_pos = localizer.pos
+        current_pos = Pose(localizer.position.x, localizer.position.y, if(localizer.position.h >= 0.0) localizer.position.h else 2 * PI + localizer.position.h )
         err = path - current_pos
 
         y_err = cos(imew.yaw) * (err.x) - sin(imew.yaw) * (err.y)
         x_err = sin(imew.yaw) * (err.x) + cos(imew.yaw) * (err.y)
-        h_err = ang_diff(current_pos.h, imew.yaw)
+        h_err = ang_diff(path.h, imew.yaw)
 
         // If the robot is not in tolerance, run with the pd
         if (!isBotinTolerance()) {
-            chassis.fc_drive(yPDF.update(y_err) * slow, xPDF.update(x_err) * slow, hPDF.update(h_err), 0.0)
+            chassis.rc_drive( -xPDF.update(x_err), -yPDF.update(y_err) * slow, -hPDF.update(h_err), 0.0)
             ep.reset()
         }
         else {
             // else, run with the pd in the opposite direction in order to stop it and counteract the slip for a bit then stop
             if(ep.milliseconds()<50)
-                chassis.fc_drive(- y_f * sign(y_err), - x_f * sign(x_err),- h_f * sign(h_err), 0.0)
+                chassis.rc_drive( y_f * sign(y_err),  x_f * sign(x_err), h_f * sign(h_err), 0.0)
             else
-                chassis.fc_drive(0.0, 0.0, 0.0, 0.0)
+                chassis.rc_drive(0.0, 0.0, 0.0, 0.0)
         }
 
     }

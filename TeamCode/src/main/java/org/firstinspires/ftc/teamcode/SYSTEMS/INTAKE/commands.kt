@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.Array
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_to_pos
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.pos_diff
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
@@ -11,15 +12,19 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTargetCommand
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intermediary
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_closed
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_open
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intermediary
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_transfer
@@ -38,13 +43,14 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
 import org.firstinspires.ftc.teamcode.TELEOP.isIntaking
 
 object commands {
-    ///0 = neutral, 1 = intake, 2 = specimen, 3 = transfer
+    ///0 = neutral, 1 = intake, 2 = specimen, 3 = transfer, 4 = intermediary
     fun setArmStateIntake(state: Int): Command {
         val states = when (state) {
             0 -> Array(chub_arm_neutral, ehub_arm_neutral)
             1 -> Array(chub_arm_intake, ehub_arm_intake)
             2 -> Array(chub_arm_specimen, ehub_arm_specimen)
-            else -> Array(chub_arm_transfer, ehub_arm_transfer)
+            3 -> Array(chub_arm_transfer, ehub_arm_transfer)
+            else -> Array(chub_arm_intermediary, ehub_arm_intermediary)
         }
 
 
@@ -88,11 +94,21 @@ object commands {
 
     //if i have my cam open and my arm is going down, set the wrist according to the camera's feed, else, set it ready for transfer
     //the else if is there just not to constantly set the servo position even if it's already in the right position
-    fun setWrist(){
-        if(camera.is_open && isIntaking)
-            intake.wrist.position = ang_to_pos(camera.corners().p1, camera.corners().p2)
-        else if(!pos_diff(intake.wrist.position, wrist_neutral))
-            intake.wrist.position = wrist_neutral
+    fun setWrist(): Command{
+        return InstantCommand{ intake.wrist.position = wrist_neutral}
+    }
+
+    fun setWristCommand(): Command{
+        val pos = if(camera.is_open && extendo.chub_rails.currentpos > home_submersible)
+            ang_to_pos(camera.corners().p1, camera.corners().p2)
+        else if(extendo.chub_rails.currentpos in home_examination..home_submersible)
+            wrist_neutral
+        else
+            wrist_neutral
+
+        return InstantCommand{
+            intake.wrist.position = pos
+        }
     }
 
     fun setClawIntakeState(state: Int): Command{

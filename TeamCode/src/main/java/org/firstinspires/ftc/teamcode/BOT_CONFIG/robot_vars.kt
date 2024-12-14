@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -39,7 +40,7 @@ object robot_vars {
     lateinit var intake: Intake
     lateinit var lift: Lift
     lateinit var imew: ThreadedIMU
-    lateinit var localizer: Sparkfun
+    lateinit var localizer: SparkFunOTOS
     lateinit var camera: Camera
     lateinit var pose_set: Any
     lateinit var p2p: P2P
