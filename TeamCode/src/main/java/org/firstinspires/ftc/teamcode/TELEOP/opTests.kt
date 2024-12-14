@@ -72,6 +72,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.complex_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
@@ -201,7 +202,7 @@ class opTest: LinearOpMode() {
 
 
             if(gamepad1.square && !lift_testy0){
-                current_command3 = if(isSpecimen)
+                current_command2 = if(isSpecimen)
                     complex_commands.place_specimen()
                 else
                     complex_commands.place_sample()
@@ -210,17 +211,8 @@ class opTest: LinearOpMode() {
             }
             lift_testy0 = gamepad1.square
 
-            if(gamepad1.circle && !outtaking){
-                TRENUL_DE_BUZAU = true
-                current_command3 = if(isSpecimen)
-                    complex_commands.prepare_specimen()
-                else
-                    complex_commands.prepare_sample()
-            }
-            outtaking =gamepad1.circle
-
             if(gamepad1.triangle && !curu5){
-                current_command3 = setClawState(1)
+                current_command2 = setClawState(1)
             }
             curu5 = gamepad1.triangle
 
@@ -247,9 +239,9 @@ class opTest: LinearOpMode() {
 
             if(gamepad2.square && !transfer_extendo){
                 isTransferring = true
-                current_command2 = SequentialCommand(
+                current_command = SequentialCommand(
                     setFourbar(4),
-                    SleepCommand(0.3),
+                    SleepCommand(0.15),
                     setClawState(0),
                     SleepCommand(0.2),
                     setClawIntakeState(0)
@@ -352,6 +344,15 @@ class opTest: LinearOpMode() {
                 extendo_target = extendo.chub_rails.currentpos
             }
 
+            if(gamepad1.circle && !outtaking){
+                TRENUL_DE_BUZAU = true
+                current_command2 = if(isSpecimen)
+                    setArmState(1)
+                else
+                    setArmState(2)
+            }
+            outtaking =gamepad1.circle
+
             if(extendo.chub_rails.currentpos in home_examination - 150 .. home_submersible + 200){
                 if(isToExam) {
                     setExtendoTarget(0)
@@ -389,10 +390,10 @@ class opTest: LinearOpMode() {
                     )
 
                 if(TRENUL_DE_BUZAU){
-                    current_command3 = if(isSpecimen)
-                        complex_commands.prepare_specimen()
+                    current_command2 = if(isSpecimen)
+                        setArmState(1)
                     else
-                        complex_commands.prepare_sample()
+                        setArmState(2)
 
                     TRENUL_DE_BUZAU = false
                 }
@@ -414,11 +415,6 @@ class opTest: LinearOpMode() {
                 }
             }
 
-            if(current_command3 != null){
-                if(current_command3!!.run(telemetry_packet)){
-                    current_command3 = null
-                }
-            }
             setLift()
             robot.update()
 
