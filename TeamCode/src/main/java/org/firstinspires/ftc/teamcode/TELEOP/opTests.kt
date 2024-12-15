@@ -170,15 +170,12 @@ class opTest: LinearOpMode() {
                     targetheading = imew.yaw
                 }
             }
-            send_toall("TARGETHEADING", targetheading)
 
             ///chassis
-            chassis.fc_drive(-gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
+            chassis.fc_drive(gamepad1.left_stick_y.toDouble(),  -gamepad1.left_stick_x.toDouble(), -gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
+
+            send_toall("imew yaw", imew.yaw)
             //chassis.rc_drive(gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
-
-            send_toall("diff", ang_diff(targetheading, imew.yaw))
-            send_toall("pid value", chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)))
-
 
             //lift
             if(gamepad1.right_bumper && !lift_testy3){
@@ -232,12 +229,14 @@ class opTest: LinearOpMode() {
 
             if(gamepad2.square && !transfer_extendo){
                 isTransferring = true
-                current_command = SequentialCommand(
+                send_toall("transfeeering", "no")
+                current_command2 = SequentialCommand(
                     setFourbar(4),
                     SleepCommand(0.15),
                     setClawState(0),
                     SleepCommand(0.2),
-                    setClawIntakeState(0)
+                    setClawIntakeState(0),
+                    InstantCommand { send_toall("transferring", "yes") }
                 )
             }
             transfer_extendo = gamepad2.square
@@ -255,7 +254,6 @@ class opTest: LinearOpMode() {
                     setArmStateIntake(4),
                     SleepCommand(0.2),
                     setFourbar(4),
-                    SleepCommand(0.3),
                     setWrist(),
                     setArmStateIntake(3),
                 )
@@ -300,6 +298,7 @@ class opTest: LinearOpMode() {
                 isToIntake = true
                 setExtendoTarget(3)
                 current_command = SequentialCommand(
+                    setArmStateIntake(3),
                     WaitUntilCommand { isExtendoinTolerance() },
                     setClawIntakeState(0),
                     setArmStateIntake(1),
@@ -332,10 +331,24 @@ class opTest: LinearOpMode() {
 
             if(gamepad1.circle && !outtaking){
                 TRENUL_DE_BUZAU = true
-                current_command2 = if(isSpecimen)
-                    setArmState(1)
-                else
-                    setArmState(2)
+                send_toall("trenul de buzau", "no")
+                /*current_command = if(isSpecimen) SequentialCommand(
+                    setArmState(1),
+                    InstantCommand { send_toall("trenul de boozau", "yes") }
+                )
+                else SequentialCommand(
+                    setArmState(2),
+                    InstantCommand { send_toall("trenul de boozau", "yes") }
+                ) */
+                if(isSpecimen) {
+                    outtake.chub_arm.position = outtake_vars.chub_arm_place
+                    outtake.ehub_arm.position = outtake_vars.ehub_arm_place
+                }
+                else{
+                    outtake.chub_arm.position = outtake_vars.chub_arm_basket
+                    outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
+                }
+
             }
             outtaking =gamepad1.circle
 
@@ -375,6 +388,15 @@ class opTest: LinearOpMode() {
                         setFourbar(4),
                         setWrist()
                     )
+
+                if(TRENUL_DE_BUZAU){
+                    TRENUL_DE_BUZAU = false
+                    current_command = if(isSpecimen)
+                        setArmState(1)
+                    else
+                        setArmState(2)
+
+                }
             }
 
             setExtendo(gamepad2.right_stick_y.toDouble())

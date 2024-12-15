@@ -42,7 +42,7 @@ object p2p_vars{
     var hPDF: PDF = PDF()
 
     @JvmField
-    var tolerance: Double = 5.0
+    var tolerance: Double = 2.0
     @JvmField
     var angular_tolerance: Double = 0.13
 
@@ -69,7 +69,7 @@ object red_vars_sample {
 
 @Config
 object red_vars_specimen {
-    var spec0 = Pose(100.0, 25.0, PI/2)
+    var spec0 = Pose(0.0, 39.0, 0.0)
     var spec1 = Pose()
     var spec2 = Pose()
 

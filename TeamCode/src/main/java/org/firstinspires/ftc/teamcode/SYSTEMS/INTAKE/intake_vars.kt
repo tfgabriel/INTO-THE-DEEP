@@ -31,7 +31,7 @@ object intake_vars {
 
     var fourbar_intake: Double = 0.45
     @JvmField
-    var fourbar_transfer: Double = 0.965
+    var fourbar_transfer: Double = 0.98
     var fourbar_up: Double = 0.94
     var fourbar_mid: Double = 0.0
     @JvmField
@@ -58,6 +58,6 @@ object intake_vars {
     @JvmField
     var claws_open: Double = 0.59
     @JvmField
-    var claws_closed: Double = 0.4
+    var claws_closed: Double = 0.38
 
 }
