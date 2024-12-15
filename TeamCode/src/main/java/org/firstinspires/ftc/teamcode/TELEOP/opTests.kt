@@ -121,7 +121,6 @@ var curu2001 = false
 var TRENUL_DE_BUZAU = false
 
 var current_command3 : Command? = null
-@Photon
 @TeleOp
 class opTest: LinearOpMode() {
     override fun runOpMode() {
@@ -223,13 +222,7 @@ class opTest: LinearOpMode() {
                 isTakingSpecimen = true
 
                 current_command = SequentialCommand(
-                    /*setFourbar(1),
-                    setArmStateIntake(0),
-                    SleepCommand(0.2),
-                    setClawIntakeState(1),
-                    SleepCommand(0.3),
 
-                     */
                     setArmStateIntake(3),
                     setFourbar(4),
                     setWrist(),
@@ -245,7 +238,6 @@ class opTest: LinearOpMode() {
                     setClawState(0),
                     SleepCommand(0.2),
                     setClawIntakeState(0)
-
                 )
             }
             transfer_extendo = gamepad2.square
@@ -259,7 +251,7 @@ class opTest: LinearOpMode() {
             curu2 = gamepad2.cross
 
             if(gamepad2.triangle && !curu2001){
-                current_command2 = SequentialCommand(
+                current_command = SequentialCommand(
                     setArmStateIntake(4),
                     SleepCommand(0.2),
                     setFourbar(4),
@@ -289,9 +281,6 @@ class opTest: LinearOpMode() {
             }
             intake_sample = gamepad2.dpad_down
 
-
-
-
             if(gamepad2.right_bumper && !intake_specimen){
                 isToExam = true
                 setExtendoTarget(0)
@@ -318,9 +307,6 @@ class opTest: LinearOpMode() {
                 )
             }
             curu2000 = gamepad2.left_bumper
-
-
-
 
             if(gamepad2.left_trigger > 0.002 && !curu3){
                 if(!pos_diff(intake.wrist.position, 0.01))
@@ -366,9 +352,10 @@ class opTest: LinearOpMode() {
                     isToExam = false
                 } else if(isTransferring){
                     current_command = SequentialCommand(
-                        SleepCommand(0.5),
+                        setFourbar(4),
+                        SleepCommand(0.15),
                         setClawState(0),
-                        SleepCommand(0.4),
+                        SleepCommand(0.2),
                         setClawIntakeState(0)
                     )
                     isTransferring = false
@@ -388,16 +375,6 @@ class opTest: LinearOpMode() {
                         setFourbar(4),
                         setWrist()
                     )
-
-                if(TRENUL_DE_BUZAU){
-                    current_command2 = if(isSpecimen)
-                        setArmState(1)
-                    else
-                        setArmState(2)
-
-                    TRENUL_DE_BUZAU = false
-                }
-
             }
 
             setExtendo(gamepad2.right_stick_y.toDouble())
