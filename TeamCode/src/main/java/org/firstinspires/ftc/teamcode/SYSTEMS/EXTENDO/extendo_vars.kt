@@ -9,7 +9,7 @@ object extendo_vars {
     @JvmField
     var max_submersible: Int = 750
     @JvmField
-    var home_submersible: Int = 220
+    var home_submersible: Int = 200
 
 
     @JvmField

@@ -53,7 +53,6 @@ class P2P {
         y_err = cos(imew.yaw) * (err.x) - sin(imew.yaw) * (err.y)
         x_err = sin(imew.yaw) * (err.x) + cos(imew.yaw) * (err.y)
         h_err = ang_diff(path.h, imew.yaw)
-
         // If the robot is not in tolerance, run with the pd
         if (!isBotinTolerance()) {
             chassis.rc_drive( -xPDF.update(x_err), -yPDF.update(y_err) * slow, -hPDF.update(h_err), 0.0)

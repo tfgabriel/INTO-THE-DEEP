@@ -98,11 +98,9 @@ object complex_commands{
     fun place_specimen(): Command{
         return SequentialCommand(
             SleepCommand(0.3),
-            setArmState(0),
             setClawState(2),
             SleepCommand(0.1),
-            setClawState(1),
-            SleepCommand(0.2),
+            setClawState(1)
         )
     }
 

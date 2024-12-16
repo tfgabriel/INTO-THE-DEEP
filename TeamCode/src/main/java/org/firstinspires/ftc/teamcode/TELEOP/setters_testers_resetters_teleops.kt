@@ -965,7 +965,6 @@ class teser: LinearOpMode(){
 
             if(gamepad2.right_bumper && !lift_testy3){
                 isSpecimen = true
-                isLiftDown = false
 
                 setLiftTarget(3)
             }
@@ -973,7 +972,6 @@ class teser: LinearOpMode(){
 
             if(gamepad2.left_bumper && !lift_testy6){
                 isSpecimen = false
-                isLiftDown = false
 
                 setLiftTarget(6)
             }
@@ -985,7 +983,6 @@ class teser: LinearOpMode(){
                 else
                     complex_commands.place_sample()
                 setLiftTarget(0)
-                isLiftDown = true
             }
             lift_testy0 = gamepad2.dpad_left
 
