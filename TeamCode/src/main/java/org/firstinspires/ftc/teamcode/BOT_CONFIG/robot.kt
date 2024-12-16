@@ -135,6 +135,7 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     private val et = ElapsedTime()
     fun update() {
         send_toall("framerate", 1 / et.seconds())
+
         telemetry.update()
         et.reset()
         control_hub.clearBulkCache()

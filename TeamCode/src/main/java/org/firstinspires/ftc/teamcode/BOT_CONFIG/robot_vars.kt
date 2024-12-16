@@ -62,4 +62,11 @@ object robot_vars {
     var camera_ang = 0.0
     var camera_distance_from_ground = 0.0
     var cm_to_ticks = 0.0
+
+    @JvmField
+    var field_scale = 1 / 2.54
+    @JvmField
+    var robot_radius = 28.0
+    @JvmField
+    var robot_color = "#FF0000"
 }

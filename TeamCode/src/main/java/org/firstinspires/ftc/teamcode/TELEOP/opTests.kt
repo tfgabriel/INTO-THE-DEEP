@@ -77,7 +77,7 @@ var curu2001 = false
 var TRENUL_DE_BUZAU = false
 
 var current_command3 : Command? = null
-@TeleOp
+@TeleOp(name = "我討厭修訂")
 class opTest: LinearOpMode() {
     override fun runOpMode() {
         val robot = robot(false)
@@ -363,14 +363,14 @@ class mapispeel: LinearOpMode(){
             a = gamepad2.y
 
             if(gamepad2.x && !b){
-                outtake.chub_arm.position = outtake_vars.chub_arm_basket
-                outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
+                outtake.chub_arm.position = outtake_vars.chub_arm_pickup
+                outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
             }
             b = gamepad2.x
 
             if(gamepad2.a && !c){
-                outtake.chub_arm.position = outtake_vars.chub_arm_pickup
-                outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
+                outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
+                outtake.chub_arm.position = outtake_vars.chub_arm_basket
             }
             c = gamepad2.a
             robot.update()
