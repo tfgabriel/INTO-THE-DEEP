@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.BOT_CONFIG
 
 import android.graphics.Color
 import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
@@ -12,6 +13,8 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.dashboard
@@ -26,6 +29,7 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.p2p
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.pose_set
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.robot_color
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.voltage_sensor
@@ -46,9 +50,26 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_neutral
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
+import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
+import org.firstinspires.ftc.teamcode.WRAPPERS.Localizer
 
 class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     constructor(isAuto: Boolean): this(isAuto, true, true)
+
+    //all systems
+    fun init_systems(){
+        chassis = Chassis()
+        lift = Lift()
+        extendo = Extendo()
+        intake = Intake()
+        outtake = Outtake()
+        localizer = Localizer("sparkfun")
+    }
+
+    //camera, localization
+    fun init_auto(isRed: Boolean, isSample: Boolean){
+        p2p = P2P()
+    }
 
     fun start(lom: LinearOpMode){
         base_init(lom)
@@ -78,35 +99,10 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         imew.init()
         imew.reset()
         dashboard = FtcDashboard.getInstance()
-        telemetry = dashboard.telemetry
         telemetry_packet = TelemetryPacket()
+        telemetry = MultipleTelemetry(lom.telemetry, dashboard.telemetry)
 
         //voltage_sensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
-    }
-
-    //all systems
-    fun init_systems(){
-        chassis = Chassis()
-        lift = Lift()
-        extendo = Extendo()
-        intake = Intake()
-        outtake = Outtake()
-    }
-
-    //camera, localization
-    fun init_auto(isRed: Boolean, isSample: Boolean){
-        localizer = hardwareMap.get(SparkFunOTOS::class.java, "sparkfun")
-        localizer.resetTracking()
-        localizer.initialize()
-        localizer.resetTracking()
-        localizer.calibrateImu()
-        localizer.angularUnit = AngleUnit.RADIANS
-        localizer.linearUnit = DistanceUnit.CM
-        localizer.linearScalar = 1.0054
-        localizer.angularScalar = 1.0075
-        localizer.offset.set(SparkFunOTOS.Pose2D(0.4,0.1,0.0))
-
-        p2p = P2P()
     }
 
     fun init_positions(isAuto: Boolean){
@@ -136,6 +132,13 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     fun update() {
         send_toall("framerate", 1 / et.seconds())
 
+        val tp = TelemetryPacket()
+        val canvas = tp.fieldOverlay()
+        drawings.drawRobot(canvas, localizer.pose)
+        if (isAuto) { drawings.drawP2P(canvas) }
+        dashboard.sendTelemetryPacket(tp)
+        send_toall("POse", localizer.pose)
+        localizer.update()
         telemetry.update()
         et.reset()
         control_hub.clearBulkCache()

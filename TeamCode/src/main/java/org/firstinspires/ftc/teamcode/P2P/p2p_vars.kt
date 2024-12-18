@@ -8,14 +8,6 @@ import kotlin.math.PI
 
 @Config
 object p2p_vars{
-    lateinit var path: Pose
-    lateinit var current_pos: Pose
-    lateinit var err: Pose
-
-    var x_err: Double = 0.0
-    var y_err: Double = 0.0
-    var h_err: Double = 0.0
-
     @JvmField
     var x_p: Double = 0.01
     @JvmField
@@ -37,10 +29,6 @@ object p2p_vars{
     @JvmField
     var h_f: Double = 0.03
 
-    var xPDF: PDF = PDF()
-    var yPDF: PDF = PDF()
-    var hPDF: PDF = PDF()
-
     @JvmField
     var tolerance: Double = 2.0
     @JvmField
@@ -48,8 +36,6 @@ object p2p_vars{
 
     @JvmField
     val slow: Double = 1.0
-
-    val ep: ElapsedTime = ElapsedTime()
 }
 
 @Config

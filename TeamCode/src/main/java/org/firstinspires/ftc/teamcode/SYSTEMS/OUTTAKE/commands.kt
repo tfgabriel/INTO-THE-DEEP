@@ -10,12 +10,14 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_basket
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_pickup
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_place
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_arm_steal
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_claw_close
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_claw_intermed
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_claw_open
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_arm_basket
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_arm_pickup
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_arm_place
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_arm_steal
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_claw_close
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_claw_intermed
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_claw_open
@@ -56,12 +58,13 @@ object simple_commands {
         )
     }
 
-    /// 0 = pickup, 1 = chamber, 2 = basket
+    /// 0 = pickup, 1 = chamber, 2 = basket. 3 = steal
     fun setArmState(state: Int): Command{
         val states: Array = when (state) {
             0 -> Array(chub_arm_pickup, ehub_arm_pickup)
             1 -> Array(chub_arm_place, ehub_arm_place)
-            else -> Array(chub_arm_basket, ehub_arm_basket)
+            2 -> Array(chub_arm_basket, ehub_arm_basket)
+            else -> Array(chub_arm_steal, ehub_arm_steal)
         }
 
         return ParallelCommand(

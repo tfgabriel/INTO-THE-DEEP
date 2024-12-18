@@ -22,6 +22,6 @@ object communication {
 
     fun send_toall(caption: String, content: Any){
         send_tods(caption, content)
-        send_todash(caption, content)
+        //send_todash(caption, content)
     }
 }
