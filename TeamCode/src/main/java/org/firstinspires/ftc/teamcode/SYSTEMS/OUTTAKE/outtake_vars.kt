@@ -31,6 +31,9 @@ object outtake_vars {
     var chub_claw_intermed: Double = 0.43
 
 
+    var chub_arm_steal: Double = 0.1
+    var ehub_arm_steal: Double = 0.74
+
     @JvmField
     var place_time: Double = 0.3
     @JvmField

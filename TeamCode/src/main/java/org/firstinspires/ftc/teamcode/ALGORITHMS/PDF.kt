@@ -18,7 +18,6 @@ class PDF(@JvmField val p: Double, @JvmField var d: Double, @JvmField var f: Dou
     var ep = ElapsedTime()
 
     fun update(err: Double): Double{
-
         derivative = (err - proportionate) / ep.milliseconds()
         ep.reset()
         proportionate = err

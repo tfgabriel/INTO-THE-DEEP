@@ -5,12 +5,14 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.hardware.limelightvision.LLFieldMap
+import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.rect_center
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.x_distance
@@ -33,6 +35,7 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
@@ -744,8 +747,6 @@ class outtake_reset: LinearOpMode(){
     }
 
 }
-
-@Disabled
 @TeleOp
 class cameruta: LinearOpMode(){
     override fun runOpMode() {
@@ -765,38 +766,51 @@ class cameruta: LinearOpMode(){
 
             send_toall("ahem", camera.limelight.status)
 
-            if(gamepad2.y && !isIntaking) {
-                send_toall("", "----------------------- CORNERS ------------------------")
+            val result = camera.limelight.getLatestResult();
+            if (result != null) {
+                if (result.isValid()) {
+                    telemetry.addData("tx", result.getTx());
+                    telemetry.addData("ty", result.getTy());
 
-                send_toall("1X", camera.corners().p1.x)
-                send_toall("1Y", camera.corners().p1.y)
+                    send_toall("mamamama", result.colorResults.isEmpty())
 
-                send_toall("2X", camera.corners().p2.x)
-                send_toall("2Y", camera.corners().p2.y)
+                    if(!result.colorResults.isEmpty()) {
 
-                send_toall("3X", camera.corners().p3.x)
-                send_toall("3Y", camera.corners().p3.y)
 
-                send_toall("4X", camera.corners().p4.x)
-                send_toall("4Y", camera.corners().p4.y)
-                send_toall("", "----------------------- MIDPOINT ------------------------")
+                        send_toall("", "----------------------- CORNERS ------------------------")
 
-                send_toall("MIDPOINT X", rect_center(camera.corners()).x)
-                send_toall("MIDPOINT Y", rect_center(camera.corners()).y)
+                        send_toall("1X", camera.corners().p1.x)
+                        send_toall("1Y", camera.corners().p1.y)
 
-                send_toall("", "----------------------- DISTANCES ------------------------")
+                        send_toall("2X", camera.corners().p2.x)
+                        send_toall("2Y", camera.corners().p2.y)
 
-                send_toall("Y DIST", y_distance(camera.ang_Y))
-                send_toall("X DIST", x_distance(camera.ang_X, camera.ang_Y))
+                        send_toall("3X", camera.corners().p3.x)
+                        send_toall("3Y", camera.corners().p3.y)
 
-                send_toall("", "----------------------- ANGLES ------------------------")
+                        send_toall("4X", camera.corners().p4.x)
+                        send_toall("4Y", camera.corners().p4.y)
+                        send_toall("", "----------------------- MIDPOINT ------------------------")
 
-                send_toall("SAMPLE OFF Y", camera.ang_Y)
-                send_toall("SAMPLE OFF X", camera.ang_X)
+                        send_toall("MIDPOINT X", rect_center(camera.corners()).x)
+                        send_toall("MIDPOINT Y", rect_center(camera.corners()).y)
 
-                robot.update()
+                        send_toall("", "----------------------- DISTANCES ------------------------")
+
+                        send_toall("Y DIST", y_distance(camera.ang_Y))
+                        send_toall("X DIST", x_distance(camera.ang_X, camera.ang_Y))
+
+                        send_toall("", "----------------------- ANGLES ------------------------")
+
+                        send_toall("SAMPLE OFF Y", camera.ang_Y)
+                        send_toall("SAMPLE OFF X", camera.ang_X)
+                    }
+
+                }
             }
-            isIntaking = gamepad2.y
+
+            robot_vars.telemetry.update()
+            robot.update()
         }
     }
 
