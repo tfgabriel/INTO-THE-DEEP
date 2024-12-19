@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_extendo_tolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_submersible
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.modify_tresh
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftPowers
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
@@ -68,6 +70,8 @@ object commands {
     }
 
     fun isExtendoinTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < tolerance
+    fun isExtendoinHomeTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < home_extendo_tolerance
+
 
 
     /*
@@ -86,10 +90,11 @@ object commands {
         val err = extendo_target - extendo.chub_rails.currentpos
 
 
-        if(!isExtendoinTolerance())
+        if(!isExtendoinTolerance()) {
             setExtendoPowers(extendo_pdf.update(err.toDouble()) + gamepad_power * 0.5)
+        }
         else
-            setExtendoPowers(force * sign(err.toDouble()) + gamepad_power * 0.5)
+            setExtendoPowers(extendo_vars.force * sign(err.toDouble()) + gamepad_power * 0.5)
     }
 
 

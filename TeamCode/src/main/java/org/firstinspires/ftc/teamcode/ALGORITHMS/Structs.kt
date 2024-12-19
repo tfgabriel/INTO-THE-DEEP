@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.ALGORITHMS
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angNorm
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 class Array(val val1: Double, val val2: Double, val val3: Double){
@@ -16,6 +20,7 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
 
 class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double){
     constructor(): this(0.0, 0.0, 0.0)
+    constructor(idiot: SparkFunOTOS.Pose2D): this(idiot.x, idiot.y, idiot.h)
 
     operator fun plus(pose: Pose): Pose = Pose(x + pose.x, y + pose.y, h + pose.h)
 
@@ -23,7 +28,14 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
 
     operator fun times(a: Double): Pose = Pose(a * x, a * y, a * h)
 
-    fun distance(): Double = sqrt(x*x - y*y)
+
+    fun rotate(angle: Double) = Pose(x * cos(angle) - y * sin(angle),
+                                     x * sin(angle) + y * cos(angle),
+                                        angNorm(h + angle))
+
+    fun distance(): Double = sqrt(x*x + y*y)
+
+    override fun toString() = String.format("(%.3f %.3f %.3f)", x, y, angNorm(h))
 }
 
 class Point(var x: Double, var y: Double){
@@ -38,6 +50,7 @@ class Point(var x: Double, var y: Double){
 
     operator fun plus(point: Point): Point = Point(x + point.x, y + point.y)
 
+    override fun toString() = String.format("(%.3f %.3f)", x, y)
 }
 
 class PointVec(var p1: Point, var p2: Point, var p3: Point, var p4: Point){

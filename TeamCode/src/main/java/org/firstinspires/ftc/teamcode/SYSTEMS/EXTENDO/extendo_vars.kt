@@ -7,13 +7,13 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 object extendo_vars {
     // NOT YET FINISHED
     @JvmField
-    var max_submersible: Int = 750
+    var max_submersible: Int = -500
     @JvmField
-    var home_submersible: Int = 200
+    var home_submersible: Int = 185
 
 
     @JvmField
-    var max_examination: Int = -280
+    var max_examination: Int = -630
     @JvmField
     var home_examination: Int = 0
 
@@ -38,4 +38,7 @@ object extendo_vars {
 
     @JvmField
     var modify_tresh: Int = 50
+
+    @JvmField
+    var home_extendo_tolerance = 20.0
 }

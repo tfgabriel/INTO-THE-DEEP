@@ -14,11 +14,14 @@ import org.firstinspires.ftc.teamcode.LOCALIZATION.Sparkfun
 import org.firstinspires.ftc.teamcode.P2P.P2P
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
+import org.firstinspires.ftc.teamcode.WRAPPERS.Localizer
+import kotlin.math.abs
 
 @Config
 @SuppressLint("StaticFieldLeak")
@@ -40,7 +43,7 @@ object robot_vars {
     lateinit var intake: Intake
     lateinit var lift: Lift
     lateinit var imew: ThreadedIMU
-    lateinit var localizer: SparkFunOTOS
+    lateinit var localizer: Localizer
     lateinit var camera: Camera
     lateinit var pose_set: Any
     lateinit var p2p: P2P
@@ -66,7 +69,13 @@ object robot_vars {
     @JvmField
     var field_scale = 1 / 2.54
     @JvmField
-    var robot_radius = 28.0
+    var robot_radius = 7.0
+    var robot_width = 1
+
+    @JvmField
+    var trajectory_color = "#00FF00"
+
     @JvmField
     var robot_color = "#FF0000"
+
 }

@@ -47,5 +47,5 @@ object lift_vars {
     var lazy_coef: Double = 0.003
 
     @JvmField
-    var rebepe: Double = 0.00002
+    var rebepe: Double = 0.000005
 }

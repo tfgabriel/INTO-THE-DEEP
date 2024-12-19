@@ -46,6 +46,8 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_neutral
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
+import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
+import org.firstinspires.ftc.teamcode.WRAPPERS.Localizer
 
 class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     constructor(isAuto: Boolean): this(isAuto, true, true)
@@ -56,6 +58,20 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
             init_auto(isRed, isSample)
         init_systems()
     }
+
+    fun init_systems(){
+        chassis = Chassis()
+        lift = Lift()
+        extendo = Extendo()
+        intake = Intake()
+        outtake = Outtake()
+        localizer = Localizer("sparkfun")
+    }
+    //camera, localization
+    fun init_auto(isRed: Boolean, isSample: Boolean){
+        p2p = P2P()
+    }
+
 
     //dash, telemetry, hubs
     fun base_init(lom: LinearOpMode){
@@ -85,29 +101,6 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     }
 
     //all systems
-    fun init_systems(){
-        chassis = Chassis()
-        lift = Lift()
-        extendo = Extendo()
-        intake = Intake()
-        outtake = Outtake()
-    }
-
-    //camera, localization
-    fun init_auto(isRed: Boolean, isSample: Boolean){
-        localizer = hardwareMap.get(SparkFunOTOS::class.java, "sparkfun")
-        localizer.resetTracking()
-        localizer.initialize()
-        localizer.resetTracking()
-        localizer.calibrateImu()
-        localizer.angularUnit = AngleUnit.RADIANS
-        localizer.linearUnit = DistanceUnit.CM
-        localizer.linearScalar = 1.0054
-        localizer.angularScalar = 1.0075
-        localizer.offset.set(SparkFunOTOS.Pose2D(0.4,0.1,0.0))
-
-        p2p = P2P()
-    }
 
     fun init_positions(isAuto: Boolean){
         intake.wrist.position = wrist_neutral
@@ -135,6 +128,14 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     private val et = ElapsedTime()
     fun update() {
         send_toall("framerate", 1 / et.seconds())
+
+        val tp = TelemetryPacket()
+        val canvas = tp.fieldOverlay()
+        drawings.drawRobot(canvas, localizer.pose)
+        if (isAuto) { drawings.drawP2P(canvas) }
+        dashboard.sendTelemetryPacket(tp)
+        send_toall("POse", localizer.pose)
+        localizer.update()
 
         telemetry.update()
         et.reset()

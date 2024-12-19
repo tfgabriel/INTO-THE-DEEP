@@ -21,7 +21,7 @@ object communication {
     fun send_tods(caption: String, content: Float) = send_tods(caption, String.format("%.4f", content))
 
     fun send_toall(caption: String, content: Any){
-        send_tods(caption, content)
+        //send_tods(caption, content)
         send_todash(caption, content)
     }
 }

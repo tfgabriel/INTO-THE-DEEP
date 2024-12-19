@@ -11,10 +11,10 @@ import kotlin.math.max
 import kotlin.math.sin
 
 class Chassis {
-    var leftfront = MOTOR("LF", false, false)
-    var leftback = MOTOR("LB", false, false)
-    var rightfront = MOTOR("RF", false, true)
-    var rightback = MOTOR("RB", false, true)
+    var leftfront = MOTOR("LF", false, true)
+    var leftback = MOTOR("LB", false, true)
+    var rightfront = MOTOR("RF", false, false)
+    var rightback = MOTOR("RB", false, false)
 
     fun rc_drive(y: Double, x: Double, rx: Double, slow: Double){
         slowdown = (1 * slowcoef) * (1 - slow)
