@@ -28,15 +28,7 @@ object Math {
 
     fun ang_norm(o1: Double) = float_mod(o1, 2 * Math.PI)
 
-    fun rect_center(ptVec: PointVec): Point{
-        var pt = Point();
 
-        for(i in 0..3){
-            pt += ptVec[i]
-        }
-
-        return pt
-    }
 
     fun cam_ang_norm(angy: Double) = angy + camera_ang
 

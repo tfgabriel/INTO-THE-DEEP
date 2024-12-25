@@ -1,17 +1,12 @@
 package org.firstinspires.ftc.teamcode.BOT_CONFIG
 
-import android.graphics.Color
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.dashboard
@@ -25,21 +20,15 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.p2p
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.pose_set
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.result
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.voltage_sensor
-import org.firstinspires.ftc.teamcode.LOCALIZATION.Sparkfun
 import org.firstinspires.ftc.teamcode.P2P.P2P
-import org.firstinspires.ftc.teamcode.P2P.blue_vars_sample
-import org.firstinspires.ftc.teamcode.P2P.blue_vars_specimen
-import org.firstinspires.ftc.teamcode.P2P.red_vars_sample
-import org.firstinspires.ftc.teamcode.P2P.red_vars_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
@@ -57,6 +46,7 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         if(isAuto)
             init_auto(isRed, isSample)
         init_systems()
+        init_positions(isAuto)
     }
 
     fun init_systems(){
@@ -103,7 +93,7 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     //all systems
 
     fun init_positions(isAuto: Boolean){
-        intake.wrist.position = wrist_neutral
+        intake.wrist.position = intake_vars.wrist_neutral
         outtake.positioner.position = positioner_neutral
         outtake.chub_arm.position = outtake_vars.chub_arm_pickup
         outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
@@ -117,9 +107,8 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
             outtake.chub_claw.position = outtake_vars.chub_claw_open
         }
 
-        intake.chub_arm.position = intake_vars.chub_arm_transfer
-        intake.ehub_arm.position = intake_vars.ehub_arm_transfer
-
+        intake.chub_arm.position = transfer
+        intake.ehub_arm.position = transfer
         intake.claws.position = intake_vars.claws_open
 
         intake.fourbar.position = intake_vars.fourbar_transfer
@@ -133,10 +122,19 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         val canvas = tp.fieldOverlay()
         drawings.drawRobot(canvas, localizer.pose)
         if (isAuto) { drawings.drawP2P(canvas) }
-        dashboard.sendTelemetryPacket(tp)
         send_toall("POse", localizer.pose)
         localizer.update()
+        //send_toall("is open", camera.is_open)
+        //send_toall("is valid", result.isValid)
+        //send_toall("is not empty", !result.colorResults.isEmpty())
+        //send_toall("is in size", result.colorResults[0].targetCorners.size == 4)
 
+        if (camera.is_open)
+            if(result.isValid())
+                if(!result.colorResults.isEmpty())
+                    if(result.colorResults[0].targetCorners.size == 4)
+                        drawings.draw_sample(canvas, result)
+        dashboard.sendTelemetryPacket(tp)
         telemetry.update()
         et.reset()
         control_hub.clearBulkCache()

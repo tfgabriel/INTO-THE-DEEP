@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.COMMANDBASE
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry
 
 interface Command {
     fun run(packet: TelemetryPacket): Boolean
@@ -67,5 +68,21 @@ class ParallelCommand(vararg commands: Command): Command {
     override fun run(packet: TelemetryPacket): Boolean {
         commandList = commandList.filter { !it.run(packet) }
         return commandList.isEmpty()
+    }
+
+}
+
+class AppendCommand(vararg commands: Command?, val appendedCommand: InstantCommand.LambdaCommand): Command{
+    var commandList = commands.asList()
+
+    override fun run(packet: TelemetryPacket): Boolean {
+        if(commandList.isEmpty()) {
+            appendedCommand.run()
+        }
+        if(commandList.first()!!.run(packet)) {
+            commandList = commandList.drop(1)
+            run(packet)
+        }
+        return false
     }
 }

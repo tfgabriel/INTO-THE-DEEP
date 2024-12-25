@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 
 class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
     //val motor: PhotonDcMotor = hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
-    val motor = hardwareMap.dcMotor.get(name)
+    val motor = hardwareMap.dcMotor.get(name) as DcMotorEx
     init{
         if(encoder){
             motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER

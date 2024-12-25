@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
+import com.qualcomm.hardware.limelightvision.LLResult
+import com.qualcomm.hardware.limelightvision.LLResultTypes
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -47,6 +49,7 @@ object robot_vars {
     lateinit var camera: Camera
     lateinit var pose_set: Any
     lateinit var p2p: P2P
+    lateinit var result: LLResult
 
     @JvmField
     var WITH_PID: Boolean = false
@@ -62,9 +65,9 @@ object robot_vars {
     var READY_FOR_EXAMINING: Boolean = false
 
     var servo_range = 355.0
-    var camera_ang = 0.0
-    var camera_distance_from_ground = 0.0
-    var cm_to_ticks = 0.0
+    var camera_ang = -10.0
+    var camera_distance_from_ground = 30.0
+    var cm_to_ticks = 1.0
 
     @JvmField
     var field_scale = 1 / 2.54
@@ -72,10 +75,18 @@ object robot_vars {
     var robot_radius = 7.0
     var robot_width = 1
 
+    var sample_outline = "#FF0000"
+    var sample_diagonal = "#FFFFFF"
+
     @JvmField
     var trajectory_color = "#00FF00"
 
     @JvmField
     var robot_color = "#FF0000"
+
+    @JvmField
+    var offx = 100.0
+    @JvmField
+    var offy = -100.0
 
 }

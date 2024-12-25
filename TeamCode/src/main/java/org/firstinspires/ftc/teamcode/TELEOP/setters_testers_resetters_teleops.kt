@@ -14,10 +14,11 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.rect_center
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_to_pos
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.x_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.y_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Point
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.EXTENDO_STATE
@@ -34,7 +35,9 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.result
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
@@ -66,25 +69,10 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWristCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_specimen
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_testing
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_transfer
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_testing
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_transfer
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_mid
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_testing
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_transfer
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_up
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power_testing
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_testing
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
@@ -103,8 +91,10 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawSta
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setPositionerState
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
+import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
 import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
 import org.firstinspires.ftc.teamcode.WRAPPERS.CR_SERVO
+import org.firstinspires.ftc.teamcode.WRAPPERS.Localizer
 import org.firstinspires.ftc.teamcode.WRAPPERS.MOTOR
 import kotlin.math.abs
 import kotlin.math.sign
@@ -409,13 +399,10 @@ class intake_testyyyy: LinearOpMode(){
         waitForStart()
         while(!isStopRequested){
             if(gamepad1.y && !test1){
-                servo1.position = intake_vars.ehub_arm_intake
-                servo2.position = intake_vars.chub_arm_intake
             }
             test1 = gamepad1.y
 
             if(gamepad1.a && !test2){
-                servo3.position = intake_vars.wrist_testing
             }
             test2 = gamepad1.a
 
@@ -601,7 +588,6 @@ class servoTEST: LinearOpMode(){
             if(gamepad2.y && !test_place) {
                 intake.chub_arm.position = 0.0
                 intake.ehub_arm.position = 1.0
-                intake.wrist.position = intake_vars.wrist_testing
             }
             test_place = gamepad2.y
 
@@ -626,22 +612,15 @@ class servoTTTT: LinearOpMode(){
         waitForStart()
         while(!isStopRequested){
             if(gamepad2.y && !test_place) {
-                intake.chub_arm.position = chub_arm_intake
-                intake.ehub_arm.position = ehub_arm_intake
-                intake.fourbar.position = fourbar_up
             }
             test_place = gamepad2.y
 
             if(gamepad2.b && !test_pickup) {
                 intake.fourbar.position = fourbar_testing
-                intake.wrist.position = wrist_testing
             }
             test_pickup = gamepad2.b
 
             if(gamepad2.x && !test_open) {
-                intake.chub_arm.position = chub_arm_transfer
-                intake.ehub_arm.position = ehub_arm_transfer
-                intake.fourbar.position = fourbar_up
             }
             test_open = gamepad2.x
 
@@ -728,12 +707,10 @@ class outtake_reset: LinearOpMode(){
         waitForStart()
         while(!isStopRequested){
             if(gamepad2.circle && !test_positioner) {
-                intake.chub_arm.position = chub_arm_intake
             }
             test_positioner = gamepad2.circle
 
             if(gamepad2.square && !test_open) {
-                intake.ehub_arm.position = ehub_arm_intake
             }
             test_open = gamepad2.square
 
@@ -749,71 +726,95 @@ class outtake_reset: LinearOpMode(){
 }
 @TeleOp
 class cameruta: LinearOpMode(){
+
     override fun runOpMode() {
         val robot = robot(false)
         robot.base_init(this)
         camera = Camera()
         camera.limelight.start()
         camera.limelight.pipelineSwitch(0)
-
+        localizer = Localizer("sparkfun")
+        localizer.reset()
+        var k: Int = 0
+        var mid: Point = Point()
 
         // LLFieldMap pentru Autonom please :()()()()()
-
         waitForStart()
-        while(!isStopRequested){
-
+        while(!isStopRequested) {
             send_toall("alive", camera.limelight.isRunning)
-
             send_toall("ahem", camera.limelight.status)
+            result = camera.limelight.getLatestResult()
 
-            val result = camera.limelight.getLatestResult();
             if (result != null) {
                 if (result.isValid()) {
-                    telemetry.addData("tx", result.getTx());
-                    telemetry.addData("ty", result.getTy());
+                    //telemetry.addData("tx", result.getTx());
+                    //telemetry.addData("ty", result.getTy());
+                    //send_toall("mamamama", result.colorResults.isEmpty())
 
-                    send_toall("mamamama", result.colorResults.isEmpty())
+                    if (!result.colorResults.isEmpty()) {
+                        send_toall("size", result.colorResults[0].targetCorners.size)
+                        send_toall("IS IN SIZE", result.colorResults[0].targetCorners.size == 4)
+                        if (result.colorResults[0].targetCorners.size == 4) {
+                            send_toall(
+                                "",
+                                "----------------------- CORNERS ------------------------"
+                            )
+                            mid = Point()
+                            for (point in result.colorResults[0].targetCorners) {
+                                val corner = String.format("corner %d", k)
+                                send_toall(corner, result.colorResults[0].targetCorners[k])
+                                mid += Point(result.colorResults[0].targetCorners[k])
+                                if (k < 4)
+                                    k++
+                                else
+                                    break
+                            }
 
-                    if(!result.colorResults.isEmpty()) {
 
+                            send_toall(
+                                "",
+                                "----------------------- MIDPOINT ------------------------"
+                            )
+                            send_toall("mid", mid / 4.0)
 
-                        send_toall("", "----------------------- CORNERS ------------------------")
+                            send_toall(
+                                "",
+                                "----------------------- DISTANCES ------------------------"
+                            )
 
-                        send_toall("1X", camera.corners().p1.x)
-                        send_toall("1Y", camera.corners().p1.y)
+                            send_toall("Y DIST", y_distance(camera.ang_Y))
+                            send_toall("X DIST", x_distance(camera.ang_X, camera.ang_Y))
 
-                        send_toall("2X", camera.corners().p2.x)
-                        send_toall("2Y", camera.corners().p2.y)
+                            send_toall(
+                                "",
+                                "----------------------- ANGLES ------------------------"
+                            )
 
-                        send_toall("3X", camera.corners().p3.x)
-                        send_toall("3Y", camera.corners().p3.y)
+                            send_toall("SAMPLE OFF Y", camera.ang_Y)
+                            send_toall("SAMPLE OFF X", camera.ang_X)
 
-                        send_toall("4X", camera.corners().p4.x)
-                        send_toall("4Y", camera.corners().p4.y)
-                        send_toall("", "----------------------- MIDPOINT ------------------------")
+                            send_toall(
+                                "",
+                                "----------------------- WRIST POS ------------------------"
+                            )
 
-                        send_toall("MIDPOINT X", rect_center(camera.corners()).x)
-                        send_toall("MIDPOINT Y", rect_center(camera.corners()).y)
+                            send_toall(
+                                "servo pos",
+                                ang_to_pos(Point(result.colorResults[0].targetCorners[0]), Point(result.colorResults[0].targetCorners[2]))
+                            )
 
-                        send_toall("", "----------------------- DISTANCES ------------------------")
-
-                        send_toall("Y DIST", y_distance(camera.ang_Y))
-                        send_toall("X DIST", x_distance(camera.ang_X, camera.ang_Y))
-
-                        send_toall("", "----------------------- ANGLES ------------------------")
-
-                        send_toall("SAMPLE OFF Y", camera.ang_Y)
-                        send_toall("SAMPLE OFF X", camera.ang_X)
+                            //drawings.draw_sample(canvas, result)
+                        }
                     }
-
                 }
             }
 
-            robot_vars.telemetry.update()
+
+
             robot.update()
+            k = 0
         }
     }
-
 }
 
 //intake the whole time + retract arm + put wrist in home position
@@ -875,7 +876,7 @@ class teser: LinearOpMode(){
             }
             curu2 = gamepad2.circle
 
-            if (gamepad2.cross && !curu3) {
+            if (gamepad2.cross && !curu1999) {
                 isTakingSpecimen = true
 
 
@@ -890,16 +891,16 @@ class teser: LinearOpMode(){
                     setWrist(),
                 )
             }
-            curu3 = gamepad2.cross
+            curu1999 = gamepad2.cross
 
-            if (gamepad2.square && !curu4) {
+            if (gamepad2.square && !curu2003) {
                 current_command2 = SequentialCommand(
                     setArmState(0),
                     setPositionerState(0),
                     setClawState(1)
                 )
             }
-            curu4 = gamepad2.square
+            curu2003 = gamepad2.square
 
             if(gamepad2.dpad_down && !curu6){
                 isTransferring = true
@@ -921,7 +922,6 @@ class teser: LinearOpMode(){
             curu1 = gamepad2.dpad_right
 
             if (gamepad1.circle && !curu7) {
-                intake.chub_arm.position = intake_vars.chub_arm_neutral
             }
             curu7 = gamepad1.circle
 
@@ -931,7 +931,6 @@ class teser: LinearOpMode(){
             curu8 = gamepad1.cross
 
             if (gamepad1.square && !curu9) {
-                intake.wrist.position = intake_vars.wrist_testing
             }
             curu9 = gamepad1.square
 

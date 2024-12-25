@@ -1,13 +1,19 @@
 package org.firstinspires.ftc.teamcode.TELEMETRY
 
 import com.acmerobotics.dashboard.canvas.Canvas
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.qualcomm.hardware.limelightvision.LLResult
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Point
+import org.firstinspires.ftc.teamcode.ALGORITHMS.VecVec2D
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.field_scale
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.offx
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.offy
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.p2p
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.robot_color
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.robot_radius
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.robot_width
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.sample_diagonal
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.sample_outline
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.trajectory_color
 import java.lang.Math.PI
 import kotlin.math.cos
@@ -27,6 +33,38 @@ object drawings {
         canvas.setStrokeWidth(sz)
         canvas.setStroke(col)
         canvas.strokeLine(pos.x * field_scale, pos.y * field_scale, pos.x * field_scale + v.x * sc, pos.y * field_scale + v.y * sc)
+    }
+
+    private fun draw_line(canvas: Canvas, p1: Point, p2: Point, scale: Double){
+        canvas.strokeLine(p1.x * scale, p1.y * scale, p2.x * scale, p2.y * scale)
+    }
+
+    private fun draw_rect(canvas: Canvas, ptVec: VecVec2D, color: String, color2: String, size: Int, scale: Double, angle: Double){
+        canvas.setStrokeWidth(size)
+        canvas.setStroke(color)
+        ptVec.rotate(angle)
+        draw_line(canvas, ptVec[0], ptVec[1], scale)
+        draw_line(canvas, ptVec[1], ptVec[2], scale)
+        draw_line(canvas, ptVec[2], ptVec[3], scale)
+        draw_line(canvas, ptVec[3], ptVec[0], scale)
+
+        canvas.setStroke(color2)
+        draw_line(canvas, ptVec[0], ptVec[2], scale)
+        draw_line(canvas, ptVec[1], ptVec[3], scale)
+    }
+
+    fun draw_sample(canvas:Canvas, result: LLResult){
+        if(result.colorResults.isNotEmpty()) {
+            draw_rect(
+                canvas,
+                VecVec2D(result.colorResults[0].targetCorners),
+                sample_outline,
+                sample_diagonal,
+                1,
+                field_scale * 1/2,
+                PI/2
+            )
+        }
     }
 
     fun corr(p: Pose): Pose {

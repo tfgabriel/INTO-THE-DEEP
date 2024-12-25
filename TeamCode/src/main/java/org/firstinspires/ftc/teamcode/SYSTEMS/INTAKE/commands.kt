@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Array
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_to_pos
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.pos_diff
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Point
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
@@ -16,79 +16,49 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examinat
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_intermediary
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_specimen
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.chub_arm_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_closed
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_open
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_intermediary
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_specimen
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.ehub_arm_transfer
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_deaaa
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_hover
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_intake
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_mid
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_transfer
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_up
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intake_time
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_spit_power
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.spit_time
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.transverse_time
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
-import org.firstinspires.ftc.teamcode.TELEOP.isIntaking
 
 object commands {
-    ///0 = neutral, 1 = intake, 2 = specimen, 3 = transfer, 4 = intermediary
+
     fun setArmStateIntake(state: Int): Command {
         val states = when (state) {
-            0 -> Array(chub_arm_neutral, ehub_arm_neutral)
-            1 -> Array(chub_arm_intake, ehub_arm_intake)
-            2 -> Array(chub_arm_specimen, ehub_arm_specimen)
-            3 -> Array(chub_arm_transfer, ehub_arm_transfer)
-            else -> Array(chub_arm_intermediary, ehub_arm_intermediary)
+            0 -> Array(intake_vars.transfer)
+            1 -> Array(intake_vars.hover)
+            else -> Array(intake_vars.intake)
         }
 
 
         return SequentialCommand(
             InstantCommand{ intake.chub_arm.position = states[0] },
-            InstantCommand{ intake.ehub_arm.position = states[1] }
+            InstantCommand{ intake.ehub_arm.position = states[0] }
         )
     }
 
-    ///-1 = spit, 0 = stop, 1 = intake
-    /*fun setIntakePower(state: Int): Command{
-        val states = when (state) {
-            1 -> Array(intaker_power)
-            -1 -> Array(intaker_spit_power)
-            else -> Array()
-        }
 
-        return ParallelCommand(
-            InstantCommand { intake.chub_intaker.power = states[0] },
-            InstantCommand { intake.ehub_intaker.power = states[0] }
-        )
-    }
-
-     */
-
-    //0 - intake, 1 - up, 2 - mid, 3 - transfer
     fun setFourbar(state: Int): Command{
         val states = when (state) {
-            0 -> Array(fourbar_intake)
-            1 -> Array(fourbar_up)
-            2 -> Array(fourbar_mid)
-            4-> Array(fourbar_transfer)
-            else -> Array(fourbar_deaaa)
+            0 -> Array(fourbar_transfer)
+            1 -> Array(fourbar_hover)
+            else -> Array(fourbar_intake)
         }
 
 
+        return InstantCommand { intake.fourbar.position = states[0] }
+
+    }
+
+    fun setIntakeState(state: Int): Command{
         return ParallelCommand(
-            InstantCommand { intake.fourbar.position = states[0] }
+            setArmStateIntake(state),
+            setFourbar(state)
         )
     }
 
@@ -100,7 +70,7 @@ object commands {
 
     fun setWristCommand(): Command{
         val pos = if(camera.is_open && extendo.chub_rails.currentpos > home_submersible)
-            ang_to_pos(camera.corners().p1, camera.corners().p2)
+            ang_to_pos(Point(camera.corners()!!.lld[0]), Point(camera.corners()!!.lld[2]))
         else if(extendo.chub_rails.currentpos in home_examination..home_submersible)
             wrist_neutral
         else
@@ -111,6 +81,7 @@ object commands {
         }
     }
 
+    // 0 - open, 1 - closed
     fun setClawIntakeState(state: Int): Command{
         val states = when(state){
             0 -> Array(claws_open)

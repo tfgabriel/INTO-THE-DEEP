@@ -33,7 +33,7 @@ object lift_vars {
 
     /// THE PID WORKS !!!
     @JvmField
-    var proportional: Double = 0.0012
+    var proportional: Double = 0.0014
     @JvmField
     var derivative: Double = -0.01
     @JvmField

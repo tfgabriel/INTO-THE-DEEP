@@ -1,22 +1,32 @@
 package org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA
 
+import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Point
-import org.firstinspires.ftc.teamcode.ALGORITHMS.PointVec
+import org.firstinspires.ftc.teamcode.ALGORITHMS.VecVec2D
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
-import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.camera_vars.angtopos
 
 class Camera {
     var limelight: Limelight3A = hardwareMap.get(Limelight3A::class.java, "limelight");
 
+    val result: LLResult?
+        get(){
+            return  limelight.latestResult
+        }
+
     val ang_X: Double
         get(){
-            return limelight.latestResult.tx
+            return if(result != null)
+                result!!.tx
+            else
+                0.0
         }
 
     val ang_Y: Double
         get(){
-            return limelight.latestResult.ty
+            return if(result != null)
+                result!!.ty
+            else
+                0.0
         }
 
     val is_open: Boolean
@@ -24,13 +34,18 @@ class Camera {
             return limelight.isRunning
         }
 
-    val targetCorners: List<List<Double>>
+    val targetCorners: MutableList<MutableList<Double>>?
         get(){
-            return limelight.latestResult.colorResults[0].targetCorners
+            return if(result != null)
+            result!!.colorResults[0].targetCorners
+            else
+                null
         }
 
-    fun corners(): PointVec{
-        return PointVec(Point(targetCorners[0][0], targetCorners[0][1]), Point(targetCorners[1][0], targetCorners[1][1]), Point(targetCorners[2][0], targetCorners[2][1]), Point(targetCorners[3][0], targetCorners[3][1]))
+    fun corners(): VecVec2D? {
+        return if(result!= null && targetCorners!= null)
+            VecVec2D(result!!.colorResults[0].targetCorners)
+        else null
     }
 
 }

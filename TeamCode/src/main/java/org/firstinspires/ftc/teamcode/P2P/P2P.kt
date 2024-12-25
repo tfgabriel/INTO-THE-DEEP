@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angNorm
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
@@ -60,13 +61,13 @@ class P2P {
         current_pos = Pose(localizer.pose.x, localizer.pose.y, angNorm(localizer.pose.h))
         err = target_pose - current_pos
 
-        err = err.rotate(current_pos.h)
+        err = err.rotate(-current_pos.h)
         err.h = ang_diff(current_pos.h, target_pose.h)
         // If the robot is not in tolerance, run with the pd
         if (!isBotinTolerance()) {
             chassis.rc_drive(
-                -yPDF.update(err.y),
-                xPDF.update(-err.x),
+                -yPDF.update(err.y) * SpecimenVars.slow,
+                xPDF.update(-err.x) * SpecimenVars.slow,
                 -hPDF.update(err.h),
                 0.0
             )

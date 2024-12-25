@@ -10,29 +10,29 @@ import kotlin.math.PI
 object p2p_vars{
 
     @JvmField
-    var x_p: Double = 0.05
+    var x_p: Double = 0.055
     @JvmField
     var x_d: Double = 0.0011
     @JvmField
-    var x_f: Double = 0.045
+    var x_f: Double = 0.025
 
     @JvmField
-    var y_p: Double = 0.03
+    var y_p: Double = 0.035
     @JvmField
     var y_d: Double = 0.0
     @JvmField
-    var y_f: Double = 0.035
+    var y_f: Double = 0.025
 
     @JvmField
-    var h_p: Double = 0.4
+    var h_p: Double = 0.41
     @JvmField
     var h_d: Double = 0.0
     @JvmField
-    var h_f: Double = 0.03
+    var h_f: Double = 0.031
     @JvmField
-    var tolerance: Double = 2.0
+    var tolerance: Double = 3.8
     @JvmField
-    var angular_tolerance: Double = 0.13
+    var angular_tolerance: Double = 0.2
 
     @JvmField
     val slow: Double = 1.0
