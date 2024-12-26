@@ -36,6 +36,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_ne
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
+import org.firstinspires.ftc.teamcode.TELEOP.DISABLE_CAM
 import org.firstinspires.ftc.teamcode.WRAPPERS.Localizer
 
 class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
@@ -129,11 +130,13 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         //send_toall("is not empty", !result.colorResults.isEmpty())
         //send_toall("is in size", result.colorResults[0].targetCorners.size == 4)
 
-        if (camera.is_open)
-            if(result.isValid())
-                if(!result.colorResults.isEmpty())
-                    if(result.colorResults[0].targetCorners.size == 4)
-                        drawings.draw_sample(canvas, result)
+        if(!DISABLE_CAM) {
+            if (camera.is_open)
+                if (result.isValid())
+                    if (!result.colorResults.isEmpty())
+                        if (result.colorResults[0].targetCorners.size == 4)
+                            drawings.draw_sample(canvas, result)
+        }
         dashboard.sendTelemetryPacket(tp)
         telemetry.update()
         et.reset()

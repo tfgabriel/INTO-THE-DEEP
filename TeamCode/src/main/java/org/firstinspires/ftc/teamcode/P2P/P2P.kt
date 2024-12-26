@@ -51,7 +51,6 @@ class P2P {
         path = current_path
         target_pose = current_path
         start_pose = Pose(localizer.pose.x, localizer.pose.y, angNorm(localizer.pose.h))
-
     }
 
 

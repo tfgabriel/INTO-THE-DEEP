@@ -21,6 +21,7 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
 
 class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double){
     constructor(): this(0.0, 0.0, 0.0)
+    constructor(x: Double, y: Double): this(x, y, 0.0)
     constructor(sparkpos: SparkFunOTOS.Pose2D): this(sparkpos.x, sparkpos.y, sparkpos.h)
 
     operator fun plus(pose: Pose): Pose = Pose(x + pose.x, y + pose.y, h + pose.h)
@@ -38,6 +39,12 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
 
     @SuppressLint("DefaultLocale")
     override fun toString() = String.format("(%.3f %.3f %.3f)", x, y, angNorm(h))
+}
+
+class Path(var sp: Pose, var ep: Pose){
+    constructor(): this(Pose(), Pose())
+
+
 }
 
 class Point(var x: Double, var y: Double){

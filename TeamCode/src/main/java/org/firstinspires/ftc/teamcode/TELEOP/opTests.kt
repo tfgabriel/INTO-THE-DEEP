@@ -108,6 +108,7 @@ var curu77777 = false
 
 var curu90000099 = false
 
+var DISABLE_CAM = true
 var curu60 = false
 var position = 6
 var position2 = 5
@@ -118,6 +119,7 @@ class opTest: LinearOpMode() {
     override fun runOpMode() {
         val robot = robot(false)
         robot.start(this)
+        DISABLE_CAM = true
         lift.chub_slides.motor.setCurrentAlert(3.0, CurrentUnit.AMPS)
         //setExtendoTarget(1)
         k = true
@@ -185,14 +187,14 @@ class opTest: LinearOpMode() {
             curu77777 = gamepad1.dpad_up
 
 
-            if(gamepad1.dpad_right && !curu5){
+            if(gamepad1.triangle && !curu5){
                 send_toall("isopen trigger", "true")
                 current_command  = SequentialCommand(
                     setClawState(1),
                     InstantCommand { send_toall("is actually opened", "yes") }
                 )
             }
-            curu5 = gamepad1.dpad_right
+            curu5 = gamepad1.triangle
 
             if(gamepad1.cross && !curu60){
                 send_toall("isclosed trigger", "true")
