@@ -53,5 +53,6 @@ object Math {
         return floatMod(o2 - o1 + Math.PI, Math.PI * 2) - Math.PI
     }
 
-
+    @JvmStatic
+    fun interpolate_heading(h1: Double, h2: Double, dist: Double) = ang_norm(h1 + ang_diff(h1, h2) / dist)
 }

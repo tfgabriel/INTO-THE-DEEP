@@ -89,4 +89,6 @@ object robot_vars {
     @JvmField
     var offy = -100.0
 
+    var vel: Double = 0.5
+
 }

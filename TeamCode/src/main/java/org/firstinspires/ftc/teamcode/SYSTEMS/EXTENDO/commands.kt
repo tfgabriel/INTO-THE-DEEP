@@ -13,25 +13,27 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_extendo_tolerance
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examination
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_submersible
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.mid_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.modify_tresh
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinHomeTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftPowers
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
+import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.TELEOP.isIntaking
 import kotlin.math.abs
 import kotlin.math.sign
 
 object commands {
-    ///0 - max_examination, 1 - home_examination , 2 - home_submersible, 3 - max_submersible
+    ///0 - home, 1 - mid , 2 - max, 3 - max_submersible
     fun setExtendoTarget(state: Int) {
 
         extendo_pdf = if(state != -1)
@@ -40,13 +42,12 @@ object commands {
             PDF()
 
         extendo_target = if(state == 0)
-            max_examination
+            home_extendo
         else if(state == 1)
-            home_examination
-        else if(state == 2)
-            home_submersible
+            mid_examination
         else
-            max_submersible
+            max_examination
+
     }
 
     fun setExtendoTargetCommand(state: Int): Command {
@@ -57,20 +58,18 @@ object commands {
             PDF()
 
         return InstantCommand {
-        extendo_target = if (state == 0)
-            max_examination
-        else if (state == 1)
-            home_examination
-        else if (state == 2)
-            home_submersible
-        else
-            max_submersible
+            extendo_target = if(state == 0)
+                home_extendo
+            else if(state == 1)
+                mid_examination
+            else
+                max_examination
     }
 
     }
 
     fun isExtendoinTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < tolerance
-    fun isExtendoinHomeTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < home_extendo_tolerance
+    fun isExtendoinHomeTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < 25.0
 
 
 
@@ -91,10 +90,24 @@ object commands {
 
 
         if(!isExtendoinTolerance()) {
-            setExtendoPowers(extendo_pdf.update(err.toDouble()) + gamepad_power * 0.5)
+            if(extendo_target != home_extendo) {
+                setExtendoPowers(extendo_pdf.update(err.toDouble()))
+                send_toall("extendo is", "going elsewhere")
+            }
+            else if(!isExtendoinHomeTolerance()){
+                setExtendoPowers(1.0)
+                send_toall("extendo is", "going home")
+            }
+            else {
+                setExtendoPowers(0.0)
+                send_toall("extendo is", "home")
+            }
         }
-        else
+        else {
             setExtendoPowers(extendo_vars.force * sign(err.toDouble()) + gamepad_power * 0.5)
+            send_toall("extendo is", "idling")
+
+        }
     }
 
 

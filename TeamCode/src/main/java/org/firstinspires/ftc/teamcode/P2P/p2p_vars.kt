@@ -17,11 +17,11 @@ object p2p_vars{
     var x_f: Double = 0.025
 
     @JvmField
-    var y_p: Double = 0.035
+    var y_p: Double = 0.022
     @JvmField
-    var y_d: Double = 0.0
+    var y_d: Double = 0.15
     @JvmField
-    var y_f: Double = 0.025
+    var y_f: Double = 0.1
 
     @JvmField
     var h_p: Double = 0.41
@@ -30,7 +30,7 @@ object p2p_vars{
     @JvmField
     var h_f: Double = 0.031
     @JvmField
-    var tolerance: Double = 3.8
+    var tolerance: Double = 4.0
     @JvmField
     var angular_tolerance: Double = 0.2
 
@@ -56,7 +56,7 @@ object red_vars_sample {
 
 @Config
 object red_vars_specimen {
-    var spec0 = Pose(0.0, 39.0, 0.0)
+    var spec0 = Pose()
     var spec1 = Pose()
     var spec2 = Pose()
 

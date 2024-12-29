@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTargetCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_closed
@@ -69,10 +69,8 @@ object commands {
     }
 
     fun setWristCommand(): Command{
-        val pos = if(camera.is_open && extendo.chub_rails.currentpos > home_submersible)
+        val pos = if(camera.is_open && extendo.chub_rails.currentpos > home_extendo)
             ang_to_pos(Point(camera.corners()!!.lld[0]), Point(camera.corners()!!.lld[2]))
-        else if(extendo.chub_rails.currentpos in home_examination..home_submersible)
-            wrist_neutral
         else
             wrist_neutral
 

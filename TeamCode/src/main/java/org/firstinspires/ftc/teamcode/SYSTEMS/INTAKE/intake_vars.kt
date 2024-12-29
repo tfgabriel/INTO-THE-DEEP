@@ -20,10 +20,10 @@ object intake_vars {
     var intaker_power: Double = 1.0
     var intaker_spit_power: Double = -1.0
 
-    var fourbar_intake: Double = 0.58
+    var fourbar_intake: Double = 0.6
     @JvmField
-    var fourbar_transfer: Double = 0.53
-    var fourbar_hover: Double = 0.6
+    var fourbar_transfer: Double = 0.6
+    var fourbar_hover: Double = 0.63
 
     @JvmField
     var fourbar_testing: Double = 0.8

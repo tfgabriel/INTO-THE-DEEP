@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinHomeTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTarget
@@ -121,9 +122,7 @@ class opTest: LinearOpMode() {
         robot.start(this)
         DISABLE_CAM = true
         lift.chub_slides.motor.setCurrentAlert(3.0, CurrentUnit.AMPS)
-        //setExtendoTarget(1)
         k = true
-        setExtendoTarget(1)
         waitForStart()
         while(!isStopRequested){
             sleepy_time = 0.005 * abs(extendo.chub_rails.currentpos - extendo_target)
@@ -220,11 +219,11 @@ class opTest: LinearOpMode() {
 
             if(gamepad2.square && !transfer_extendo){
                 isTransferring = true
-                setExtendoTarget(2)
-                current_command2 = SequentialCommand(
-                    setIntakeState(1),
-                    WaitUntilCommand { isExtendoinTolerance() },
-                    SleepCommand(0.2),
+                setExtendoTarget(0)
+                current_command = SequentialCommand(
+                    setIntakeState(0),
+                    WaitUntilCommand { !isExtendoinHomeTolerance() },
+                    SleepCommand(0.55),
                     setClawState(0),
                     SleepCommand(0.2),
                     setClawIntakeState(0),
@@ -272,7 +271,7 @@ class opTest: LinearOpMode() {
             curu2001 = gamepad2.triangle
 
             if(gamepad2.dpad_left && !intake_sample ){
-                setExtendoTarget(2)
+                setExtendoTarget(0)
                 current_command = ParallelCommand(
                     setIntakeState(0),
                     setWrist()
@@ -299,7 +298,7 @@ class opTest: LinearOpMode() {
 
             if(gamepad2.right_bumper && !intake_specimen){
                 isToExam = true
-                setExtendoTarget(0)
+                setExtendoTarget(2)
                 current_command = SequentialCommand(
                     setIntakeState(0),
                     WaitUntilCommand { isExtendoinTolerance() },
@@ -312,9 +311,9 @@ class opTest: LinearOpMode() {
 
             if(gamepad2.left_bumper && !curu2000){
                 isToIntake = true
-                setExtendoTarget(3)
+                setExtendoTarget(1)
                 current_command = SequentialCommand(
-                    setIntakeState(0),
+                    setIntakeState(1),
                     WaitUntilCommand { isExtendoinTolerance() },
                 )
             }

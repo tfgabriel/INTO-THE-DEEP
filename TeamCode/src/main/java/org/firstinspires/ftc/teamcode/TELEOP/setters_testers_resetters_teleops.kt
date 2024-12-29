@@ -59,7 +59,6 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_submersible
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.modify_tresh
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
@@ -946,7 +945,7 @@ class teser: LinearOpMode(){
                 extendo_target = extendo.chub_rails.currentpos
             }
 
-            if(extendo.chub_rails.currentpos in home_examination - 150 .. home_submersible + 200){
+           /* if(extendo.chub_rails.currentpos in home_examination - 150 .. home_submersible + 200){
                 if(isToExam) {
                     setExtendoTarget(0)
                     current_command = SequentialCommand(
@@ -975,6 +974,8 @@ class teser: LinearOpMode(){
                     )
 
             }
+
+            */
 
             if(gamepad2.right_bumper && !lift_testy3){
                 isSpecimen = true

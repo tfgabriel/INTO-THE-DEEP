@@ -118,6 +118,16 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     private val et = ElapsedTime()
     fun update() {
         send_toall("framerate", 1 / et.seconds())
+        send_toall("slide chub", lift.chub_slides.motor.isOverCurrent)
+        send_toall("slide ehub", lift.ehub_slides.motor.isOverCurrent)
+        send_toall("chassis lf", chassis.leftfront.motor.isOverCurrent)
+        send_toall("chassis lb", chassis.leftback.motor.isOverCurrent)
+        send_toall("chassis rf", chassis.rightfront.motor.isOverCurrent)
+        send_toall("chassis rb", chassis.rightback.motor.isOverCurrent)
+        send_toall("extendo", extendo.chub_rails.motor.isOverCurrent)
+
+
+
 
         val tp = TelemetryPacket()
         val canvas = tp.fieldOverlay()

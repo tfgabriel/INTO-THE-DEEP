@@ -21,6 +21,7 @@ class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        motor.setCurrentAlert(3.0, CurrentUnit.AMPS)
 
         if(reversed)
             motor.direction = DcMotorSimple.Direction.REVERSE

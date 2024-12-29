@@ -76,7 +76,7 @@ object drawings {
         val cp = corr(p)
         cp.h = p.h
         canvas.strokeCircle(cp.x * field_scale, cp.y * field_scale, robot_radius)
-        drawVector(canvas, cp, Pose(cos(p.h), sin(p.h), 0.0), robot_color, robot_width, robot_radius)
+        drawVector(canvas, cp, Pose(cos(p.h), sin(p.h), 0.0, 0.0), robot_color, robot_width, robot_radius)
     }
     fun drawP2P(canva: Canvas) {
         drawVector(

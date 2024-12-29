@@ -27,7 +27,7 @@ class Sparkfun {
 
     val pos: Pose
         get(){
-            return Pose(x, y, h)
+            return Pose(x, y, h, 0.0)
         }
 
     val scalars: Array
