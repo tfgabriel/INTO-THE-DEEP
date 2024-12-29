@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.LOCALIZATION.Sparkfun
 import org.firstinspires.ftc.teamcode.P2P.P2P
+import org.firstinspires.ftc.teamcode.PURE_PURSUIT.pure_pursuit
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
@@ -49,6 +50,7 @@ object robot_vars {
     lateinit var camera: Camera
     lateinit var pose_set: Any
     lateinit var p2p: P2P
+    lateinit var pp: pure_pursuit
     lateinit var result: LLResult
 
     @JvmField
