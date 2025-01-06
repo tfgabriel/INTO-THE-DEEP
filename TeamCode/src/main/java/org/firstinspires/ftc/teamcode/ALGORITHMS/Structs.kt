@@ -19,18 +19,24 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
     }
 }
 
-class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double){
+class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double){
     constructor(): this(0.0, 0.0, 0.0, 0.0)
-    constructor(x: Double, y: Double): this(x, y, 0.0, 0.0)
-    constructor(point: Vec2D, h: Double, vel: Double): this(point.x, point.y, h, vel)
+    constructor(x: Double, y: Double, h: Double, decelPose: Vec2D): this(x, y, h, 1.0, decelPose)
+    constructor(x: Double, y: Double): this(x, y, 0.0
+        , 0.0)
+    constructor(point: Vec2D, h: Double, vel: Double): this(point.x, point.y, h, 1.0)
+    constructor(x: Double, y: Double, h: Double, vel: Double, dp: Vec2D): this(x, y, h, 1.0, dp, 40.0)
+    constructor(x: Double, y: Double, h: Double, vel: Double): this(x, y, h, 1.0, Vec2D(29.9, 30.0))
     constructor(sparkpos: SparkFunOTOS.Pose2D): this(sparkpos.x, sparkpos.y, sparkpos.h, 0.0)
-    constructor(sparkpos: SparkFunOTOS.Pose2D, vel: Double): this(sparkpos.x, sparkpos.y, angNorm( sparkpos.h), vel)
+    constructor(sparkpos: SparkFunOTOS.Pose2D, vel: Double): this(sparkpos.x, sparkpos.y, angNorm( sparkpos.h), 1.0)
 
     operator fun plus(pose: Pose): Pose = Pose(x + pose.x, y + pose.y, h + pose.h, vel + pose.vel)
 
     operator fun minus(pose: Pose): Pose = Pose(x - pose.x, y - pose.y, h - pose.h, vel - pose.vel)
 
     operator fun times(a: Double): Pose = Pose(a * x, a * y, a * h, vel)
+
+    operator fun div(a: Double): Pose = Pose(x / a, y / a, h / a, vel)
 
 
     fun rotate(angle: Double) = Pose(x * cos(angle) - y * sin(angle),
@@ -60,7 +66,7 @@ class Trajectory(vararg path: Path){
         }
 }
 
-class Vec2D(var x: Double, var y: Double){
+class Vec2D(@JvmField var x: Double, @JvmField var y: Double){
     constructor(): this(0.0, 0.0)
     constructor( list: List<Double>): this(list[0], list[1])
 
@@ -233,3 +239,17 @@ class Intersection(val trajectory: Trajectory, val center: Pose, val radius: Dou
         return B*B - 4*A*C
     }
 }
+
+class Vec4D( @JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Double, @JvmField var d: Double){
+    constructor(): this(0.0, 0.0, 0.0, 0.0)
+    operator fun get(i: Int): Double =  when(i){
+        0 -> a
+        1 -> b
+        2 -> c
+        else -> d
+    }
+
+    operator fun times(x: Double) = Vec4D(this.a*x, this.b*x, this.c*x, this.d*x)
+}
+
+

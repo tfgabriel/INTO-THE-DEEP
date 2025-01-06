@@ -106,8 +106,6 @@ object drawings {
 
     fun drawP2P(canva: Canvas) {
         val misc = p2p.target_pose - p2p.start_pose
-        val farSlowPoint = misc * p2p.decelDistanceFar
-        val closeSlowPoint = misc * p2p.decelDistanceClose
 
         drawVector(
             canva,
@@ -139,7 +137,10 @@ object drawings {
         )*/
 
         drawCircle(
-            canva, p2p.closeEnoughTM, corr(p2p.target_pose), "#010805"
+            canva, p2p.target_pose.decelPose.x, corr(p2p.target_pose), "#010805"
+        )
+        drawCircle(
+            canva, p2p.target_pose.decelPose.y, corr(p2p.target_pose), "#A0B3C2"
         )
 
     }

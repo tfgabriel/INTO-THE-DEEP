@@ -11,32 +11,19 @@ import kotlin.math.PI
 object p2p_vars{
 
     @JvmField
-    var x_p: Double = 0.055
+    var PDFCX: PDFC = PDFC(0.05, 0.0, 0.005)
     @JvmField
-    var x_d: Double = 0.0011
+    var PDFCY: PDFC = PDFC(0.05, 0.0, 0.005)
     @JvmField
-    var x_f: Double = 0.025
+    var PDFCH: PDFC = PDFC(0.41, 0.0, 0.0)
 
     @JvmField
-    var y_p: Double = 0.022
+    var PDFCFinalX: PDFC = PDFC(0.02, 0.0, 0.00)
     @JvmField
-    var y_d: Double = 0.15
+    var PDFCFinalY: PDFC = PDFC(0.035, 0.0, 0.0)
     @JvmField
-    var y_f: Double = 0.1
 
-    @JvmField
-    var h_p: Double = 0.41
-    @JvmField
-    var h_d: Double = 0.0
-    @JvmField
-    var h_f: Double = 0.031
-
-    @JvmField
-    var PDFCFinalX: PDFC = PDFC(0.03, 0.003, 0.02)
-    @JvmField
-    var PDFCFinalY: PDFC = PDFC(0.03, 0.003, 0.02)
-    @JvmField
-    var PDFCFinalH: PDFC = PDFC(0.4, 0.0, 0.031)
+    var PDFCFinalH: PDFC = PDFC(0.4, 0.0, 0.0)
 
     @JvmField
     var tolerance: Double = 3.0
@@ -50,6 +37,11 @@ object p2p_vars{
     var PeruMin = 0.4
     @JvmField
     var PeruMax = 1.0
+
+    @JvmField
+    var speed_limit_linear = 2.0
+    @JvmField
+    var speed_limit_angular = 2.0
 }
 
 @Config

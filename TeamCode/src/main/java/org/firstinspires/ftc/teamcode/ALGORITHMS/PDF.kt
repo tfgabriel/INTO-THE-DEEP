@@ -7,15 +7,14 @@ import kotlin.math.sign
 
 class PDFC(@JvmField var p: Double, @JvmField var d: Double, @JvmField var f: Double)
 
-class PDF(@JvmField val p: Double, @JvmField var d: Double, @JvmField var f: Double) {
-    constructor(): this(0.0,0.0,0.0)
-    constructor(p: Double, d: Double): this(p, d, 0.0)
-    constructor(f: Double): this(0.0, 0.0, f)
-    constructor(c: PDFC): this(c.p, c.d, c.f)
+class PDF(@JvmField var coef: PDFC) {
+    constructor(): this(PDFC(0.0,0.0,0.0))
+    constructor(p: Double, d: Double): this(PDFC(p, d, 0.0))
+    constructor(p: Double, d: Double, f: Double): this(PDFC(p, d, f))
+    constructor(f: Double): this(PDFC(0.0, 0.0, f))
 
     private var proportionate = 0.0
     private var derivative = 0.0
-    private val force = f
     var ep = ElapsedTime()
 
     fun update(err: Double): Double{
@@ -23,6 +22,6 @@ class PDF(@JvmField val p: Double, @JvmField var d: Double, @JvmField var f: Dou
         ep.reset()
         proportionate = err
 
-        return proportionate * p + derivative * d + sign(err) * force
+        return proportionate * coef.p + derivative * coef.d + sign(err) * coef.f
     }
 }

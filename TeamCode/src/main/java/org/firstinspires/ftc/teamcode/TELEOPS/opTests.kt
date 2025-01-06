@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.external.Telemetry.Line
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
@@ -28,6 +29,7 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars
+import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars.chassis_f
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinHomeTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
@@ -107,6 +109,20 @@ var position = 6
 var position2 = 5
 var TRENUL_DE_BUZAU = false
 var current_command3 : Command? = null
+@Disabled
+@TeleOp
+class ffwheeltest: LinearOpMode() {
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.start(this)
+        while (!isStopRequested) {
+            chassis.leftfront.power = chassis_f[0]
+            chassis.leftback.power = chassis_f[1]
+            chassis.rightfront.power = chassis_f[2]
+            chassis.rightback.power = chassis_f[3]
+        }
+    }
+}
 @TeleOp(name = "我討厭修訂")
 class opTest: LinearOpMode() {
     override fun runOpMode() {

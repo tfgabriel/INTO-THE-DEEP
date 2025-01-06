@@ -314,7 +314,7 @@ object auto_commands{
 @Config
 object SpecimenVars {
     @JvmField
-    var score_preload = Pose(0.0, -72.0, 0.0,  0.4)
+    var score_preload = Pose(0.0, -72.0, 0.0, Vec2D(50.0, 60.0))
 
     @JvmField
     var park = Pose(-30.0, -28.0, 0.6, 1.0)
@@ -362,7 +362,7 @@ object SpecimenVars {
 
 
     @JvmField
-    var from_preload_to_samples = Pose(-52.0, -47.0, 2.2, 0.4)
+    var from_preload_to_samples = Pose(-52.0, -47.0, 2.2, Vec2D(15.0, 14.5))
 
     @JvmField
     var wrist_one = 0.25
@@ -374,22 +374,22 @@ object SpecimenVars {
     var wrist_three = 0.25
 
     @JvmField
-    var spinny_baby = Pose(-52.7, -53.5, 0.6, 0.7)
+    var spinny_baby = Pose(-52.7, -53.5, 0.6, 1.0)
 
     @JvmField
-    var c_offset = Pose(-19.0, -6.0, 0.0, 0.0)
+    var c_offset = Pose(-19.0, -6.0, 0.0, 1.0)
 
     @JvmField
     var wait_take = 0.15
 
     @JvmField
-    var the_third_children = Pose(-95.0, -82.0, Math.toRadians(100.0), 0.7)
+    var the_third_children = Pose(-95.0, -82.0, Math.toRadians(100.0), 1.0)
 
     @JvmField
-    var matei_clumsy = Pose(-20.0, -55.0, 0.7, 0.7)
+    var matei_clumsy = Pose(-20.0, -55.0, 0.7, 1.0)
 
     @JvmField
-    var alexia_offset = Pose(-15.0, -65.0, 0.7, 0.7)
+    var alexia_offset = Pose(-15.0, -65.0, 0.7, 1.0)
 
     @JvmField
     var matei_sleepy = 0.2
@@ -439,7 +439,7 @@ object SpecimenVars {
     var testySlowPos = Vec2D(20.0, 0.0)
 
     @JvmField
-    var testySlowDown = 30.0
+    var testySlowDown = 60.0
 }
 
 
@@ -777,7 +777,7 @@ class SpecimenTakeWithExtendo: LinearOpMode() {
             WaitUntilCommand { p2p.done },
 
             //pickup first sample
-            WaitUntilCommand { isExtendoinTolerance() },
+            SleepCommand(0.2),
             take(wrist_one, false),
 
             //dropoff first sample
@@ -1104,12 +1104,12 @@ class Sample: LinearOpMode(){
 class testy: LinearOpMode(){
     override fun runOpMode() {
         val robot = robot(true)
-        robot.base_init(this)
         robot.start(this)
         DISABLE_CAM = true
         localizer.reset()
         current_command = SequentialCommand(
-            InstantCommand { p2p.followpath(testp, testySlowPos.x, testySlowPos.y, testySlowDown)},
+            InstantCommand { p2p.followpath(testp)},
+            InstantCommand { setLiftTarget(3) }
             //InstantCommand { setLiftTarget(3) }
         )
 

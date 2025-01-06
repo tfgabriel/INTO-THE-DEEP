@@ -52,12 +52,19 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     }
 
     fun init_systems(){
+        val tp = TelemetryPacket()
         chassis = Chassis()
+        tp.put("0Chassis", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         lift = Lift()
+        tp.put("0Lift", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         extendo = Extendo()
+        tp.put("0Extendo", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         intake = Intake()
+        tp.put("0Intake", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         outtake = Outtake()
+        tp.put("0Outtake", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         localizer = Localizer("sparkfun")
+        tp.put("0Localizer", ep.seconds()); dashboard.sendTelemetryPacket(tp)
     }
     //camera, localization
     fun init_auto(isRed: Boolean, isSample: Boolean){
@@ -66,7 +73,12 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
 
 
     //dash, telemetry, hubs
+    val ep = ElapsedTime()
     fun base_init(lom: LinearOpMode){
+        val tp = TelemetryPacket()
+        ep.reset()
+        dashboard = FtcDashboard.getInstance()
+        tp.put("0Start", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         linearopmode = lom
         hardwareMap = linearopmode.hardwareMap
 
@@ -81,11 +93,12 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
             control_hub = lynxModules[1]
             expansion_hub = lynxModules[0]
         }
+        tp.put("0Lynx", ep.seconds()); dashboard.sendTelemetryPacket(tp)
 
         imew = ThreadedIMU("IMU")
         imew.init()
-        imew.reset()
-        dashboard = FtcDashboard.getInstance()
+        imew.initThread()
+        tp.put("0Imew", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         telemetry = dashboard.telemetry
         telemetry_packet = TelemetryPacket()
 

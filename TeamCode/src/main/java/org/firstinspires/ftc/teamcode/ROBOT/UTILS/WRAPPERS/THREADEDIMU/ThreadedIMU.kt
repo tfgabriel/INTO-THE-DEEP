@@ -54,8 +54,6 @@ class ThreadedIMU(val name: String) {
 
     }
 
-
-
     fun initThread() {
         if (!running) {
             running = true

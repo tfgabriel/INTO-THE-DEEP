@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS
 
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec4D
 
 @Config
 object chassis_vars {
@@ -31,4 +32,7 @@ object chassis_vars {
     var imu_offset: Double = -.45
 
     var h_PDF = PDF()
+
+    @JvmField
+    var chassis_f = Vec4D(0.04, 0.04, 0.04, 0.08)
 }

@@ -9,19 +9,18 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCFinalH
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCFinalX
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCFinalY
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCH
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCX
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCY
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMax
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMin
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.angular_tolerance
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.h_d
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.h_f
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.h_p
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.speed_limit_angular
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.speed_limit_linear
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.tolerance
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.x_d
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.x_f
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.x_p
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.y_d
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.y_f
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.y_p
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
 import kotlin.math.sign
@@ -43,40 +42,42 @@ class P2P {
     val ep: ElapsedTime = ElapsedTime()
     var done: Boolean = false
 
-    var decelDistanceFar: Double = 0.0
-    var decelDistanceClose: Double = 0.0
-    var closeEnoughTM: Double = 0.0
+    var robot_vel = Pose()
 
-    fun followpath(current_path: Pose, closeEnough: Double, decelFar: Double, decelClose: Double) {
-        xPDF = PDF(x_p, x_d, x_f)
-        yPDF = PDF(y_p, y_d, y_f)
-        hPDF = PDF(h_p, h_d, h_f)
-        xFinalPDF = PDF(x_p, x_d, x_f)
-        yFinalPDF = PDF(y_p, y_d, y_f)
-        hFinalPDF = PDF(h_p, h_d, h_f)
+
+    fun followpath(current_path: Pose) {
+        xPDF = PDF(PDFCX)
+        yPDF = PDF(PDFCY)
+        hPDF = PDF(PDFCH)
+        xFinalPDF = PDF(PDFCFinalX)
+        yFinalPDF = PDF(PDFCFinalY)
+        hFinalPDF = PDF(PDFCFinalH)
         done = false
         path = current_path
-        decelDistanceFar = decelFar
-        decelDistanceClose = decelClose
-        closeEnoughTM = closeEnough
         target_pose = current_path
         start_pose =
             Pose(localizer.pose.x, localizer.pose.y, angNorm(localizer.pose.h), current_path.vel)
     }
 
-    fun followpath(current_path: Pose) = followpath(current_path, 20.0, 0.00000001, 0.0)
 
-    fun isBotinTolerance() = err.distance() < tolerance && abs(err.h) < angular_tolerance
+    fun isBotinTolerance() = err.distance() < tolerance
+            && abs(err.h) < angular_tolerance
+            && abs(robot_vel.distance()) < speed_limit_linear
+            && robot_vel.h < speed_limit_angular
 
     private fun getPeruCoef(dist: Double) = clamp(
-        (dist - decelDistanceFar) * (PeruMax - PeruMin) / (decelDistanceClose - decelDistanceFar) + PeruMin,
+        (dist - target_pose.decelPose.x) * (PeruMax - PeruMin) / (target_pose.decelPose.y - target_pose.decelPose.x) + PeruMin,
         PeruMin,
         PeruMax
     )
 
     fun update() {
         current_pos = localizer.pose + Pose(0.0, 0.0, 0.0, target_pose.vel)
+        robot_vel = localizer.vel
         err = target_pose - current_pos
+        send_toall("err y", err.y)
+        send_toall("err x", err.x)
+        send_toall("err h", err.h)
 
         err = err.rotate(-current_pos.h)
         err.h = ang_diff(current_pos.h, target_pose.h)
@@ -88,29 +89,40 @@ class P2P {
             //move_pdf_val = move_pdf_val.rotate(h_pdf_val * anti_p)
 
             val dist = err.distance()
-            val move = (if (dist < closeEnoughTM)
+            val peruCoef = getPeruCoef(err.distance())
+            val move = (if (dist < target_pose.goodEnough)
                 Vec2D(
-                    -yFinalPDF.update(err.y) * target_pose.vel,
-                    xFinalPDF.update(-err.x) * target_pose.vel
+                    clamp(xFinalPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
+                    clamp(-yFinalPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
                 )
             else
                 Vec2D(
-                    -yPDF.update(err.y) * target_pose.vel,
-                    xPDF.update(-err.x) * target_pose.vel
-                )) * getPeruCoef(err.distance())
-            send_toall("movex", move.x)
-            send_toall("movey", move.y)
+                    clamp(xPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
+                    clamp(-yPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
+                )) * peruCoef
+            send_toall("2PeruCoef", peruCoef)
+            send_toall("2movex", move.x)
+            send_toall("2movey", move.y)
+            send_toall(
+                "2moveh",
+                if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h)
+            )
 
             chassis.rc_drive(
-                move.x, move.y,
-                if (dist < closeEnoughTM) -hFinalPDF.update(err.h) else -hPDF.update(err.h),
+                move.y, move.x,
+                if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h),
                 0.0
             )
             ep.reset()
         } else {
             // else, run with the pd in the opposite direction in order to stop it and counteract the slip for a bit then stop
             if (ep.milliseconds() < 10)
-                chassis.rc_drive(y_f * sign(err.y), -x_f * sign(err.x), h_f * sign(err.h), 0.0)
+                chassis.rc_drive(
+                    PDFCY.f * sign(err.y),
+                    -PDFCX.f * sign(err.x),
+                    PDFCH.f * sign(err.h),
+                    0.0
+                )
             else {
                 chassis.rc_drive(0.0, 0.0, 0.0, 0.0)
                 done = true
@@ -118,13 +130,10 @@ class P2P {
         }
 
         send_toall("currpos", current_pos)
-        send_toall("err y", err.y)
-        send_toall("err x", err.x)
-        send_toall("err h", err.h)
         send_toall("is in tol", isBotinTolerance())
         send_toall("isin lin tol", err.distance() < tolerance)
         send_toall("is in ang tol", abs(err.h) < angular_tolerance)
-        send_toall("velocity", target_pose.vel)
+        send_toall("idiot speed", localizer.vel)
 
     }
 }
