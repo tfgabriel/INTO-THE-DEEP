@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA
+package org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CAMERA
 
 object camera_vars {
     @JvmField

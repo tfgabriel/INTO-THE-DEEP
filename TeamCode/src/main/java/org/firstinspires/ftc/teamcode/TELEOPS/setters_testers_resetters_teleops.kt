@@ -1,36 +1,29 @@
-package org.firstinspires.ftc.teamcode.TELEOP
+package org.firstinspires.ftc.teamcode.TELEOPS
 
-import android.webkit.ServiceWorkerClient
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
-import com.qualcomm.hardware.limelightvision.LLFieldMap
-import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
-import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_to_pos
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.x_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.y_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Point
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.EXTENDO_STATE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.LIFT_STATE
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.WITH_PID
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.dashboard
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.expansion_hub
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
@@ -38,7 +31,6 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.result
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
@@ -52,35 +44,25 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolera
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoPowers
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTarget
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTargetCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.derivative
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.modify_tresh
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setClawIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWristCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_testing
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_transfer
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intaker_power
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftPowers
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.complex_commands
@@ -90,13 +72,10 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawSta
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setPositionerState
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
-import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
-import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
-import org.firstinspires.ftc.teamcode.WRAPPERS.CR_SERVO
-import org.firstinspires.ftc.teamcode.WRAPPERS.Localizer
-import org.firstinspires.ftc.teamcode.WRAPPERS.MOTOR
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CAMERA.Camera
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.MOTOR
 import kotlin.math.abs
-import kotlin.math.sign
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
 
 @Disabled
@@ -735,7 +714,7 @@ class cameruta: LinearOpMode(){
         localizer = Localizer("sparkfun")
         localizer.reset()
         var k: Int = 0
-        var mid: Point = Point()
+        var mid: Vec2D = Vec2D()
 
         // LLFieldMap pentru Autonom please :()()()()()
         waitForStart()
@@ -758,11 +737,11 @@ class cameruta: LinearOpMode(){
                                 "",
                                 "----------------------- CORNERS ------------------------"
                             )
-                            mid = Point()
+                            mid = Vec2D()
                             for (point in result.colorResults[0].targetCorners) {
                                 val corner = String.format("corner %d", k)
                                 send_toall(corner, result.colorResults[0].targetCorners[k])
-                                mid += Point(result.colorResults[0].targetCorners[k])
+                                mid += Vec2D(result.colorResults[0].targetCorners[k])
                                 if (k < 4)
                                     k++
                                 else
@@ -799,7 +778,7 @@ class cameruta: LinearOpMode(){
 
                             send_toall(
                                 "servo pos",
-                                ang_to_pos(Point(result.colorResults[0].targetCorners[0]), Point(result.colorResults[0].targetCorners[2]))
+                                ang_to_pos(Vec2D(result.colorResults[0].targetCorners[0]), Vec2D(result.colorResults[0].targetCorners[2]))
                             )
 
                             //drawings.draw_sample(canvas, result)
@@ -1020,6 +999,27 @@ class teser: LinearOpMode(){
             robot.update()
         }
 
+    }
+
+}
+
+
+
+@TeleOp
+class activeintake_test: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        val servo = hardwareMap.crservo.get("CHUB_ARM_INTAKE")
+        val servo2 = hardwareMap.crservo.get("EHUB_ARM_INTAKE")
+
+        DISABLE_CAM = true
+        waitForStart()
+        while(!isStopRequested){
+           servo2.power = 1.0
+            servo.power = -1.0
+            robot.update()
+        }
     }
 
 }

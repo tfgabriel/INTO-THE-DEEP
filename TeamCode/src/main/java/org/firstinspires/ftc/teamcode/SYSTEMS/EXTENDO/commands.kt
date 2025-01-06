@@ -2,33 +2,18 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
-import org.firstinspires.ftc.teamcode.COMMANDBASE.RunUntilCommand
-import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
-import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.derivative
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_extendo
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_extendo_tolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.mid_examination
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.modify_tresh
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinHomeTolerance
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftPowers
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
-import org.firstinspires.ftc.teamcode.TELEOP.isIntaking
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -104,7 +89,7 @@ object commands {
             }
         }
         else {
-            setExtendoPowers(extendo_vars.force * sign(err.toDouble()) + gamepad_power * 0.5)
+            setExtendoPowers(force * sign(err.toDouble()) + gamepad_power * 0.5)
             send_toall("extendo is", "idling")
 
         }

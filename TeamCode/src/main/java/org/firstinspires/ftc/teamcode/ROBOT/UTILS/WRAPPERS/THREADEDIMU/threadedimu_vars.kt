@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.WRAPPERS.THREADEDIMU
+package org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.THREADEDIMU
 
 object threadedimu_vars {
     var running: Boolean = false

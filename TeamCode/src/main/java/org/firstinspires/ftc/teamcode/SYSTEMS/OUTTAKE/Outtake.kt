@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE
 
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
-import org.firstinspires.ftc.teamcode.WRAPPERS.CServo
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CServo
 
 class Outtake {
 //    var chub_arm = hardwareMap.servo.get("CHUB_ARM_OUTTAKE")

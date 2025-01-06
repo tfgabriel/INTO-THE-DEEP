@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TELEOP
+package org.firstinspires.ftc.teamcode.TELEOPS
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
-import org.firstinspires.ftc.teamcode.COMMANDBASE.AppendCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
@@ -28,32 +27,25 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 
-import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinHomeTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setClawIntakeState
-import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_closed
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftPowers
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.complex_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.chub_claw_open
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
@@ -121,7 +113,7 @@ class opTest: LinearOpMode() {
         val robot = robot(false)
         robot.start(this)
         DISABLE_CAM = true
-        lift.chub_slides.motor.setCurrentAlert(3.0, CurrentUnit.AMPS)
+        //lift.chub_slides.motor.setCurrentAlert(3.0, CurrentUnit.AMPS)
         k = true
         waitForStart()
         while(!isStopRequested){
@@ -145,7 +137,9 @@ class opTest: LinearOpMode() {
             }
 
             ///chassis
-            chassis.fc_drive(-gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble() * 0.65 )
+            chassis.fc_drive(-gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(
+                    targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(
+                targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble() * 0.65 )
 
             send_toall("imew yaw", imew.yaw)
             //chassis.rc_drive(gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
@@ -365,11 +359,11 @@ class opTest: LinearOpMode() {
             if(gamepad1.circle && !outtaking){
 
                 if(isSpecimen) {
-                    outtake.chub_arm.position = outtake_vars.chub_arm_place
+                    //outtake.chub_arm.position = outtake_vars.chub_arm_place
                     outtake.ehub_arm.position = outtake_vars.ehub_arm_place
                 }
                 else{
-                    outtake.chub_arm.position = outtake_vars.chub_arm_basket
+                    //outtake.chub_arm.position = outtake_vars.chub_arm_basket
                     outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
                 }
 
@@ -377,7 +371,7 @@ class opTest: LinearOpMode() {
             outtaking =gamepad1.circle
 
             send_toall("pos", extendo.chub_rails.currentpos)
-            send_toall("KAAAAAAAAAAAAAAAAAAA", lift.chub_slides.motor.isOverCurrent)
+           // send_toall("KAAAAAAAAAAAAAAAAAAA", lift.chub_slides.motor.isOverCurrent)
 
 
             setExtendo(gamepad2.right_stick_y.toDouble())
@@ -390,6 +384,11 @@ class opTest: LinearOpMode() {
                     current_command = null
                 }
             }
+
+
+            send_toall("lift pos ehub", lift.ehub_slides.currentpos)
+            send_toall("lift pos chub", lift.chub_slides.currentpos)
+            send_toall("target", lift_target)
 
             robot.update()
         }

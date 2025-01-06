@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 @Config
 object lift_vars {
     @JvmField
-    var low_rung: Int = 900
+    var low_rung: Int = 750
     @JvmField
     var high_rung: Int = 2300
 
@@ -21,7 +21,7 @@ object lift_vars {
     @JvmField
     var low_basket: Int = 1550
     @JvmField
-    var high_basket: Int = 2440
+    var high_basket: Int = 2465
 
     @JvmField
     var home: Int = 0
@@ -33,13 +33,13 @@ object lift_vars {
 
     /// THE PID WORKS !!!
     @JvmField
-    var proportional: Double = 0.0014
+    var proportional: Double = 0.00155
     @JvmField
     var derivative: Double = -0.01
     @JvmField
     var force: Double = 0.008
     @JvmField
-    var tolerance: Double = 7.0
+    var tolerance: Double = 8.0
 
     var lift_target: Int = 0
 

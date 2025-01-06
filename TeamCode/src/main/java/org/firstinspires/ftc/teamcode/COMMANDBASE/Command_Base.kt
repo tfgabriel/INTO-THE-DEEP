@@ -72,7 +72,8 @@ class ParallelCommand(vararg commands: Command): Command {
 
 }
 
-class AppendCommand(vararg commands: Command?, val appendedCommand: InstantCommand.LambdaCommand): Command{
+class AppendCommand(vararg commands: Command?, val appendedCommand: InstantCommand.LambdaCommand):
+    Command {
     var commandList = commands.asList()
 
     override fun run(packet: TelemetryPacket): Boolean {

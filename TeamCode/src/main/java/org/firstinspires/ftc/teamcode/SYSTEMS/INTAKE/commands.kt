@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Array
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_to_pos
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Point
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTargetCommand
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
@@ -20,6 +19,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_closed
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_open
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_hover
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_intake
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_third
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.intake_time
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.spit_time
@@ -36,18 +36,19 @@ object commands {
         }
 
 
-        return SequentialCommand(
+        return ParallelCommand(
             InstantCommand{ intake.chub_arm.position = states[0] },
             InstantCommand{ intake.ehub_arm.position = states[0] }
         )
     }
 
 
-    fun setFourbar(state: Int): Command{
+    fun setFourbar(state: Int): Command {
         val states = when (state) {
             0 -> Array(fourbar_transfer)
             1 -> Array(fourbar_hover)
-            else -> Array(fourbar_intake)
+            2 -> Array(fourbar_intake)
+            else -> Array(fourbar_third)
         }
 
 
@@ -55,22 +56,22 @@ object commands {
 
     }
 
-    fun setIntakeState(state: Int): Command{
+    fun setIntakeState(state: Int): Command {
         return ParallelCommand(
-            setArmStateIntake(state),
-            setFourbar(state)
+            setFourbar(state),
+            setArmStateIntake(state)
         )
     }
 
     //if i have my cam open and my arm is going down, set the wrist according to the camera's feed, else, set it ready for transfer
     //the else if is there just not to constantly set the servo position even if it's already in the right position
-    fun setWrist(): Command{
+    fun setWrist(): Command {
         return InstantCommand{ intake.wrist.position = wrist_neutral}
     }
 
-    fun setWristCommand(): Command{
+    fun setWristCommand(): Command {
         val pos = if(camera.is_open && extendo.chub_rails.currentpos > home_extendo)
-            ang_to_pos(Point(camera.corners()!!.lld[0]), Point(camera.corners()!!.lld[2]))
+            ang_to_pos(Vec2D(camera.corners()!!.lld[0]), Vec2D(camera.corners()!!.lld[2]))
         else
             wrist_neutral
 
@@ -80,7 +81,7 @@ object commands {
     }
 
     // 0 - open, 1 - closed
-    fun setClawIntakeState(state: Int): Command{
+    fun setClawIntakeState(state: Int): Command {
         val states = when(state){
             0 -> Array(claws_open)
             else -> Array(claws_closed)
@@ -94,7 +95,7 @@ object commands {
 
 object intake_commands{
 
-    fun setup_intake_for_specimen(): Command{
+    fun setup_intake_for_specimen(): Command {
         return SequentialCommand(
             setArmStateIntake(0),
             SleepCommand(transverse_time),
@@ -106,7 +107,7 @@ object intake_commands{
         )
     }
 
-    fun intake_specimen(): Command{
+    fun intake_specimen(): Command {
         return SequentialCommand(
             //setIntakePower(1),
             ParallelCommand(
@@ -118,21 +119,21 @@ object intake_commands{
         )
     }
 
-    fun intake_sample(): Command{
+    fun intake_sample(): Command {
         return SequentialCommand(
             setArmStateIntake(0),
             //setIntakePower(1),
             )
     }
 
-    fun go_for_specimen():Command{
+    fun go_for_specimen(): Command {
         return SequentialCommand(
             setArmStateIntake(2),
             setFourbar(1),
         )
     }
 
-    fun setup_intake_for_transfer(): Command{
+    fun setup_intake_for_transfer(): Command {
         return SequentialCommand(
             setArmStateIntake(2),
             setFourbar(1),
@@ -142,7 +143,7 @@ object intake_commands{
         )
     }
 
-    fun sample_spit(): Command{
+    fun sample_spit(): Command {
         return SequentialCommand(
             ParallelCommand(
                 setArmStateIntake(2),
@@ -153,7 +154,7 @@ object intake_commands{
         )
     }
 
-    fun specimen_intake(): Command{
+    fun specimen_intake(): Command {
         return SequentialCommand(
             ParallelCommand(
                 setFourbar(2),
@@ -163,7 +164,7 @@ object intake_commands{
         )
     }
 
-    fun transfer(): Command{
+    fun transfer(): Command {
         return SequentialCommand(
             setArmStateIntake(3),
             setFourbar(4),
@@ -174,7 +175,7 @@ object intake_commands{
             )
     }
 
-    fun intake(): Command{
+    fun intake(): Command {
         return SequentialCommand(
             setArmStateIntake(0),
             setFourbar(0),
@@ -184,7 +185,7 @@ object intake_commands{
         )
     }
 
-    fun reset_arm_and_intake(): Command{
+    fun reset_arm_and_intake(): Command {
         return SequentialCommand(
             SleepCommand(0.5),
             ParallelCommand(

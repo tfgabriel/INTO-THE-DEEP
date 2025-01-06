@@ -50,7 +50,7 @@ object commands
         }
     }
 
-    fun setLiftTargetCommand(state: Int): Command{
+    fun setLiftTargetCommand(state: Int): Command {
         //emergency stop in case i start a campfire
         lift_pdf = if(state != -1)
             PDF(proportional, derivative, force)
@@ -72,8 +72,9 @@ object commands
         }
     }
 
-    fun isLiftinTolerance() = abs(lift_target-lift.ehub_slides.currentpos) < tolerance
-    fun isLiftinHomeTolerance() = abs(lift_target - lift.ehub_slides.currentpos) < 40.0
+    fun isLiftinTolerance() = abs(lift_target-lift.chub_slides.currentpos) < tolerance
+    fun isLiftinHomeTolerance() = abs(lift_target - lift.chub_slides.currentpos) < 50.0
+    fun isSpecimenScored() = abs(1200 - lift.chub_slides.power) < tolerance
 
     fun setLiftPowers(pwr1: Double){
         lift.chub_slides.power = pwr1 + if(abs(lift.chub_slides.currentpos - lift.ehub_slides.power) < 4 || isLiftinTolerance()) 0.0 else (lift.chub_slides.currentpos - lift.ehub_slides.power) * lift_vars.rebepe
@@ -81,7 +82,7 @@ object commands
     }
 
     fun setLift(){
-        val err = lift_target-lift.ehub_slides.currentpos
+        val err = lift_target-lift.chub_slides.currentpos
 
         if(!isLiftinTolerance()){
             if(lift_target != home)

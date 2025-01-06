@@ -2,15 +2,12 @@ package org.firstinspires.ftc.teamcode.PURE_PURSUIT
 
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Intersection
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angNorm
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.interpolate_heading
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Path
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Point
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Trajectory
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.angular_tolerance
@@ -28,7 +25,6 @@ import org.firstinspires.ftc.teamcode.PURE_PURSUIT.pp_vars.robot_radius
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
 import kotlin.math.sign
-import kotlin.math.sqrt
 
 
 object pp_vars{
@@ -97,7 +93,7 @@ class pure_pursuit() {
         return target
     }
 
-    fun getIntersection(trajectory: Trajectory, center: Pose, radius: Double): Pose{
+    fun getIntersection(trajectory: Trajectory, center: Pose, radius: Double): Pose {
 
         if(traj_index <= trajectory.size) {
             val new_target = getIntersection(trajectory[traj_index+1], center, radius)

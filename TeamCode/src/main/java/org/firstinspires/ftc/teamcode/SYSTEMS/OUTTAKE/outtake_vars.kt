@@ -22,11 +22,11 @@ object outtake_vars {
     var chub_arm_place: Double = 0.075
     var chub_arm_basket: Double = 0.03
     //offsets ~0.15y
-    var ehub_claw_open: Double = 0.72
-    var ehub_claw_close: Double = 0.47
+    var ehub_claw_open: Double = 0.65
+    var ehub_claw_close: Double = 0.38
     var ehub_claw_intermed: Double = 0.56
 
-    var chub_claw_open: Double = 0.72//72
+    var chub_claw_open: Double = 0.7//72
     var chub_claw_close: Double = 0.47//33
     var chub_claw_intermed: Double = 0.43
 

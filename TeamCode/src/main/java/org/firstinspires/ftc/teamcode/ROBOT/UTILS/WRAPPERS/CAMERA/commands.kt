@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA
+package org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CAMERA
 
 import com.qualcomm.hardware.limelightvision.LLResultTypes.ColorResult
 import com.qualcomm.hardware.limelightvision.Limelight3A

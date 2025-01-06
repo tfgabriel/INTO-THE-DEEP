@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.P2P
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
+import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFC
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import kotlin.math.PI
 
@@ -29,14 +30,26 @@ object p2p_vars{
     var h_d: Double = 0.0
     @JvmField
     var h_f: Double = 0.031
+
     @JvmField
-    var tolerance: Double = 4.0
+    var PDFCFinalX: PDFC = PDFC(0.03, 0.003, 0.02)
+    @JvmField
+    var PDFCFinalY: PDFC = PDFC(0.03, 0.003, 0.02)
+    @JvmField
+    var PDFCFinalH: PDFC = PDFC(0.4, 0.0, 0.031)
+
+    @JvmField
+    var tolerance: Double = 3.0
     @JvmField
     var angular_tolerance: Double = 0.2
 
     @JvmField
-    val slow: Double = 1.0
+    var anti_p: Double = 0.4
 
+    @JvmField
+    var PeruMin = 0.4
+    @JvmField
+    var PeruMax = 1.0
 }
 
 @Config

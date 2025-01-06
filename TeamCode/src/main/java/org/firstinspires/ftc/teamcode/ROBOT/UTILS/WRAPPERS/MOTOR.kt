@@ -1,7 +1,5 @@
-package org.firstinspires.ftc.teamcode.WRAPPERS
+package org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS
 
-import com.outoftheboxrobotics.photoncore.Photon
-import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -11,7 +9,7 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
 
 class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
     //val motor: PhotonDcMotor = hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
-    val motor = hardwareMap.dcMotor.get(name) as DcMotorEx
+    val motor = hardwareMap.dcMotor.get(name) as DcMotor
     init{
         if(encoder){
             motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
@@ -21,7 +19,7 @@ class MOTOR(name: String, encoder: Boolean, reversed: Boolean) {
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        motor.setCurrentAlert(3.0, CurrentUnit.AMPS)
+       // motor.setCurrentAlert(3.0, CurrentUnit.AMPS)
 
         if(reversed)
             motor.direction = DcMotorSimple.Direction.REVERSE

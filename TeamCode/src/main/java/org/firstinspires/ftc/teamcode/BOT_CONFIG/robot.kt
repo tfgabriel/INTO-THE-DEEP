@@ -36,8 +36,9 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_ne
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
-import org.firstinspires.ftc.teamcode.TELEOP.DISABLE_CAM
-import org.firstinspires.ftc.teamcode.WRAPPERS.Localizer
+import org.firstinspires.ftc.teamcode.TELEOPS.DISABLE_CAM
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 
 class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     constructor(isAuto: Boolean): this(isAuto, true, true)
@@ -96,7 +97,7 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     fun init_positions(isAuto: Boolean){
         intake.wrist.position = intake_vars.wrist_neutral
         outtake.positioner.position = positioner_neutral
-        outtake.chub_arm.position = outtake_vars.chub_arm_pickup
+        //outtake.chub_arm.position = outtake_vars.chub_arm_pickup
         outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
 
         if(isAuto){
@@ -118,23 +119,35 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     private val et = ElapsedTime()
     fun update() {
         send_toall("framerate", 1 / et.seconds())
-        send_toall("slide chub", lift.chub_slides.motor.isOverCurrent)
-        send_toall("slide ehub", lift.ehub_slides.motor.isOverCurrent)
-        send_toall("chassis lf", chassis.leftfront.motor.isOverCurrent)
-        send_toall("chassis lb", chassis.leftback.motor.isOverCurrent)
-        send_toall("chassis rf", chassis.rightfront.motor.isOverCurrent)
-        send_toall("chassis rb", chassis.rightback.motor.isOverCurrent)
-        send_toall("extendo", extendo.chub_rails.motor.isOverCurrent)
-
+        //send_toall("slide chub", lift.chub_slides.motor.isOverCurrent)
+        //send_toall("slide ehub", lift.ehub_slides.motor.isOverCurrent)
+        //send_toall("chassis lf", chassis.leftfront.motor.isOverCurrent)
+        //send_toall("chassis lb", chassis.leftback.motor.isOverCurrent)
+        //send_toall("chassis rf", chassis.rightfront.motor.isOverCurrent)
+        //send_toall("chassis rb", chassis.rightback.motor.isOverCurrent)
+        //send_toall("extendo", extendo.chub_rails.motor.isOverCurrent)
+        send_toall("lift in tolerance", isLiftinTolerance())
+        send_toall("lift pos", lift.chub_slides.currentpos)
+        send_toall("extendo pos", extendo.chub_rails.currentpos)
 
 
 
         val tp = TelemetryPacket()
         val canvas = tp.fieldOverlay()
         drawings.drawRobot(canvas, localizer.pose)
+        send_toall("isato", isAuto)
         if (isAuto) { drawings.drawP2P(canvas) }
         send_toall("POse", localizer.pose)
+
+
+
         localizer.update()
+
+
+
+
+
+
         //send_toall("is open", camera.is_open)
         //send_toall("is valid", result.isValid)
         //send_toall("is not empty", !result.colorResults.isEmpty())

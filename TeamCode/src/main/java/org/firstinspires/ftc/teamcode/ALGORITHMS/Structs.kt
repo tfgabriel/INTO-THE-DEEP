@@ -22,7 +22,7 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
 class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double){
     constructor(): this(0.0, 0.0, 0.0, 0.0)
     constructor(x: Double, y: Double): this(x, y, 0.0, 0.0)
-    constructor(point: Point, h: Double, vel: Double): this(point.x, point.y, h, vel)
+    constructor(point: Vec2D, h: Double, vel: Double): this(point.x, point.y, h, vel)
     constructor(sparkpos: SparkFunOTOS.Pose2D): this(sparkpos.x, sparkpos.y, sparkpos.h, 0.0)
     constructor(sparkpos: SparkFunOTOS.Pose2D, vel: Double): this(sparkpos.x, sparkpos.y, angNorm( sparkpos.h), vel)
 
@@ -39,7 +39,7 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
 
     fun distance(): Double = sqrt(x*x + y*y)
 
-    fun point(): Point = Point(x, y)
+    fun point(): Vec2D = Vec2D(x, y)
 
     @SuppressLint("DefaultLocale")
     override fun toString() = String.format("(%.3f %.3f %.3f)", x, y, angNorm(h))
@@ -60,7 +60,7 @@ class Trajectory(vararg path: Path){
         }
 }
 
-class Point(var x: Double, var y: Double){
+class Vec2D(var x: Double, var y: Double){
     constructor(): this(0.0, 0.0)
     constructor( list: List<Double>): this(list[0], list[1])
 
@@ -69,24 +69,26 @@ class Point(var x: Double, var y: Double){
         else -> y
     }
 
-    operator fun minus(point: Point): Point = Point(x - point.x, y - point.y)
+    operator fun minus(point: Vec2D): Vec2D = Vec2D(x - point.x, y - point.y)
 
-    operator fun plus(point: Point): Point = Point(x + point.x, y + point.y)
+    operator fun plus(point: Vec2D): Vec2D = Vec2D(x + point.x, y + point.y)
 
-    operator fun div(a: Double): Point = Point(x/a, y/a)
+    operator fun div(a: Double): Vec2D = Vec2D(x/a, y/a)
+
+    operator fun times(a: Double): Vec2D = Vec2D(x*a, y*a)
 
     fun distance(): Double = x*x + y*y
 
-    fun rotate(angle: Double): Point{
-        return Point(
+    fun rotate(angle: Double): Vec2D {
+        return Vec2D(
             x * cos(angle) - y * sin(angle),
             x * sin(angle) + y * cos(angle))
     }
     @SuppressLint("DefaultLocale")
     override fun toString() = String.format("(%.3f %.3f)", x, y)
 
-    operator fun set(i: Int, value: Double): Point {
-        val pt = Point()
+    operator fun set(i: Int, value: Double): Vec2D {
+        val pt = Vec2D()
         pt[i] = value
 
         return pt
@@ -94,16 +96,16 @@ class Point(var x: Double, var y: Double){
 }
 
 class VecVec2D(var lld: List<List<Double>>){
-    private fun toPoints(): PointVec{
+    private fun toPoints(): PointVec {
         return PointVec(
-            Point(lld[0][0], lld[0][1]),
-            Point(lld[1][0], lld[1][1]),
-            Point(lld[2][0], lld[2][1]),
-            Point(lld[3][0], lld[3][1])
+            Vec2D(lld[0][0], lld[0][1]),
+            Vec2D(lld[1][0], lld[1][1]),
+            Vec2D(lld[2][0], lld[2][1]),
+            Vec2D(lld[3][0], lld[3][1])
         )
     }
 
-    operator fun get(i: Int): Point{
+    operator fun get(i: Int): Vec2D {
         val pv = this.toPoints()
         return when(i){
             0 -> pv[0]
@@ -113,7 +115,7 @@ class VecVec2D(var lld: List<List<Double>>){
         }
     }
 
-    fun rotate(alpha: Double): PointVec{
+    fun rotate(alpha: Double): PointVec {
         val pv = this.toPoints()
         return pv.rotate(alpha)
     }
@@ -127,13 +129,13 @@ class VecVec2D(var lld: List<List<Double>>){
 }
 
 
-class PointVec(val lp: List<Point>){
-    constructor(p1: Point, p2: Point, p3: Point, p4: Point): this(listOf(p1, p2, p3, p4))
+class PointVec(val lp: List<Vec2D>){
+    constructor(p1: Vec2D, p2: Vec2D, p3: Vec2D, p4: Vec2D): this(listOf(p1, p2, p3, p4))
 
-    operator fun get(i: Int): Point = lp[i]
+    operator fun get(i: Int): Vec2D = lp[i]
     operator fun get(i: Int, j: Int): Double = lp[i][j]
 
-    fun rotate(alpha: Double): PointVec{
+    fun rotate(alpha: Double): PointVec {
         for(i in 0..3){
             lp[i][0] = lp[i][0] * cos(alpha) - lp[i][1] * sin(alpha)
             lp[i][1] = lp[i][0] * sin(alpha) + lp[i][1] * cos(alpha)
@@ -167,11 +169,11 @@ class Intersection(val trajectory: Trajectory, val center: Pose, val radius: Dou
     private var x_2 = -(B + sqrt(discriminant())) / (2 * A)
     private var y_2 = slope() * x_2 + constant()
 
-    var single_solution: Point = Point(x_s, y_s)
-    var first_solution: Point = Point(x_1, y_1)
-    var second_solution: Point = Point(x_2, y_2)
+    var single_solution: Vec2D = Vec2D(x_s, y_s)
+    var first_solution: Vec2D = Vec2D(x_1, y_1)
+    var second_solution: Vec2D = Vec2D(x_2, y_2)
 
-    var exception: Point = Point(-1000.0, -1000.0)
+    var exception: Vec2D = Vec2D(-1000.0, -1000.0)
     //to check if a value is between two bounds, you normally do it like this a < x < b
     //in this scenario, we don't know whether a is bigger than b, so we switch them around if they arent to make the same comparison regardless of that
     //because the robots "positive x" is actually negative, the math is switched, usually the ep should be bigger than the sp, but here the general case is the other way round
@@ -193,17 +195,17 @@ class Intersection(val trajectory: Trajectory, val center: Pose, val radius: Dou
         }
 
 
-    private fun isInBounds(point: Point) =
+    private fun isInBounds(point: Vec2D) =
         if(point.x in start_x_bound..end_x_bound)
             point
         else
             exception
 
-    fun only_solution(): Point{
+    fun only_solution(): Vec2D {
         return isInBounds(single_solution)
     }
 
-    fun closest_solution(): Point{
+    fun closest_solution(): Vec2D {
         val end_point = trajectory[target_path_index].ep.point()
         val first_distance = (first_solution-end_point).distance()
         val second_distance = (second_solution-end_point).distance()

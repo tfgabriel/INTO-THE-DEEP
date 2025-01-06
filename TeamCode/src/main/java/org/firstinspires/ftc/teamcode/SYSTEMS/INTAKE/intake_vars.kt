@@ -8,10 +8,10 @@ object intake_vars {
     var transfer: Double = 0.75
 
     @JvmField
-    var hover:Double = 0.46
+    var hover:Double = 0.43
 
     @JvmField
-    var intake : Double = 0.41
+    var intake : Double = 0.37
 
     var wrist_intake: Double = 0.60
     @JvmField
@@ -20,10 +20,12 @@ object intake_vars {
     var intaker_power: Double = 1.0
     var intaker_spit_power: Double = -1.0
 
-    var fourbar_intake: Double = 0.6
+    var fourbar_intake: Double = 0.56
     @JvmField
-    var fourbar_transfer: Double = 0.6
-    var fourbar_hover: Double = 0.63
+    var fourbar_third: Double = 0.63
+    @JvmField
+    var fourbar_transfer: Double = 0.522
+    var fourbar_hover: Double = 0.6
 
     @JvmField
     var fourbar_testing: Double = 0.8

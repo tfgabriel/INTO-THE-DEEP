@@ -21,14 +21,12 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_arm_stea
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_claw_close
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_claw_intermed
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.ehub_claw_open
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.place_time
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_chub
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_ehub
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.prepare_time_sample
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.prepare_time_specimen
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
+import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 
 object simple_commands {
     /// O = close, 1 = open, 2 - intermediary
@@ -46,7 +44,7 @@ object simple_commands {
     }
 
     /// -1 = chub, 0 = neutral, 1 = ehub
-    fun setPositionerState(state: Int): Command{
+    fun setPositionerState(state: Int): Command {
         val states: Array = when (state) {
             0 -> Array(positioner_neutral)
             -1 -> Array(positioner_chub)
@@ -59,7 +57,7 @@ object simple_commands {
     }
 
     /// 0 = pickup, 1 = chamber, 2 = basket. 3 = steal
-    fun setArmState(state: Int): Command{
+    fun setArmState(state: Int): Command {
         val states: Array = when (state) {
             0 -> Array(chub_arm_pickup, ehub_arm_pickup)
             1 -> Array(chub_arm_place, ehub_arm_place)
@@ -68,8 +66,9 @@ object simple_commands {
         }
 
         return ParallelCommand(
-            InstantCommand{ outtake.chub_arm.position = states[0] },
-            InstantCommand{ outtake.ehub_arm.position = states[1] }
+            //InstantCommand{ outtake.chub_arm.position = states[0] },
+            InstantCommand{ outtake.ehub_arm.position = states[1] },
+            InstantCommand{ send_toall("outtake state", state)}
         )
     }
 
@@ -91,14 +90,14 @@ object simple_commands {
 
 object complex_commands{
 
-    fun transfer(): Command{
+    fun transfer(): Command {
         return SequentialCommand(
             setClawState(0),
         )
     }
 
     //place and return
-    fun place_specimen(): Command{
+    fun place_specimen(): Command {
         return SequentialCommand(
             SleepCommand(0.3),
             setClawState(2),
@@ -107,7 +106,7 @@ object complex_commands{
         )
     }
 
-    fun place_sample(): Command{
+    fun place_sample(): Command {
         return SequentialCommand(
             setClawState(1),
             SleepCommand(0.2),
@@ -116,20 +115,20 @@ object complex_commands{
     }
 
     //prepare to place
-    fun prepare_specimen(): Command{
+    fun prepare_specimen(): Command {
         return SequentialCommand(
             setArmState(1)
         )
     }
 
-    fun prepare_sample(): Command{
+    fun prepare_sample(): Command {
         return SequentialCommand(
             setArmState(2)
         )
     }
 
 
-    fun reset_outtake(): Command{
+    fun reset_outtake(): Command {
         return SequentialCommand(
             setArmState(0),
             setClawState(1)

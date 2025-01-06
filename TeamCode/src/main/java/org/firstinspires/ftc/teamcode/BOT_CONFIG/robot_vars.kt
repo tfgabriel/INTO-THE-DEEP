@@ -6,25 +6,21 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.limelightvision.LLResult
-import com.qualcomm.hardware.limelightvision.LLResultTypes
 import com.qualcomm.hardware.lynx.LynxModule
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.teamcode.LOCALIZATION.Sparkfun
+import org.firstinspires.ftc.teamcode.SYSTEMS.ACTIVE_INTAKE.ActiveIntake
 import org.firstinspires.ftc.teamcode.P2P.P2P
 import org.firstinspires.ftc.teamcode.PURE_PURSUIT.pure_pursuit
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.Chassis
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.Extendo
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.Intake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
-import org.firstinspires.ftc.teamcode.WRAPPERS.CAMERA.Camera
-import org.firstinspires.ftc.teamcode.WRAPPERS.Localizer
-import kotlin.math.abs
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CAMERA.Camera
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
 
 @Config
 @SuppressLint("StaticFieldLeak")
@@ -52,6 +48,7 @@ object robot_vars {
     lateinit var p2p: P2P
     lateinit var pp: pure_pursuit
     lateinit var result: LLResult
+    lateinit var active_intake: ActiveIntake
 
     @JvmField
     var WITH_PID: Boolean = false

@@ -4,8 +4,6 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera_ang
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera_distance_from_ground
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.cm_to_ticks
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.servo_range
-import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
-import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import java.lang.Math
 import kotlin.math.PI
 import kotlin.math.abs
@@ -28,11 +26,11 @@ object Math {
 
     fun ang_norm(o1: Double) = float_mod(o1, 2 * Math.PI)
 
-
+    fun clamp(v: Double, low: Double, high: Double) = v.coerceAtLeast(low).coerceAtMost(high)
 
     fun cam_ang_norm(angy: Double) = angy + camera_ang
 
-    fun ang_to_pos(pt1: Point, pt2: Point) = atan((pt2 - pt1).y / (pt2 - pt1).x) / servo_range
+    fun ang_to_pos(pt1: Vec2D, pt2: Vec2D) = atan((pt2 - pt1).y / (pt2 - pt1).x) / servo_range
 
     fun y_distance(angy: Double) = (tan(cam_ang_norm(angy)) * camera_distance_from_ground) / cm_to_ticks
 

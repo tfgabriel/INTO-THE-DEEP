@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.LOCALIZATION
 
-import org.firstinspires.ftc.teamcode.WRAPPERS.MOTOR
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.MOTOR
 
 class threewheel {
     val left_odo = MOTOR("LF", true, false)

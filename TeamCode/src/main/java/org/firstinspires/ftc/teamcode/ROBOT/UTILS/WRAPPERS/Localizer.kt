@@ -1,18 +1,13 @@
-package org.firstinspires.ftc.teamcode.WRAPPERS
+package org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angNorm
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
-import org.firstinspires.ftc.teamcode.WRAPPERS.freakyyyy.angScalar
-import org.firstinspires.ftc.teamcode.WRAPPERS.freakyyyy.linearScalar
-import kotlin.math.PI
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.freakyyyy.angScalar
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.freakyyyy.linearScalar
 
 @Config
 object freakyyyy{
