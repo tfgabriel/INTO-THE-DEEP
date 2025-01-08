@@ -538,7 +538,6 @@ class teletest: LinearOpMode(){
         imew.init()
         imew.reset()
 
-
         dashboard = FtcDashboard.getInstance()
         robot_vars.telemetry = dashboard.telemetry
         telemetry_packet = TelemetryPacket()

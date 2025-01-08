@@ -44,7 +44,6 @@ class P2P {
 
     var robot_vel = Pose()
 
-
     fun followpath(current_path: Pose) {
         xPDF = PDF(PDFCX)
         yPDF = PDF(PDFCY)
@@ -90,12 +89,12 @@ class P2P {
             val peruCoef = getPeruCoef(err.distance())
 
             val move = clamp(
-                (if (dist < target_pose.goodEnough)
+                (if (dist < target_pose.goodEnough) // Use Final pid when close enough
                 Vec2D(
                     clamp(xFinalPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
                     clamp(-yFinalPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
                 )
-                else
+                else // Use regular pid
                 Vec2D(
                     clamp(xPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
                     clamp(-yPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
