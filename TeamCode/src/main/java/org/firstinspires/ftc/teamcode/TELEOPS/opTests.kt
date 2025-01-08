@@ -137,7 +137,7 @@ class opTest: LinearOpMode() {
 
             ///imu reset
             if(gamepad1.ps && !PS1){
-                imew.reset()
+                imew.resetYaw(0.0);
                 targetheading = imew.yaw
             }
             PS1 = gamepad1.ps
