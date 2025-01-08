@@ -84,6 +84,23 @@ object robot_vars {
     var robot_color = "#FF0000"
 
     @JvmField
+    var XC = 1.0
+    @JvmField
+    var YC = 1.0
+    @JvmField
+    var P1 = 1.0
+    @JvmField
+    var P2 = 1.0
+    @JvmField
+    var P3 = 1.0
+    @JvmField
+    var P4 = 1.0
+    @JvmField
+    var PIMew = 1.0
+    @JvmField
+    var PTurn = 0.3
+
+    @JvmField
     var offx = 100.0
     @JvmField
     var offy = -100.0

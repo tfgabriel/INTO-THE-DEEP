@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCH
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCX
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCY
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.angular_tolerance
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.tolerance
 import org.firstinspires.ftc.teamcode.PURE_PURSUIT.pp_vars.robot_radius
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
@@ -98,7 +96,7 @@ class pure_pursuit() {
         return getIntersection(trajectory[traj_index + 1], center, radius)
     }
 
-    fun isBotinTolerance() = err.distance() < tolerance && abs(err.h) < angular_tolerance
+    fun isBotinTolerance() = true//err.distance() < tolerance && abs(err.h) < angular_tolerance
 
     fun isAtEndOfPath() = curr_traj[traj_index].ep.distance() <= robot_radius * robot_radius
 
@@ -113,6 +111,7 @@ class pure_pursuit() {
     }
 
     fun update() {
+        /*
         curr_pos = localizer.pose + Pose(0.0, 0.0, 0.0, target_pos.vel)
         target_pos = getIntersection(curr_traj, curr_pos, robot_radius)
         last_pos = target_pos
@@ -137,6 +136,6 @@ class pure_pursuit() {
                 chassis.rc_drive(PDFCY.f * sign(err.y), -PDFCX.f * sign(err.x), PDFCH.f * sign(err.h), 0.0)
             else
                 chassis.rc_drive(0.0, 0.0, 0.0, 0.0)
-        }
+        }*/
     }
 }

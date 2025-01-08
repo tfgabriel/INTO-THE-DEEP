@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ALGORITHMS
 import android.annotation.SuppressLint
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angNorm
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.deftones
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -19,11 +20,13 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
     }
 }
 
-class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double){
+class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double, @JvmField var tolerance: Vec4D){
     constructor(): this(0.0, 0.0, 0.0, 0.0)
     constructor(x: Double, y: Double, h: Double, decelPose: Vec2D): this(x, y, h, 1.0, decelPose)
     constructor(x: Double, y: Double): this(x, y, 0.0, 0.0)
     constructor(point: Vec2D, h: Double, vel: Double): this(point.x, point.y, h, 1.0)
+    constructor(x: Double, y: Double, h: Double, vel: Double, dp: Vec2D, goodEnough: Double): this(x, y, h, vel, dp, goodEnough, deftones.duplicate())
+    constructor(x: Double, y: Double, h: Double, dp: Vec2D, goodEnough: Double, tol: Vec4D): this(x, y, h, 1.0, dp, goodEnough, tol)
     constructor(x: Double, y: Double, h: Double, vel: Double, dp: Vec2D): this(x, y, h, 1.0, dp, 40.0)
     constructor(x: Double, y: Double, h: Double, dp: Vec2D, ge: Double): this(x, y, h, 1.0, dp, ge)
     constructor(x: Double, y: Double, h: Double, vel: Double): this(x, y, h, 1.0, Vec2D(29.9, 30.0))
@@ -248,6 +251,8 @@ class Vec4D( @JvmField var a: Double, @JvmField var b: Double, @JvmField var c: 
         2 -> c
         else -> d
     }
+
+    fun duplicate() = Vec4D(a, b, c, d)
 
     operator fun times(x: Double) = Vec4D(this.a*x, this.b*x, this.c*x, this.d*x)
 }

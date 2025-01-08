@@ -1,54 +1,40 @@
 package org.firstinspires.ftc.teamcode.AUTO
 
-import android.annotation.SuppressLint
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Path
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Trajectory
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec4D
 import org.firstinspires.ftc.teamcode.AUTO.AutoTestVars.test_pose
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.alexia_offset
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.alexia_offset2
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.alexia_wait
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.c_offset
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.first_off_sc
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.first_off_wall
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.fourth_off_sc
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.fourth_off_wall
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.from_preload_to_samples
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.matei_clumsy
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.matei_sleepy
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.park
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_8
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_9
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_offset
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_preload
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_with_rotation
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.second_off_sc
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.second_off_wall
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.second_sample
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleep_preload
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleep_score
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleepy_extend_from_preload
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleepy_extend_third_impact
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.spinny_baby
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.spinny_baby2
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.spinny_baby3
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sweepy
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.take_from_wall
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.testp
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.the_third_children
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.third_off_sc
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.third_off_wall
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_move
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_take
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_one
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_three
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_two
-import org.firstinspires.ftc.teamcode.AUTO.auto_commands.cycle_specimen
-import org.firstinspires.ftc.teamcode.AUTO.auto_commands.cycle_specimen_rotation
 import org.firstinspires.ftc.teamcode.AUTO.auto_commands.goto_chamber
 import org.firstinspires.ftc.teamcode.AUTO.auto_commands.place_specimen
 import org.firstinspires.ftc.teamcode.AUTO.auto_commands.retract
@@ -299,7 +285,7 @@ object auto_commands{
 @Config
 object SpecimenVars {
     @JvmField
-    var score_preload = Pose(0.0, -71.0, 0.0, Vec2D(45.0, 50.0), 25.0)
+    var score_preload = Pose(0.0, -74.0, 0.0, Vec2D(50.0, 55.0), 25.0, Vec4D(20.0, 0.4, 200.0, 200.0))
 
     @JvmField
     var park = Pose(-30.0, -28.0, 0.6, Vec2D(10.0, 10.0))
@@ -311,17 +297,17 @@ object SpecimenVars {
     var sleep_score = 0.3
 
     @JvmField
-    var s_8 = Pose(-73.0, -40.0, PI, Vec2D(40.0, 50.0))
+    var s_8 = Pose(-73.0, -40.0, PI, Vec2D(0.0, 0.0), 0.0, Vec4D(200.0, 0.4, 200.0, 200.0))
 
     @JvmField
-    var s_9 = Pose(-73.0, -13.0, PI, Vec2D(80.0, 90.0), 90.0)
+    var s_9 = Pose(-73.0, -13.0, PI, Vec2D(10.0, 15.0), 10.0)
 
     @JvmField
     var wait_move = 0.00
 
 
     @JvmField
-    var from_preload_to_samples = Pose(-46.0, -57.0, 2.2, Vec2D(0.0, 40.0), 5.0)
+    var from_preload_to_samples = Pose(-49.0, -57.0, 2.2, Vec2D(15.0, 20.0), 5.0, )
 
     @JvmField
     var second_sample = Pose(-79.0, -59.0, 2.2, Vec2D(5.99, 6.0), 5.0)
@@ -367,6 +353,12 @@ object SpecimenVars {
     var score_offset = Pose(-1.0, 1.0, 0.0, 0.6)
 
     @JvmField
+    var sleepy_extend_from_preload = 0.2
+
+    @JvmField
+    var sleepy_extend_third_impact = 0.6
+
+    @JvmField
     var sweepy = 0.3
 
     @JvmField
@@ -376,7 +368,7 @@ object SpecimenVars {
     var alexia_wait = 0.2
 
     @JvmField
-    var score_with_rotation = Pose(20.0, -66.0, 0.0, 1.0)
+    var score_with_rotation = Pose(20.0, -66.0, 0.0, Vec2D(10.0, 15.0), 15.0, Vec4D(10.0, 0.2, 200.0, 200.0))
 
     @JvmField
     var take_from_wall =  Pose(-73.0, -13.0, PI, Vec2D(80.0, 90.0))
@@ -438,6 +430,7 @@ class SpecimenPrime: LinearOpMode() {
                 setClawState(1),
                 InstantCommand { p2p.followpath(from_preload_to_samples) },
             ),
+            SleepCommand(sleepy_extend_from_preload),
             InstantCommand { setExtendoTarget(2) },
             //pickup first sample
             SequentialCommand(
@@ -483,9 +476,9 @@ class SpecimenPrime: LinearOpMode() {
             //pickup third sample
             InstantCommand { setExtendoTarget(1) },
             InstantCommand { p2p.followpath(the_third_children) },
-            WaitUntilCommand { p2p.done  && isExtendoinTolerance() },
+            SleepCommand(sleepy_extend_third_impact),
             InstantCommand { setExtendoTarget(2) },
-            WaitUntilCommand {isExtendoinTolerance() },
+            WaitUntilCommand { p2p.done  && isExtendoinTolerance() },
             take(wrist_three, false),
 
             //dropoff third sample
@@ -501,6 +494,8 @@ class SpecimenPrime: LinearOpMode() {
             //take wall specimen
             retract(),
             SequentialCommand(
+                InstantCommand { p2p.followpath(s_8) },
+                WaitUntilCommand { p2p.done },
                 InstantCommand { p2p.followpath(s_9) },
                 WaitUntilCommand { p2p.done },
                 SleepCommand(0.2),
@@ -519,6 +514,13 @@ class SpecimenPrime: LinearOpMode() {
                 setClawState(1),
                 InstantCommand { p2p.followpath(s_9) },
                 WaitUntilCommand { p2p.done },
+
+                setArmState(1),
+                setArmState(1),
+                setArmState(1),
+                setArmState(1),
+                setArmState(1),
+                setArmState(1),
                 SleepCommand(0.2),
                 setClawState(0),
                 SleepCommand(0.2),

@@ -17,10 +17,7 @@ import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCX
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCY
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMax
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMin
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.angular_tolerance
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.speed_limit_angular
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.speed_limit_linear
-import org.firstinspires.ftc.teamcode.P2P.p2p_vars.tolerance
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMinAngCoef
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
 import kotlin.math.sign
@@ -58,11 +55,10 @@ class P2P {
             Pose(localizer.pose.x, localizer.pose.y, angNorm(localizer.pose.h), current_path.vel)
     }
 
-
-    fun isBotinTolerance() = err.distance() < tolerance
-            && abs(err.h) < angular_tolerance
-            && abs(robot_vel.distance()) < speed_limit_linear
-            && robot_vel.h < speed_limit_angular
+    fun isBotinTolerance() = err.distance() < target_pose.tolerance[0]
+            && abs(err.h) < target_pose.tolerance[1]
+            && abs(robot_vel.distance()) < target_pose.tolerance[2]
+            && robot_vel.h < target_pose.tolerance[3]
 
     private fun getPeruCoef(dist: Double) = clamp(
         (dist - target_pose.decelPose.x) * (PeruMax - PeruMin) / (target_pose.decelPose.y - target_pose.decelPose.x) + PeruMin,
@@ -111,8 +107,8 @@ class P2P {
 
             chassis.rc_drive(
                 move.y, move.x,
-                if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h),
-                0.0
+                clamp(if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h), -peruCoef * PeruMinAngCoef, peruCoef * PeruMinAngCoef),
+                    0.0
             )
             ep.reset()
         } else {
@@ -135,8 +131,8 @@ class P2P {
 
         send_toall("currpos", current_pos)
         send_toall("is in tol", isBotinTolerance())
-        send_toall("isin lin tol", err.distance() < tolerance)
-        send_toall("is in ang tol", abs(err.h) < angular_tolerance)
+        send_toall("isin lin tol", err.distance() < target_pose.tolerance[0])
+        send_toall("is in ang tol", abs(err.h) < target_pose.tolerance[1])
         send_toall("idiot speed", localizer.vel)
 
     }

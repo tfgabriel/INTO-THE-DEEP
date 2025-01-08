@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.P2P
 
 import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFC
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
-import kotlin.math.PI
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec4D
 import kotlin.math.sqrt
 
 @Config
@@ -18,32 +16,29 @@ object p2p_vars{
     @JvmField
     var PDFCY: PDFC = PDFC(0.05, 0.0, 0.005)
     @JvmField
-    var PDFCH: PDFC = PDFC(0.35, 0.0, 0.0)
+    var PDFCH: PDFC = PDFC(0.5, 0.0, 0.0)
 
     @JvmField
-    var PDFCFinalX: PDFC = PDFC(0.04, 0.0, 0.000)
+    var PDFCFinalX: PDFC = PDFC(0.015, 0.0, 0.000)
     @JvmField
-    var PDFCFinalY: PDFC = PDFC(0.005, 0.0, 0.000)
+    var PDFCFinalY: PDFC = PDFC(0.015, 0.0, 0.000)
     @JvmField
-    var PDFCFinalH: PDFC = PDFC(0.3, 0.0, 0.0)
+    var PDFCFinalH: PDFC = PDFC(0.33, 0.0, 0.0)
 
     @JvmField
-    var tolerance: Double = 3.8
-    @JvmField
-    var angular_tolerance: Double = 0.2
+    var deftones: Vec4D = Vec4D(3.8, 0.2, 6.0, 6.0) /// Pose, Ang, PoseVel, AngVel
 
     @JvmField
-    var anti_p: Double = 0.4
+    var anti_ch_fa: Double = 0.17
+    @JvmField
+    var anti_eh_fa: Double = 0.4
 
     @JvmField
-    var PeruMin = 0.1
+    var PeruMin = 0.15
+    @JvmField
+    var PeruMinAngCoef = 0.9
     @JvmField
     var PeruMax = sqrt(2.0)
-
-    @JvmField
-    var speed_limit_linear = 6.0
-    @JvmField
-    var speed_limit_angular = 6.0
 }
 
 @Config

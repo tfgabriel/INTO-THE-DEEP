@@ -447,12 +447,16 @@ class mapispeel: LinearOpMode(){
 
 }
 
-@Disabled
 @TeleOp
 class sparcfan: LinearOpMode(){
     override fun runOpMode() {
         val robot = robot(false)
-        robot.base_init(this)
+        robot.start(this)
+        while (!isStopRequested) {
+            chassis.sebidrive()
+        }
+
+        return
         val localizer = robot_vars.hardwareMap.get(SparkFunOTOS::class.java, "sparkfun")
         localizer.initialize()
         localizer.resetTracking()
