@@ -6,27 +6,29 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFC
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import kotlin.math.PI
+import kotlin.math.sqrt
 
 @Config
 object p2p_vars{
+
+
 
     @JvmField
     var PDFCX: PDFC = PDFC(0.05, 0.0, 0.005)
     @JvmField
     var PDFCY: PDFC = PDFC(0.05, 0.0, 0.005)
     @JvmField
-    var PDFCH: PDFC = PDFC(0.41, 0.0, 0.0)
+    var PDFCH: PDFC = PDFC(0.35, 0.0, 0.0)
 
     @JvmField
-    var PDFCFinalX: PDFC = PDFC(0.02, 0.0, 0.00)
+    var PDFCFinalX: PDFC = PDFC(0.04, 0.0, 0.000)
     @JvmField
-    var PDFCFinalY: PDFC = PDFC(0.035, 0.0, 0.0)
+    var PDFCFinalY: PDFC = PDFC(0.005, 0.0, 0.000)
     @JvmField
+    var PDFCFinalH: PDFC = PDFC(0.3, 0.0, 0.0)
 
-    var PDFCFinalH: PDFC = PDFC(0.4, 0.0, 0.0)
-
     @JvmField
-    var tolerance: Double = 3.0
+    var tolerance: Double = 3.8
     @JvmField
     var angular_tolerance: Double = 0.2
 
@@ -34,14 +36,14 @@ object p2p_vars{
     var anti_p: Double = 0.4
 
     @JvmField
-    var PeruMin = 0.4
+    var PeruMin = 0.1
     @JvmField
-    var PeruMax = 1.0
+    var PeruMax = sqrt(2.0)
 
     @JvmField
-    var speed_limit_linear = 2.0
+    var speed_limit_linear = 6.0
     @JvmField
-    var speed_limit_angular = 2.0
+    var speed_limit_angular = 6.0
 }
 
 @Config

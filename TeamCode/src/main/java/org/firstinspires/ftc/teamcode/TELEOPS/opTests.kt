@@ -331,17 +331,17 @@ class opTest: LinearOpMode() {
 
             if(gamepad2.left_trigger > 0.5 && !curu3){
                 intake.wrist.position = when (position) {
-                    9 -> 0.8
-                    8 -> 0.7
-                    7 -> 0.6
-                    6 -> 0.49
-                    5 -> 0.4
-                    4 -> 0.3
-                    3 -> 0.2
-                    else -> 0.49
+                    9 -> 0.93
+                    8 -> 0.82
+                    7 -> 0.71
+                    6 -> 0.6
+                    5 -> 0.49
+                    4 -> 0.38
+                    3 -> 0.27
+                    else -> 0.6
                 }
                 --position
-                if (position == 2) {
+                if (position == 3) {
                     position = 6
                 }
             }
@@ -349,17 +349,17 @@ class opTest: LinearOpMode() {
 
             if(gamepad2.right_trigger > 0.5 && !curu4){
                 intake.wrist.position = when (position) {
-                    9 -> 0.8
-                    8 -> 0.7
-                    7 -> 0.6
-                    6 -> 0.49
-                    5 -> 0.4
-                    4 -> 0.3
-                    3 -> 0.2
-                    else -> 0.45
+                    9 -> 0.93
+                    8 -> 0.82
+                    7 -> 0.71
+                    6 -> 0.6
+                    5 -> 0.49
+                    4 -> 0.38
+                    3 -> 0.27
+                    else -> 0.6
                 }
                 ++position
-                if (position == 10) {
+                if (position == 9) {
                     position = 6
                 }
             }

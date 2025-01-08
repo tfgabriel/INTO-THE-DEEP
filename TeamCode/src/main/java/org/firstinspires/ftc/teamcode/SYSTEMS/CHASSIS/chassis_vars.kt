@@ -34,5 +34,5 @@ object chassis_vars {
     var h_PDF = PDF()
 
     @JvmField
-    var chassis_f = Vec4D(0.04, 0.04, 0.04, 0.08)
+    var chassis_f = Vec4D(0.05, 0.05, 0.05, 0.07)
 }

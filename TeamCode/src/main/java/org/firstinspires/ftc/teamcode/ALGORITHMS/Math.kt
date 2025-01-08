@@ -28,6 +28,17 @@ object Math {
 
     fun clamp(v: Double, low: Double, high: Double) = v.coerceAtLeast(low).coerceAtMost(high)
 
+    fun clamp(v: Vec2D, low: Double, high: Double): Vec2D {
+        val d = v.distance()
+        return if (d < low) {
+            v / d * low
+        } else if (d > high) {
+            v / d * high
+        } else {
+            v
+        }
+    }
+
     fun cam_ang_norm(angy: Double) = angy + camera_ang
 
     fun ang_to_pos(pt1: Vec2D, pt2: Vec2D) = atan((pt2 - pt1).y / (pt2 - pt1).x) / servo_range

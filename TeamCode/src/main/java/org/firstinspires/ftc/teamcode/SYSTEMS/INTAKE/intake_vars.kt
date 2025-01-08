@@ -15,7 +15,7 @@ object intake_vars {
 
     var wrist_intake: Double = 0.60
     @JvmField
-    var wrist_neutral: Double = 0.49
+    var wrist_neutral: Double = 0.6 //+0.11
 
     var intaker_power: Double = 1.0
     var intaker_spit_power: Double = -1.0

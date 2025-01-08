@@ -137,6 +137,10 @@ object drawings {
         )*/
 
         drawCircle(
+            canva, p2p.target_pose.goodEnough, corr(p2p.target_pose), "#0697F3"
+        )
+
+        drawCircle(
             canva, p2p.target_pose.decelPose.x, corr(p2p.target_pose), "#010805"
         )
         drawCircle(

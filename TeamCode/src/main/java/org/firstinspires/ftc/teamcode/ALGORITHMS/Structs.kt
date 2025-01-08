@@ -22,10 +22,10 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
 class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double){
     constructor(): this(0.0, 0.0, 0.0, 0.0)
     constructor(x: Double, y: Double, h: Double, decelPose: Vec2D): this(x, y, h, 1.0, decelPose)
-    constructor(x: Double, y: Double): this(x, y, 0.0
-        , 0.0)
+    constructor(x: Double, y: Double): this(x, y, 0.0, 0.0)
     constructor(point: Vec2D, h: Double, vel: Double): this(point.x, point.y, h, 1.0)
     constructor(x: Double, y: Double, h: Double, vel: Double, dp: Vec2D): this(x, y, h, 1.0, dp, 40.0)
+    constructor(x: Double, y: Double, h: Double, dp: Vec2D, ge: Double): this(x, y, h, 1.0, dp, ge)
     constructor(x: Double, y: Double, h: Double, vel: Double): this(x, y, h, 1.0, Vec2D(29.9, 30.0))
     constructor(sparkpos: SparkFunOTOS.Pose2D): this(sparkpos.x, sparkpos.y, sparkpos.h, 0.0)
     constructor(sparkpos: SparkFunOTOS.Pose2D, vel: Double): this(sparkpos.x, sparkpos.y, angNorm( sparkpos.h), 1.0)

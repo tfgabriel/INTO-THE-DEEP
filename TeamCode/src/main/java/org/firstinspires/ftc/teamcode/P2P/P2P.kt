@@ -84,29 +84,31 @@ class P2P {
         // If the robot is not in tolerance, run with the pd
         if (!isBotinTolerance()) {
 
-            //var move_pdf_val = Vec2D(-yPDF.update(err.y) * target_pose.vel, xPDF.update(-err.x) * target_pose.vel)
-            //val h_pdf_val = -hPDF.update(err.h)
-            //move_pdf_val = move_pdf_val.rotate(h_pdf_val * anti_p)
+
 
             val dist = err.distance()
             val peruCoef = getPeruCoef(err.distance())
-            val move = (if (dist < target_pose.goodEnough)
+
+            val move = clamp(
+                (if (dist < target_pose.goodEnough)
                 Vec2D(
                     clamp(xFinalPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
                     clamp(-yFinalPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
                 )
-            else
+                else
                 Vec2D(
                     clamp(xPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
                     clamp(-yPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
-                )) * peruCoef
+                )),
+
+                -peruCoef,
+                peruCoef)
             send_toall("2PeruCoef", peruCoef)
+
+
             send_toall("2movex", move.x)
             send_toall("2movey", move.y)
-            send_toall(
-                "2moveh",
-                if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h)
-            )
+            send_toall("2moveh", if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h))
 
             chassis.rc_drive(
                 move.y, move.x,
@@ -116,18 +118,21 @@ class P2P {
             ep.reset()
         } else {
             // else, run with the pd in the opposite direction in order to stop it and counteract the slip for a bit then stop
-            if (ep.milliseconds() < 10)
+            if (ep.milliseconds() < 10) {
                 chassis.rc_drive(
                     PDFCY.f * sign(err.y),
-                    -PDFCX.f * sign(err.x),
+                    -PDFCX.f * sign(-err.x),
                     PDFCH.f * sign(err.h),
                     0.0
                 )
+                done = true
+            }
             else {
                 chassis.rc_drive(0.0, 0.0, 0.0, 0.0)
                 done = true
             }
         }
+
 
         send_toall("currpos", current_pos)
         send_toall("is in tol", isBotinTolerance())

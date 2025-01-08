@@ -26,7 +26,6 @@ object pp_vars {
     var robot_radius: Double = 32.0
 }
 
-
 class pure_pursuit() {
 
     var curr_pos = Pose()
@@ -51,7 +50,6 @@ class pure_pursuit() {
         curr_traj[traj_index].ep.h,
         (curr_traj[traj_index].ep - curr_traj[traj_index].sp).distance()
     )
-
 
     fun getIntersection(path: Path, center: Pose, radius: Double): Pose {
         val intersect = Intersection(path, center, radius)
