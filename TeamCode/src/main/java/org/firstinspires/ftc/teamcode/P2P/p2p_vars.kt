@@ -21,7 +21,7 @@ object p2p_vars{
     @JvmField
     var PDFCFinalX: PDFC = PDFC(0.015, 0.0, 0.000)
     @JvmField
-    var PDFCFinalY: PDFC = PDFC(0.015, 0.0, 0.000)
+    var PDFCFinalY: PDFC = PDFC(0.012, 0.0, 0.000)
     @JvmField
     var PDFCFinalH: PDFC = PDFC(0.33, 0.0, 0.0)
 
@@ -34,7 +34,7 @@ object p2p_vars{
     var anti_eh_fa: Double = 0.4
 
     @JvmField
-    var PeruMin = 0.15
+    var PeruMin = 0.2
     @JvmField
     var PeruMinAngCoef = 0.9
     @JvmField

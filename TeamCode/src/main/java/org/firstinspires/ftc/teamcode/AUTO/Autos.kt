@@ -15,8 +15,10 @@ import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.alexia_wait
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.from_preload_to_samples
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.matei_clumsy
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.matei_sleepy
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.rotate
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_8
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_9
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_s
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_offset
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_preload
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_with_rotation
@@ -32,6 +34,7 @@ import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.testp
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.the_third_children
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_move
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_take
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_theydontloveyoulikeiloveyou
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_one
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_three
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_two
@@ -296,8 +299,14 @@ object SpecimenVars {
     @JvmField
     var sleep_score = 0.3
 
+
+    @JvmField
+    var wait_theydontloveyoulikeiloveyou = Pose(0.0, -64.0, 2.2, Vec2D(0.0, 0.0), 0.0, Vec4D(20.0, 0.5, 200.0, 200.0))
     @JvmField
     var s_8 = Pose(-73.0, -40.0, PI, Vec2D(0.0, 0.0), 0.0, Vec4D(200.0, 0.4, 200.0, 200.0))
+
+    @JvmField
+    var s_s = Pose(-73.0, -40.0, PI, Vec2D(0.0, 0.0), 0.0, Vec4D(80.0, 20.0, 200.0, 200.0))
 
     @JvmField
     var s_9 = Pose(-73.0, -13.0, PI, Vec2D(10.0, 15.0), 10.0)
@@ -305,27 +314,26 @@ object SpecimenVars {
     @JvmField
     var wait_move = 0.00
 
+    @JvmField
+    var from_preload_to_samples = Pose(-47.0, -62.0, 2.2, Vec2D(20.0, 21.0), 20.0)
 
     @JvmField
-    var from_preload_to_samples = Pose(-49.0, -57.0, 2.2, Vec2D(15.0, 20.0), 5.0, )
+    var second_sample = Pose(-79.0, -59.0, 2.2, Vec2D(14.0, 15.0), 15.0)
 
     @JvmField
-    var second_sample = Pose(-79.0, -59.0, 2.2, Vec2D(5.99, 6.0), 5.0)
+    var wrist_one = 0.1
 
     @JvmField
-    var wrist_one = 0.14
+    var wrist_two = 0.1
 
     @JvmField
-    var wrist_two = 0.14
+    var wrist_three = 0.9
 
     @JvmField
-    var wrist_three = 0.14
+    var spinny_baby = Pose(-46.0, -57.0, 0.6, Vec2D(0.0, 0.0), 0.0, Vec4D(10.0, 0.3, 200.0, 200.0))
 
     @JvmField
-    var spinny_baby = Pose(-46.0, -57.0, 0.6, Vec2D(0.0, 0.0), 0.0)
-
-    @JvmField
-    var spinny_baby2 = Pose(-79.0, -59.0, 0.6, Vec2D(0.0, 0.0), 0.0)
+    var spinny_baby2 = Pose(-79.0, -59.0, 0.6, Vec2D(0.0, 0.0), 0.0, Vec4D(10.0, 0.3, 200.0, 200.0))
 
     @JvmField
     var c_offset = Pose(-19.0, -6.0, 0.0, 1.0)
@@ -334,11 +342,10 @@ object SpecimenVars {
     var wait_take = 0.15
 
     @JvmField
-    var the_third_children = Pose(-90.0, -82.0, Math.toRadians(100.0), Vec2D(4.0, 5.0), 15.0)
-
+    var the_third_children = Pose(-85.0, -95.0, Math.toRadians(90.0), Vec2D(8.0, 10.0), 7.0)
 
     @JvmField
-    var spinny_baby3 = Pose(-70.0, -60.0,  0.6, Vec2D(0.0, 0.0), 0.0)
+    var spinny_baby3 = Pose(-70.0, -60.0,  0.6, Vec2D(0.0, 0.0), 0.0, Vec4D(10.0, 0.3, 200.0, 200.0))
 
     @JvmField
     var matei_clumsy = Pose(-20.0, -55.0, 0.7, 1.0)
@@ -368,8 +375,10 @@ object SpecimenVars {
     var alexia_wait = 0.2
 
     @JvmField
-    var score_with_rotation = Pose(20.0, -66.0, 0.0, Vec2D(10.0, 15.0), 15.0, Vec4D(10.0, 0.2, 200.0, 200.0))
+    var score_with_rotation = Pose(20.0, -66.0, 0.0, Vec2D(10.0, 15.0), 15.0, Vec4D(30.0, 0.2, 200.0, 200.0))
 
+    @JvmField
+    var rotate = Pose(20.0, -50.0, PI, Vec2D(0.0, 0.0), 0.0, Vec4D(34.0, 1.1, 200.0, 200.0))
     @JvmField
     var take_from_wall =  Pose(-73.0, -13.0, PI, Vec2D(80.0, 90.0))
 
@@ -428,13 +437,15 @@ class SpecimenPrime: LinearOpMode() {
                 setClawState(2),
                 SleepCommand(0.2),
                 setClawState(1),
+                InstantCommand { p2p.followpath(wait_theydontloveyoulikeiloveyou) },
+                WaitUntilCommand { p2p.done },
                 InstantCommand { p2p.followpath(from_preload_to_samples) },
             ),
             SleepCommand(sleepy_extend_from_preload),
             InstantCommand { setExtendoTarget(2) },
+            SleepCommand(0.05),
             //pickup first sample
             SequentialCommand(
-                SleepCommand(0.2),
                 ParallelCommand(
                     setIntakeState(1),
                     InstantCommand { intake.wrist.position = wrist_one},
@@ -476,9 +487,11 @@ class SpecimenPrime: LinearOpMode() {
             //pickup third sample
             InstantCommand { setExtendoTarget(1) },
             InstantCommand { p2p.followpath(the_third_children) },
+            InstantCommand { intake.wrist.position = 0.9},
             SleepCommand(sleepy_extend_third_impact),
             InstantCommand { setExtendoTarget(2) },
-            WaitUntilCommand { p2p.done  && isExtendoinTolerance() },
+            InstantCommand { intake.wrist.position = 0.9},
+            WaitUntilCommand { p2p.done && isExtendoinTolerance() },
             take(wrist_three, false),
 
             //dropoff third sample
@@ -494,6 +507,7 @@ class SpecimenPrime: LinearOpMode() {
             //take wall specimen
             retract(),
             SequentialCommand(
+                setArmState(1),
                 InstantCommand { p2p.followpath(s_8) },
                 WaitUntilCommand { p2p.done },
                 InstantCommand { p2p.followpath(s_9) },
@@ -504,10 +518,16 @@ class SpecimenPrime: LinearOpMode() {
             ),
 
             //score wall specimen
+
             goto_chamber(score_offset),
             WaitUntilCommand { p2p.done },
             SleepCommand(sleep_preload),
             place_specimen(),
+
+            InstantCommand { p2p.followpath(rotate) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(s_s) },
+            WaitUntilCommand { p2p.done },
 
             SequentialCommand(
                 setArmState(1),
@@ -532,6 +552,10 @@ class SpecimenPrime: LinearOpMode() {
             SleepCommand(sleep_preload),
             place_specimen(),
 
+            InstantCommand { p2p.followpath(rotate) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(s_s) },
+            WaitUntilCommand { p2p.done },
             SequentialCommand(
                 setArmState(1),
                 setClawState(1),
@@ -549,12 +573,17 @@ class SpecimenPrime: LinearOpMode() {
             place_specimen(),
 
 
+            InstantCommand { p2p.followpath(rotate) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(s_s) },
+            WaitUntilCommand { p2p.done },
             SequentialCommand(
                 setArmState(1),
                 setClawState(1),
                 InstantCommand { p2p.followpath(s_9) },
                 WaitUntilCommand { p2p.done },
                 SleepCommand(0.2),
+                setArmState(1),
                 setClawState(0),
                 SleepCommand(0.2),
             ),
@@ -565,6 +594,10 @@ class SpecimenPrime: LinearOpMode() {
             SleepCommand(sleep_preload),
             place_specimen(),
 
+            InstantCommand { p2p.followpath(rotate) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(s_s) },
+            WaitUntilCommand { p2p.done },
             //park
             SequentialCommand(
                 setArmState(1),
