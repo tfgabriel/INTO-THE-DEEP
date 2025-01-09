@@ -78,9 +78,6 @@ class P2P {
         err.h = ang_diff(current_pos.h, target_pose.h)
         // If the robot is not in tolerance, run with the pd
         if (!isBotinTolerance()) {
-
-
-
             val dist = err.distance()
             val peruCoef = getPeruCoef(err.distance())
 

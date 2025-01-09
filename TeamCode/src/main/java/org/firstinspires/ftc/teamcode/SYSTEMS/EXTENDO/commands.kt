@@ -20,19 +20,23 @@ import kotlin.math.sign
 object commands {
     ///0 - home, 1 - mid , 2 - max, 3 - max_submersible
     fun setExtendoTarget(state: Int) {
-
-        extendo_pdf = if(state != -1)
+        extendo_pdf = if (state != -1)
             PDF(proportional, derivative, force)
         else
             PDF()
 
-        extendo_target = if(state == 0)
+        extendo_target = if (state == 0)
             home_extendo
-        else if(state == 1)
+        else if (state == 1)
             mid_examination
         else
             max_examination
 
+    }
+
+    fun setExtendoTargetLinear(dist: Int) {
+        extendo_pdf = PDF(proportional, derivative, force)
+        extendo_target = dist
     }
 
     fun setExtendoTargetCommand(state: Int): Command {
@@ -43,19 +47,18 @@ object commands {
             PDF()
 
         return InstantCommand {
-            extendo_target = if(state == 0)
+            extendo_target = if (state == 0)
                 home_extendo
-            else if(state == 1)
+            else if (state == 1)
                 mid_examination
             else
                 max_examination
-    }
+        }
 
     }
 
     fun isExtendoinTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < tolerance
     fun isExtendoinHomeTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < 25.0
-
 
 
     /*
@@ -65,36 +68,32 @@ object commands {
     }
     */
 
-    fun setExtendoPowers(pwr1: Double){
+    fun setExtendoPowers(pwr1: Double) {
         extendo.chub_rails.power = pwr1
         //extendo.ehub_rails.power = pwr1
     }
 
-    fun setExtendo(gamepad_power: Double){
+    fun setExtendo(gamepad_power: Double) {
         val err = extendo_target - extendo.chub_rails.currentpos
 
 
-        if(!isExtendoinTolerance()) {
-            if(extendo_target != home_extendo) {
+        if (!isExtendoinTolerance()) {
+            if (extendo_target != home_extendo) {
                 setExtendoPowers(extendo_pdf.update(err.toDouble()))
                 send_toall("extendo is", "going elsewhere")
-            }
-            else if(!isExtendoinHomeTolerance()){
+            } else if (!isExtendoinHomeTolerance()) {
                 setExtendoPowers(1.0)
                 send_toall("extendo is", "going home")
-            }
-            else {
+            } else {
                 setExtendoPowers(0.0)
                 send_toall("extendo is", "home")
             }
-        }
-        else {
+        } else {
             setExtendoPowers(force * sign(err.toDouble()) + gamepad_power * 0.5)
             send_toall("extendo is", "idling")
 
         }
     }
-
 
 
     /*fun setExtendoState(): Command{

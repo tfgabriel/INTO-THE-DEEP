@@ -329,7 +329,12 @@ class opTest: LinearOpMode() {
             }
             curu2000 = gamepad2.left_bumper
 
+            send_toall("WristPosition", position)
             if(gamepad2.left_trigger > 0.5 && !curu3){
+                --position
+                if (position == 2) {
+                    position = 6
+                }
                 intake.wrist.position = when (position) {
                     9 -> 0.93
                     8 -> 0.82
@@ -339,15 +344,15 @@ class opTest: LinearOpMode() {
                     4 -> 0.38
                     3 -> 0.27
                     else -> 0.6
-                }
-                --position
-                if (position == 3) {
-                    position = 6
                 }
             }
             curu3 = gamepad2.left_trigger > 0.5
 
             if(gamepad2.right_trigger > 0.5 && !curu4){
+                ++position
+                if (position == 10) {
+                    position = 6
+                }
                 intake.wrist.position = when (position) {
                     9 -> 0.93
                     8 -> 0.82
@@ -357,10 +362,6 @@ class opTest: LinearOpMode() {
                     4 -> 0.38
                     3 -> 0.27
                     else -> 0.6
-                }
-                ++position
-                if (position == 9) {
-                    position = 6
                 }
             }
 

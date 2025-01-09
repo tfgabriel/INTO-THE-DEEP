@@ -19,9 +19,9 @@ object p2p_vars{
     var PDFCH: PDFC = PDFC(0.5, 0.0, 0.0)
 
     @JvmField
-    var PDFCFinalX: PDFC = PDFC(0.015, 0.0, 0.000)
+    var PDFCFinalX: PDFC = PDFC(0.015, 0.0, 0.03)
     @JvmField
-    var PDFCFinalY: PDFC = PDFC(0.012, 0.0, 0.000)
+    var PDFCFinalY: PDFC = PDFC(0.012, 0.0, 0.03)
     @JvmField
     var PDFCFinalH: PDFC = PDFC(0.33, 0.0, 0.0)
 

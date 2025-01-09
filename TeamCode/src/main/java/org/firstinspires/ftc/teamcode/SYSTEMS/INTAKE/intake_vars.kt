@@ -24,8 +24,8 @@ object intake_vars {
     @JvmField
     var fourbar_third: Double = 0.708
     @JvmField
-    var fourbar_transfer: Double = 0.57
-    var fourbar_hover: Double = 0.678
+    var fourbar_transfer: Double = 0.59
+    var fourbar_hover: Double = 0.65
 
     @JvmField
     var fourbar_testing: Double = 0.8
