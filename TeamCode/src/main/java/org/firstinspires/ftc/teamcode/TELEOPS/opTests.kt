@@ -376,12 +376,12 @@ class opTest: LinearOpMode() {
             if(gamepad1.circle && !outtaking){
 
                 if(isSpecimen) {
-                    //outtake.chub_arm.position = outtake_vars.chub_arm_place
-                    outtake.ehub_arm.position = outtake_vars.ehub_arm_place
+                    outtake.chub_arm.position = outtake_vars.chub_arm_place
+                    //outtake.ehub_arm.position = outtake_vars.ehub_arm_place
                 }
                 else{
-                    //outtake.chub_arm.position = outtake_vars.chub_arm_basket
-                    outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
+                    outtake.chub_arm.position = outtake_vars.chub_arm_basket
+                    //outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
                 }
 
             }

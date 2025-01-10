@@ -128,7 +128,7 @@ class P2P {
 
         send_toall("currpos", current_pos)
         send_toall("is in tol", isBotinTolerance())
-        send_toall("isin lin tol", err.distance() < target_pose.tolerance[0])
+        send_toall("is in lin tol", err.distance() < target_pose.tolerance[0])
         send_toall("is in ang tol", abs(err.h) < target_pose.tolerance[1])
         send_toall("idiot speed", localizer.vel)
 

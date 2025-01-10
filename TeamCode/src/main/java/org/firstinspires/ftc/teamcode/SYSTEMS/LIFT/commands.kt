@@ -73,6 +73,9 @@ object commands
     }
 
     fun isLiftinTolerance() = abs(lift_target-lift.chub_slides.currentpos) < tolerance
+
+    fun isLiftinMaxTolerance() = lift.chub_slides.currentpos in 2401..2499
+
     fun isLiftinHomeTolerance() = abs(lift_target - lift.chub_slides.currentpos) < 50.0
     fun isSpecimenScored() = abs(1200 - lift.chub_slides.power) < tolerance
 

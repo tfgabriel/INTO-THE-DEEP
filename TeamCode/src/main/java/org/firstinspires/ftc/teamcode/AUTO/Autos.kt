@@ -45,7 +45,7 @@ import org.firstinspires.ftc.teamcode.AUTO.auto_commands.retract
 import org.firstinspires.ftc.teamcode.AUTO.auto_commands.take
 import org.firstinspires.ftc.teamcode.AUTO.auto_commands.transfer
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.dunk
-import org.firstinspires.ftc.teamcode.AUTO.sample_vars.first_offet
+import org.firstinspires.ftc.teamcode.AUTO.sample_vars.dunk2
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
@@ -63,10 +63,8 @@ import org.firstinspires.ftc.teamcode.AUTO.sample_vars.park3
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sample_1
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sample_2
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sample_three
-import org.firstinspires.ftc.teamcode.AUTO.sample_vars.second_offset
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sleepBIG
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sleep_startS
-import org.firstinspires.ftc.teamcode.AUTO.sample_vars.third_offset
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.wait_takeS
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.waitaminute
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars
@@ -83,6 +81,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setClawIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinMaxTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
@@ -377,6 +376,15 @@ object SpecimenVars {
     @JvmField
     var testp = Pose(-80.0, 60.0, PI, 1.0)
 
+    @JvmField
+    var sp1 = Pose(-70.0, -55.0, 2.7, Vec2D(20.0, 21.0), 20.0)
+
+    @JvmField
+    var sp2 = Pose(-70.0, -55.0, 2.2, Vec2D(20.0, 21.0), 20.0)
+
+    @JvmField
+    var sp_r = Pose(-70.0, -55.0, 2.2, Vec2D(20.0, 21.0), 20.0)
+
 }
 
 @Autonomous
@@ -620,21 +628,18 @@ class SpecimenPrime: LinearOpMode() {
 @Config
 object sample_vars{
     @JvmField
-    var dunk = Pose(-23.0, -44.0, Math.toRadians(45.0), 0.5)
+    var dunk = Pose(-23.0, -44.0, Math.toRadians(45.0), Vec2D(8.0, 9.0), 0.0)
 
     @JvmField
-    var sample_1 = Pose(-23.3, -30.7, 1.65, 0.6)
+    var sample_1 = Pose(-27.0, -33.7, 1.65, Vec2D(), 0.0)
 
     @JvmField
-    var sample_2 = Pose(-22.6, -59.2, 1.58, 0.6)
+    var sample_2 = Pose(-27.0, -59.2, 1.58, Vec2D(), 0.0)
     @JvmField
-    var sample_three = Pose(-92.0, -12.5, Math.toRadians(180.0), 0.7)
+    var sample_three = Pose(-92.0, -12.5, Math.toRadians(180.0), Vec2D(), 0.0)
 
     @JvmField
     var wait_takeS = 0.27
-
-    @JvmField
-    var score = Pose(-19.0, -40.0, Math.toRadians(35.0), 0.9)
 
     @JvmField
     var waitaminute = 0.3
@@ -642,25 +647,16 @@ object sample_vars{
     var sleep_startS = 0.85
 
     @JvmField
-    var offset = Pose()
-
-    @JvmField
     var sleepBIG = 0.9
 
     @JvmField
-    var park2 = Pose(-140.0, 0.0, 3.3, 1.0)
+    var park2 = Pose(-180.0, -20.0, 3.3, Vec2D(), 0.0, Vec4D(60.0, 2.0, 200.0, 200.0))
 
     @JvmField
-    var park3 = Pose(-140.0, 35.0, 3.3, 1.0)
+    var park3 = Pose(-140.0, 35.0, 3.3, Vec2D(), 0.0)
 
     @JvmField
-    var first_offet =  Pose(-2.0, -0.0, -0.03, 0.0)
-
-    @JvmField
-    var second_offset = Pose(-3.1, -3.5, -0.03, 0.0)
-
-    @JvmField
-    var third_offset = Pose(-2.0, -2.5, -0.03 , 0.0)
+    var dunk2 = Pose(-23.0, -44.0, Math.toRadians(45.0), Vec2D(9.5, 10.0), 15.0)
 }
 
 @Autonomous
@@ -679,7 +675,7 @@ class Sample: LinearOpMode(){
                 InstantCommand { p2p.followpath(dunk)}
             ),
 
-            WaitUntilCommand { p2p.done  && isLiftinTolerance() },
+            WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
             SleepCommand(0.2),
             setClawState(1),
             SleepCommand(0.4),
@@ -702,10 +698,10 @@ class Sample: LinearOpMode(){
             InstantCommand { setLiftTarget(6) },
             setArmState(2),
             SleepCommand(sleep_startS),
-            InstantCommand { p2p.followpath(dunk + first_offet)},
+            InstantCommand { p2p.followpath(dunk)},
             WaitUntilCommand { p2p.done},
 
-            WaitUntilCommand { p2p.done  && isLiftinTolerance() },
+            WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
             SleepCommand(0.2),
             setClawState(1),
             SleepCommand(0.4),
@@ -732,10 +728,10 @@ class Sample: LinearOpMode(){
             setArmState(2),
             SleepCommand(sleep_startS),
 
-            InstantCommand { p2p.followpath(dunk + second_offset)},
+            InstantCommand { p2p.followpath(dunk)},
             WaitUntilCommand { p2p.done },
 
-            WaitUntilCommand { p2p.done  && isLiftinTolerance() },
+            WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
             SleepCommand(0.2),
             setClawState(1),
             SleepCommand(0.4),
@@ -756,7 +752,7 @@ class Sample: LinearOpMode(){
             setIntakeState(1),
             setFourbar(1),
             WaitUntilCommand { isExtendoinTolerance() },
-            take(0.09, true, 0.2),
+            take(0.9, true, 0.2),
 
             retract(),
             transfer(),
@@ -764,8 +760,8 @@ class Sample: LinearOpMode(){
             InstantCommand { setLiftTarget(6) },
             setArmState(2),
             SleepCommand(sleep_startS),
-            InstantCommand { p2p.followpath(dunk + third_offset)},
-            WaitUntilCommand { p2p.done && isLiftinTolerance() },
+            InstantCommand { p2p.followpath(dunk2)},
+            WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
 
             setClawState(1),
             SleepCommand(0.4),

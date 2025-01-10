@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
 import org.firstinspires.ftc.teamcode.TELEOPS.DISABLE_CAM
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinMaxTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 
 class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
@@ -110,7 +111,7 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     fun init_positions(isAuto: Boolean){
         intake.wrist.position = intake_vars.wrist_neutral
         outtake.positioner.position = positioner_neutral
-        //outtake.chub_arm.position = outtake_vars.chub_arm_pickup
+        outtake.chub_arm.position = outtake_vars.chub_arm_pickup
         outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
 
         if(isAuto){
@@ -139,7 +140,7 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         //send_toall("chassis rf", chassis.rightfront.motor.isOverCurrent)
         //send_toall("chassis rb", chassis.rightback.motor.isOverCurrent)
         //send_toall("extendo", extendo.chub_rails.motor.isOverCurrent)
-        send_toall("lift in tolerance", isLiftinTolerance())
+        send_toall("lift in tolerance", isLiftinMaxTolerance())
         send_toall("lift pos", lift.chub_slides.currentpos)
         send_toall("extendo pos", extendo.chub_rails.currentpos)
 
