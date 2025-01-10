@@ -67,7 +67,7 @@ object simple_commands {
 
         return ParallelCommand(
             InstantCommand{ outtake.chub_arm.position = states[0] },
-            //InstantCommand{ outtake.ehub_arm.position = states[1] },
+            InstantCommand{ outtake.ehub_arm.position = states[1] },
             InstantCommand{ send_toall("outtake state", state)}
         )
     }
