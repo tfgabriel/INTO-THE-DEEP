@@ -68,6 +68,10 @@ object robot_vars {
     var camera_distance_from_ground = 37.5
     var cm_to_ticks = 1.0
 
+
+    @JvmField
+    var isAuto = false
+
     @JvmField
     var field_scale = 1 / 2.54
     @JvmField

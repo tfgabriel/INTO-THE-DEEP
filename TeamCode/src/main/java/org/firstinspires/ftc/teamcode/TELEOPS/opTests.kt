@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TELEOPS
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.isAuto
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
@@ -33,6 +35,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars.chassis_f
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinHomeTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoPowers
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
@@ -51,6 +54,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
+import org.firstinspires.ftc.teamcode.TELEOPS.uhhuhuh.coef
 import kotlin.math.abs
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
 
@@ -109,10 +113,21 @@ var position = 6
 var position2 = 5
 var TRENUL_DE_BUZAU = false
 var current_command3 : Command? = null
+
+var curu4040 = false
+var curu505 = false
+var curu303 = false
+
+@Config
+object uhhuhuh{
+    @JvmField
+    var coef = 0.9
+}
 @Disabled
 @TeleOp
 class ffwheeltest: LinearOpMode() {
     override fun runOpMode() {
+        isAuto = false
         val robot = robot(false)
         robot.start(this)
         while (!isStopRequested) {
@@ -126,6 +141,7 @@ class ffwheeltest: LinearOpMode() {
 @TeleOp(name = "我討厭修訂")
 class opTest: LinearOpMode() {
     override fun runOpMode() {
+        isAuto = false
         val robot = robot(false)
         robot.start(this)
         DISABLE_CAM = true
@@ -153,7 +169,7 @@ class opTest: LinearOpMode() {
             }
 
             ///chassis
-            chassis.fc_drive(-gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(
+            chassis.fc_drive(-gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x+ if(WITH_PID && abs(ang_diff(
                     targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(
                 targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble() * 0.65 )
 
@@ -364,13 +380,27 @@ class opTest: LinearOpMode() {
                     else -> 0.6
                 }
             }
-
             curu4 = gamepad2.right_trigger > 0.5
+
+
+            if(gamepad2.dpad_down && !curu4040){
+                extendo.chub_rails.motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+                setExtendoTarget(-1)
+                setExtendoPowers(1.0)
+            }
+            curu4040 = gamepad2.dpad_down
+
+            if(gamepad2.dpad_right && !curu505){
+                setExtendoTarget(-1)
+                setExtendoPowers(0.0)
+                extendo.chub_rails.motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+                extendo.chub_rails.motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            }
+            curu505 = gamepad2.dpad_right
 
             if(abs(gamepad2.right_stick_y) > 0.001){
                 extendo_target = extendo.chub_rails.currentpos
             }
-
 
 
             if(gamepad1.circle && !outtaking){
@@ -484,6 +514,25 @@ class sparcfan: LinearOpMode(){
                 localizer.resetTracking()
             }
             curu2001 = gamepad2.circle
+        }
+    }
+
+}
+@Config
+object testttttt{
+    @JvmField
+    var xd = 0.3
+}
+
+@TeleOp
+class stangadreapta: LinearOpMode(){
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.base_init(this)
+        val servohandy = hardwareMap.servo.get("CHUB_ARM_OUTTAKE")
+        waitForStart()
+        while(!isStopRequested){
+            s
         }
     }
 

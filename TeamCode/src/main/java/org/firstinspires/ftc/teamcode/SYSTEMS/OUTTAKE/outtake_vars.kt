@@ -18,6 +18,7 @@ object outtake_vars {
     var ehub_arm_place: Double = 0.78
     var ehub_arm_basket: Double = 0.87
 
+    @JvmField
     var chub_arm_pickup: Double = 0.26
     var chub_arm_place: Double = 0.075
     var chub_arm_basket: Double = 0.03
