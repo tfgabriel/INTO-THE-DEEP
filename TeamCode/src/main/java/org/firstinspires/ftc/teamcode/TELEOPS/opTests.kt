@@ -53,6 +53,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setOuttake
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.TELEOPS.uhhuhuh.coef
 import kotlin.math.abs
@@ -118,6 +119,8 @@ var curu4040 = false
 var curu505 = false
 var curu303 = false
 
+var isDown = true
+
 @Config
 object uhhuhuh{
     @JvmField
@@ -180,27 +183,31 @@ class opTest: LinearOpMode() {
             if(gamepad1.right_bumper && !lift_testy3){
                 isSpecimen = true
                 setLiftTarget(3)
+                isDown = false
             }
             lift_testy3 = gamepad1.right_bumper
 
             if(gamepad1.left_bumper && !lift_testy6){
                 isSpecimen = false
                 setLiftTarget(6)
+                isDown = false
             }
             lift_testy6 = gamepad1.right_bumper
 
 
             if(gamepad1.square && !lift_testy0){
+                isDown = true
                 current_command = if(isSpecimen)
                     SequentialCommand(
-                        setArmState(0),
                         SleepCommand(0.2),
-                        setClawState(2),
-                        SleepCommand(0.2),
-                        setClawState(1)
+                        setClawState(1),
+                        SleepCommand(0.1),
+                        setOuttake(1)
                 )
-                else
-                    setArmState(0)
+                else ParallelCommand(
+                    setOuttake(1),
+                    setClawState(1)
+                )
                 setLiftTarget(0)
             }
             lift_testy0 = gamepad1.square
@@ -250,9 +257,12 @@ class opTest: LinearOpMode() {
                     setIntakeState(0),
                     WaitUntilCommand { !isExtendoinHomeTolerance() },
                     SleepCommand(0.55),
+                    setOuttake(0),
+                    SleepCommand(0.1),
                     setClawState(0),
                     SleepCommand(0.2),
                     setClawIntakeState(0),
+                    setOuttake(1)
                 )
 
                 intake.wrist.position = wrist_neutral
@@ -405,14 +415,23 @@ class opTest: LinearOpMode() {
 
             if(gamepad1.circle && !outtaking){
 
+                if(!isDown){
                 if(isSpecimen) {
-                    outtake.chub_arm.position = outtake_vars.chub_arm_place
-                    outtake.ehub_arm.position = outtake_vars.ehub_arm_place
+                    outtake.chub_arm.position = outtake_vars.score_specimen
+                    outtake.ehub_arm.position = outtake_vars.score_specimen
+                    outtake.fourbar.position = outtake_vars.fb_score
                 }
                 else{
-                    outtake.chub_arm.position = outtake_vars.chub_arm_basket
-                    outtake.ehub_arm.position = outtake_vars.ehub_arm_basket
+                    outtake.chub_arm.position = outtake_vars.score_basket
+                    outtake.ehub_arm.position = outtake_vars.score_basket
+                    outtake.fourbar.position = outtake_vars.fb_score
+                }}
+                else{
+                    outtake.chub_arm.position = outtake_vars.steal
+                    outtake.ehub_arm.position = outtake_vars.steal
+                    outtake.fourbar.position = outtake_vars.fb_steal
                 }
+
 
             }
             outtaking =gamepad1.circle
@@ -532,7 +551,7 @@ class stangadreapta: LinearOpMode(){
         val servohandy = hardwareMap.servo.get("CHUB_ARM_OUTTAKE")
         waitForStart()
         while(!isStopRequested){
-            s
+            
         }
     }
 

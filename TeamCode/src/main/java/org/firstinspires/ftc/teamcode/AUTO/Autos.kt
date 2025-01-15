@@ -98,6 +98,7 @@ import org.firstinspires.ftc.teamcode.TELEOPS.DISABLE_CAM
 import org.firstinspires.ftc.teamcode.TELEOPS.current_command
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isSpecimenScored
+import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setOuttake
 import kotlin.math.PI
 
 
@@ -115,12 +116,14 @@ object auto_commands{
     fun transfer(): Command{
         return SequentialCommand(
             setIntakeState(0),
-            WaitUntilCommand { isExtendoinHomeTolerance() },
+            WaitUntilCommand { !isExtendoinHomeTolerance() },
             SleepCommand(0.55),
+            setOuttake(0),
+            SleepCommand(0.1),
             setClawState(0),
             SleepCommand(0.2),
             setClawIntakeState(0),
-            SleepCommand(0.2),
+            setOuttake(1),
             InstantCommand { send_toall("is", "transferring") },
         )
     }
@@ -138,114 +141,24 @@ object auto_commands{
         return SequentialCommand(
             InstantCommand { setLiftTarget(0) },
             SleepCommand(0.1),
-            setArmState(0),
-            SleepCommand(0.15),
-            setClawState(2),
-            SleepCommand(0.2),
             setClawState(1),
+            SleepCommand(0.3),
+            setOuttake(1),
             InstantCommand { send_toall("is", "placing specimen") }
         )
     }
 
-    fun place_sample( pose1: Pose, pose2: Pose): Command{
-        return SequentialCommand(
-            WaitUntilCommand { isLiftinTolerance() },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(pose1) },
-            WaitUntilCommand { p2p.done},
-            SleepCommand(0.1),
-            setClawState(1),
-            InstantCommand { p2p.followpath(pose2)},
-            SleepCommand(0.3),
-            InstantCommand { setLiftTarget(0) },
-            setArmState(0),
-            InstantCommand { send_toall("is", "placing sample") }
-        )
-    }
-
-    fun cycle_specimen(offset: Pose): Command{
-        return SequentialCommand(
-            InstantCommand { p2p.followpath(alexia_offset + offset) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { setExtendoTarget(2)},
-            setIntakeState(1),
-            setWrist(),
-            setClawIntakeState(0),
-            SleepCommand(alexia_wait),
-            InstantCommand { p2p.followpath(matei_clumsy + offset) },
-            WaitUntilCommand { p2p.done},
-            setIntakeState(2),
-            SleepCommand(matei_sleepy),
-            setClawIntakeState(1),
-            SleepCommand(0.2),
-            InstantCommand { send_toall("is", "cycling specimen") }
-        )
-    }
-
-    fun cycle_specimen_rotation(pose1: Pose, pose2: Pose, offset1: Pose, offset2: Pose): Command{
-        return SequentialCommand(
-            ParallelCommand (
-                InstantCommand { p2p.followpath(pose1 + offset1)},
-                setArmState(1),
-                setClawState(1)
-            ),
-
-            WaitUntilCommand { p2p.done },
-            setClawState(0),
-            SleepCommand(0.5),
-
-            SleepCommand(1.0),
-
-            SequentialCommand(
-                InstantCommand { setLiftTarget(3) },
-                WaitUntilCommand { isLiftinTolerance() },
-                InstantCommand { p2p.followpath(pose2 + offset2)},
-            ),
-
-            WaitUntilCommand { p2p.done  && isLiftinTolerance() },
-
-            SleepCommand(1.0),
-
-            SequentialCommand(
-                InstantCommand { setLiftTarget(0) },
-                WaitUntilCommand { isSpecimenScored() },
-                setClawState(1)
-            )
-
-        )
-    }
-    fun cycle_sample(): Command{
-        return SequentialCommand(
-            InstantCommand { setExtendoTarget(2) },
-            WaitUntilCommand { p2p.done },
-            setIntakeState(1),
-            setWrist(),
-            setClawIntakeState(0),
-            InstantCommand { setLiftTarget(0) },
-            InstantCommand { send_toall("is", "cycling sample") }
-        )
-    }
 
 
     fun goto_chamber(offset: Pose): Command{
         return SequentialCommand(
-            setArmState(1),
+            setOuttake(2),
             InstantCommand { setLiftTarget(3) },
-            SleepCommand(sleep_score),
             InstantCommand { p2p.followpath(score_with_rotation + offset) },
             InstantCommand { send_toall("is", "going to chamber") }
         )
     }
 
-    fun goto_basket(offset: Pose): Command{
-        return ParallelCommand(
-            InstantCommand { setLiftTarget(6) },
-            setArmState(2),
-            SleepCommand(0.3),
-            InstantCommand { p2p.followpath(dunk + offset)},
-            InstantCommand { send_toall("is", "going to basket") }
-        )
-    }
 
     fun take(pos: Double, isSample: Boolean): Command{
 
@@ -416,23 +329,22 @@ class SpecimenPrime: LinearOpMode() {
             InstantCommand { setExtendoTarget(0) },
             SequentialCommand(
                 InstantCommand { setLiftTarget(3) },
-                setArmState(1),
-                SleepCommand(0.27),
+                setOuttake(2),
                 InstantCommand { p2p.followpath(score_preload) },
             ),
             WaitUntilCommand { p2p.done },
 
             SequentialCommand(
                 InstantCommand { setLiftTarget(0) },
-                setArmState(0),
-                SleepCommand(0.2),
-                setClawState(2),
                 SleepCommand(0.2),
                 setClawState(1),
+                SleepCommand(0.2),
+                setOuttake(1),
                 InstantCommand { p2p.followpath(wait_theydontloveyoulikeiloveyou) },
                 WaitUntilCommand { p2p.done },
                 InstantCommand { p2p.followpath(from_preload_to_samples) },
             ),
+            setOuttake(4),
             WaitUntilCommand { p2p.done },
             SleepCommand(sleepy_extend_from_preload),
             InstantCommand { setExtendoTarget(2) },
@@ -500,7 +412,6 @@ class SpecimenPrime: LinearOpMode() {
             //take wall specimen
             retract(),
             SequentialCommand(
-                setArmState(1),
                 InstantCommand { p2p.followpath(s_8) },
                 WaitUntilCommand { p2p.done },
                 InstantCommand { p2p.followpath(s_9) },
@@ -522,6 +433,7 @@ class SpecimenPrime: LinearOpMode() {
             InstantCommand { p2p.followpath(s_s) },
             WaitUntilCommand { p2p.done },
 
+            setOuttake(4),
             SequentialCommand(
                 setArmState(1),
                 setClawState(1),
@@ -549,6 +461,7 @@ class SpecimenPrime: LinearOpMode() {
             WaitUntilCommand { p2p.done },
             InstantCommand { p2p.followpath(s_s) },
             WaitUntilCommand { p2p.done },
+            setOuttake(4),
             SequentialCommand(
                 setArmState(1),
                 setClawState(1),
@@ -566,6 +479,7 @@ class SpecimenPrime: LinearOpMode() {
             place_specimen(),
 
 
+            setOuttake(4),
             InstantCommand { p2p.followpath(rotate) },
             WaitUntilCommand { p2p.done },
             InstantCommand { p2p.followpath(s_s) },
@@ -591,6 +505,7 @@ class SpecimenPrime: LinearOpMode() {
             WaitUntilCommand { p2p.done },
             InstantCommand { p2p.followpath(s_s) },
             WaitUntilCommand { p2p.done },
+            setOuttake(4),
             //park
             SequentialCommand(
                 setArmState(1),
@@ -685,7 +600,7 @@ class Sample: LinearOpMode(){
             InstantCommand { setExtendoTarget(0) },
             SequentialCommand(
                 InstantCommand { setLiftTarget(6) },
-                setArmState(2),
+                setOuttake(3),
                 SleepCommand(sleepBIG),
                 InstantCommand { p2p.followpath(rotate1)},
                 WaitUntilCommand { p2p.done},
@@ -707,7 +622,7 @@ class Sample: LinearOpMode(){
             SleepCommand(waitaminute),
             ParallelCommand(
                 InstantCommand {setLiftTarget(0) },
-                setArmState(0)
+                setOuttake(1),
             ),
 
             WaitUntilCommand { p2p.done  && isExtendoinTolerance() },
@@ -734,7 +649,7 @@ class Sample: LinearOpMode(){
             transfer(),
 
             InstantCommand { setLiftTarget(6) },
-            setArmState(2),
+            setOuttake(3),
             SleepCommand(sleep_startS),
 
             WaitUntilCommand { p2p.done},
@@ -755,8 +670,8 @@ class Sample: LinearOpMode(){
             SleepCommand(waitaminute),
             ParallelCommand(
                 InstantCommand {setLiftTarget(0) },
-                setArmState(0)
-
+                setArmState(0),
+                setOuttake(1),
             ),
 
             WaitUntilCommand { p2p.done  && isExtendoinTolerance() },
@@ -782,7 +697,7 @@ class Sample: LinearOpMode(){
             transfer(),
 
             InstantCommand { setLiftTarget(6) },
-            setArmState(2),
+            setOuttake(3),
             SleepCommand(sleep_startS),
 
             InstantCommand { p2p.followpath(rotate1)},
@@ -802,7 +717,7 @@ class Sample: LinearOpMode(){
             SleepCommand(waitaminute),
             ParallelCommand(
                 InstantCommand {setLiftTarget(0) },
-                setArmState(0)
+                setOuttake(1)
             ),
 
             WaitUntilCommand { p2p.done },
@@ -832,7 +747,7 @@ class Sample: LinearOpMode(){
             transfer(),
 
             InstantCommand { setLiftTarget(6) },
-            setArmState(2),
+            setOuttake(3),
             SleepCommand(sleep_startS),
             InstantCommand { p2p.followpath(rotate1)},
             WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
@@ -846,8 +761,7 @@ class Sample: LinearOpMode(){
             WaitUntilCommand { p2p.done },
             InstantCommand { p2p.followpath(park2) },
             SleepCommand(0.2),
-            setArmState(0),
-            InstantCommand { setLiftTarget(2) },
+            setOuttake(3),
             InstantCommand { p2p.followpath(park3) },
             WaitUntilCommand { p2p.done }
 

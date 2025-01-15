@@ -69,7 +69,6 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.complex_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setPositionerState
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CAMERA.Camera
@@ -620,20 +619,6 @@ class servoTTTT: LinearOpMode(){
             }
             aaaaaa = gamepad2.dpad_left
 
-            if(gamepad2.dpad_right && !bbbbb) {
-                outtake.chub_arm.position = outtake_vars.chub_arm_pickup
-                outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
-                outtake.positioner.position = outtake_vars.positioner_neutral
-                outtake.chub_claw.position = outtake_vars.chub_claw_open
-                outtake.ehub_claw.position = outtake_vars.ehub_claw_open
-            }
-            bbbbb = gamepad2.dpad_right
-
-            if(gamepad2.right_bumper && !cccccc) {
-                outtake.chub_claw.position = outtake_vars.chub_claw_close
-                outtake.ehub_claw.position = outtake_vars.ehub_claw_close
-            }
-            cccccc = gamepad2.right_bumper
 
             if(gamepad2.left_bumper && !dddd) {
                 setLiftTarget(3)
@@ -831,10 +816,7 @@ class teser: LinearOpMode(){
         current_command = InstantCommand{}
         setExtendoTarget(1)
         waitForStart()
-        outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
-        outtake.chub_arm.position = outtake_vars.chub_arm_pickup
 
-        outtake.positioner.position = outtake_vars.positioner_neutral
         while(!isStopRequested) {
 
             if (gamepad2.triangle && !curu) {
@@ -873,7 +855,6 @@ class teser: LinearOpMode(){
             if (gamepad2.square && !curu2003) {
                 current_command2 = SequentialCommand(
                     setArmState(0),
-                    setPositionerState(0),
                     setClawState(1)
                 )
             }

@@ -13,7 +13,9 @@ object lift_vars {
     @JvmField
     var low_chamber: Int = 350
     @JvmField
-    var high_chamber: Int = 1300
+    var high_chamber: Int = 650
+
+
 
     @JvmField
     var transfer: Int = 500

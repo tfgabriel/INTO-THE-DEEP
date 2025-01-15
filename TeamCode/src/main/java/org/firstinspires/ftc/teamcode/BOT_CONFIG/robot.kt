@@ -32,7 +32,6 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.transfer
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars.positioner_neutral
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
@@ -110,17 +109,14 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
 
     fun init_positions(isAuto: Boolean){
         intake.wrist.position = intake_vars.wrist_neutral
-        outtake.positioner.position = positioner_neutral
-        outtake.chub_arm.position = outtake_vars.chub_arm_pickup
-        outtake.ehub_arm.position = outtake_vars.ehub_arm_pickup
-
+        outtake.chub_arm.position = outtake_vars.idle
+        outtake.ehub_arm.position = outtake_vars.idle
+        outtake.fourbar.position = outtake_vars.fb_transfer
         if(isAuto){
-            outtake.ehub_claw.position = outtake_vars.ehub_claw_close
-            outtake.chub_claw.position = outtake_vars.chub_claw_close
+            outtake.claw.position = outtake_vars.claw_close
         }
         else {
-            outtake.ehub_claw.position = outtake_vars.ehub_claw_open
-            outtake.chub_claw.position = outtake_vars.chub_claw_open
+            outtake.claw.position = outtake_vars.claw_open
         }
 
         intake.chub_arm.position = transfer
