@@ -452,6 +452,18 @@ class SpecimenPrime: LinearOpMode() {
 
 @Autonomous
 class Sample: LinearOpMode(){
+    fun doDunk() =
+      SequentialCommand(
+        InstantCommand { p2p.followpath(dunk)}
+        WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
+        setOuttake(3),
+        setOuttakeFourbar(3),
+        SleepCommand(0.3),
+        setClawState(1),
+        SleepCommand(0.2),
+        setOuttake(1)
+      )
+
     override fun runOpMode() {
         isAuto= true
 //        liftl_first_open.opened = false
@@ -467,16 +479,9 @@ class Sample: LinearOpMode(){
                 InstantCommand { setLiftTarget(6) },
                 InstantCommand { p2p.followpath(rotate1)},
                 WaitUntilCommand { p2p.done},
-                InstantCommand { p2p.followpath(dunk)}
             ),
 
-            WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
-            setOuttake(3),
-            setOuttakeFourbar(3),
-            SleepCommand(0.3),
-            setClawState(1),
-            SleepCommand(0.2),
-            setOuttake(1),
+            doDunk(),
 
             InstantCommand { p2p.followpath(rotatemid)},
             WaitUntilCommand{p2p.done},
@@ -516,15 +521,7 @@ class Sample: LinearOpMode(){
             InstantCommand { setLiftTarget(6) },
             WaitUntilCommand { p2p.done  && isLiftinMaxTolerance()},
 
-            InstantCommand { p2p.followpath(dunk)},
-            WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
-
-            setOuttake(3),
-            SleepCommand(0.3),
-            setClawState(1),
-            SleepCommand(0.2),
-            setOuttake(1),
-
+            doDunk(),
             InstantCommand { p2p.followpath(rotatemid)},
             WaitUntilCommand { p2p.done },
             InstantCommand { p2p.followpath(sample_2)},
@@ -550,7 +547,6 @@ class Sample: LinearOpMode(){
                 InstantCommand { send_toall("is", "taking") }
             ),
 
-
             InstantCommand { p2p.followpath(rotate2)},
             setIntakeState(0),
             SleepCommand(0.2),
@@ -560,18 +556,9 @@ class Sample: LinearOpMode(){
             InstantCommand { setLiftTarget(6) },
             WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
 
-            InstantCommand { p2p.followpath(dunk)},
-            WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
+            doDunk(),
 
-            setOuttake(3),
-            SleepCommand(0.3),
-            setClawState(1),
-            SleepCommand(0.3),
-            setOuttake(1),
-
-            ParallelCommand(
-                InstantCommand { p2p.followpath(sample_three)},
-            ),
+            InstantCommand { p2p.followpath(sample_three)},
 
             SleepCommand(waitaminute),
             InstantCommand {setLiftTarget(0) },
@@ -584,7 +571,6 @@ class Sample: LinearOpMode(){
             SleepCommand(sleepExtendoThird),
             InstantCommand { setExtendoPowers(1.0) },
             SequentialCommand(
-
                 ParallelCommand(
                     setIntakeState(1),
                     setClawIntakeState(0),
