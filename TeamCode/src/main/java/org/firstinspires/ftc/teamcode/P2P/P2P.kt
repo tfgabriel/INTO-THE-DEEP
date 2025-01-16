@@ -118,7 +118,7 @@ class P2P {
 
             send_toall("2movex", move.x)
             send_toall("2movey", move.y)
-            send_toall("2moveh", if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h))
+            send_toall("2moveh", if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h)) /// Tmp
 
             if (hitPeruMin && et.seconds() < PeruMinTime) {
                 chassis.rc_brake()
