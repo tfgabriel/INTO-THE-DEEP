@@ -112,7 +112,7 @@ object SpecimenVars {
 @Config
 object sample_vars {
     @JvmField
-    var dunk = Pose(-18.0, -44.0, Math.toRadians(45.0), Vec2D(14.0, 15.0), 10.0, Vec4D(10.0, 0.1, 200.0, 200.0)).setName("dunk")
+    var dunk = Pose(-17.0, -44.0, Math.toRadians(45.0), Vec2D(14.0, 15.0), 10.0, Vec4D(10.0, 0.1, 200.0, 200.0)).setName("dunk")
 
     @JvmField
     var sample_1 = Pose(-25.0, -34.0, 1.62, Vec2D(10.0, 10.0), 10.0).setName("sample1")

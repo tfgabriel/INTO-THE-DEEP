@@ -17,15 +17,21 @@ object intake_vars {
     @JvmField
     var wrist_neutral: Double = 0.6 //+0.11
 
+    @JvmField
+    var reset_offset = 0.04
+
     var intaker_power: Double = 1.0
     var intaker_spit_power: Double = -1.0
 
-    var fourbar_intake: Double = 0.6 //+0.078
+    var fourbar_intake: Double = 0.6 + reset_offset//+0.078
     @JvmField
-    var fourbar_third: Double = 0.708
+    var fourbar_third: Double = 0.708 + reset_offset
     @JvmField
-    var fourbar_transfer: Double = 0.59
-    var fourbar_hover: Double = 0.65
+    var fourbar_transfer: Double = 0.6 + reset_offset
+    var fourbar_hover: Double = 0.63 + reset_offset
+
+    @JvmField
+    var fourbar_yummy: Double = 0.63 + reset_offset
 
     @JvmField
     var fourbar_testing: Double = 0.8

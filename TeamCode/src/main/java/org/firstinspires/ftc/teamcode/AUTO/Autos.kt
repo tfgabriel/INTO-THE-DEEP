@@ -80,6 +80,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examinati
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setClawIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_yummy
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinMaxTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
@@ -109,15 +110,20 @@ object auto_commands{
         return SequentialCommand(
             setIntakeState(0),
             setOuttake(1),
+            setClawState(1),
+
             WaitUntilCommand { !isExtendoinHomeTolerance() },
-            SleepCommand(0.58),
+            SleepCommand(0.55),
+
+            InstantCommand { intake.fourbar.position = fourbar_yummy },
+            SleepCommand(0.1),
+
             setOuttake(0),
             SleepCommand(0.1),
             setClawState(0),
             SleepCommand(0.2),
             setClawIntakeState(0),
-            setOuttake(1),
-            InstantCommand { send_toall("is", "transferring") },
+            setOuttake(1)
         )
     }
 

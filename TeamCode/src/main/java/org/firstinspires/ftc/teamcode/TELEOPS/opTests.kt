@@ -40,10 +40,12 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setArmStateIntake
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setClawIntakeState
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setFourbar
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.claws_closed
+import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_yummy
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.wrist_neutral
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftPowers
@@ -305,8 +307,11 @@ class opTest: LinearOpMode() {
                 current_command = SequentialCommand(
                     setIntakeState(0),
                     setOuttake(1),
+                    setClawState(1),
                     WaitUntilCommand { !isExtendoinHomeTolerance() },
                     SleepCommand(0.55),
+                    InstantCommand { intake.fourbar.position = fourbar_yummy },
+                    SleepCommand(0.1),
                     setOuttake(0),
                     SleepCommand(0.1),
                     setClawState(0),

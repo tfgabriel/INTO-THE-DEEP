@@ -13,7 +13,7 @@ object extendo_vars {
 
 
     @JvmField
-    var max_examination: Int = -740
+    var max_examination: Int = -730
     @JvmField
     var home_examination: Int = 0
 
@@ -24,10 +24,10 @@ object extendo_vars {
 
     @JvmField
     // Might get changed
-    var proportional: Double = 0.009
+    var proportional: Double = 0.004
     @JvmField
     // To be changed
-    var derivative: Double = 0.002
+    var derivative: Double = 0.2
     @JvmField
     // To be changed
     var force: Double = 0.0
