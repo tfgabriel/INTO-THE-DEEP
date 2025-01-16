@@ -194,6 +194,7 @@ class ffwheeltest: LinearOpMode() {
 }
 @TeleOp(name = "我討厭修訂")
 class opTest: LinearOpMode() {
+    val pressSquareTimer = ElapsedTime()
     override fun runOpMode() {
         isAuto = false
         val robot = robot(false)
@@ -250,6 +251,28 @@ class opTest: LinearOpMode() {
 
 
             if(gamepad1.square && !lift_testy0){
+                pressSquareTimer.reset()
+                isDown = true
+                setLiftTarget(0)
+            } else if (!gamepad1.square && lift_testy0) {
+                val remTime = if (pressSquareTimer.seconds() > 0.3) 0.0 else 0.3 - pressSquareTimer.seconds()
+                current_command = if(isSpecimen)
+                    SequentialCommand(
+                        SleepCommand(remTime),
+                        setClawState(1),
+                        SleepCommand(0.1),
+                        setOuttake(1)
+                    )
+                else ParallelCommand(
+                    setOuttake(1),
+                    setClawState(1),
+                )
+            }
+            lift_testy0 = gamepad1.square
+
+
+            /*
+            if(gamepad1.square && !lift_testy0){
                 isDown = true
                 current_command = if(isSpecimen)
                     SequentialCommand(
@@ -265,6 +288,7 @@ class opTest: LinearOpMode() {
                 setLiftTarget(0)
             }
             lift_testy0 = gamepad1.square
+             */
 
             if(gamepad1.dpad_up && !curu77777){
                 setLiftTarget(-1)

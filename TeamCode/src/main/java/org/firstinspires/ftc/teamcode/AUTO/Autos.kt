@@ -105,8 +105,8 @@ object AutoTestVars {
 }
 
 @Config
-object auto_commands{
-    fun transfer(): Command{
+object auto_commands {
+    fun transfer(): Command {
         return SequentialCommand(
             setIntakeState(0),
             setOuttake(1),
@@ -127,7 +127,7 @@ object auto_commands{
         )
     }
 
-    fun retract(): Command{
+    fun retract(): Command {
         return SequentialCommand(
             setIntakeState(0),
             setWrist(),
@@ -136,7 +136,7 @@ object auto_commands{
         )
     }
 
-    fun place_specimen(): Command{
+    fun place_specimen(): Command {
         return SequentialCommand(
             InstantCommand { setLiftTarget(0) },
             SleepCommand(0.3),
@@ -148,8 +148,7 @@ object auto_commands{
     }
 
 
-
-    fun goto_chamber(offset: Pose): Command{
+    fun goto_chamber(offset: Pose): Command {
         return SequentialCommand(
             setOuttake(2),
             InstantCommand { setLiftTarget(3) },
@@ -159,9 +158,9 @@ object auto_commands{
     }
 
 
-    fun take(pos: Double, isSample: Boolean): Command{
+    fun take(pos: Double, isSample: Boolean): Command {
 
-        val  wristcommand = if(pos != 0.0)
+        val wristcommand = if (pos != 0.0)
             InstantCommand { intake.wrist.position = pos }
         else
             setWrist()
@@ -175,19 +174,19 @@ object auto_commands{
                 setIntakeState(1),
                 setClawIntakeState(0),
             ),
-            SleepCommand(if(!isSample) wait_take else wait_takeS),
+            SleepCommand(if (!isSample) wait_take else wait_takeS),
             setIntakeState(2),
-            SleepCommand(if(!isSample) wait_take else wait_takeS),
+            SleepCommand(if (!isSample) wait_take else wait_takeS),
             setClawIntakeState(1),
-            SleepCommand(if(!isSample) wait_take else wait_takeS),
+            SleepCommand(if (!isSample) wait_take else wait_takeS),
             setIntakeState(1),
             InstantCommand { send_toall("is", "taking") }
         )
     }
 
-    fun take(pos: Double, isSample: Boolean, secondary_wait: Double): Command{
+    fun take(pos: Double, isSample: Boolean, secondary_wait: Double): Command {
 
-        val  wristcommand = if(pos != 0.0)
+        val wristcommand = if (pos != 0.0)
             InstantCommand { intake.wrist.position = pos }
         else
             setWrist()
@@ -199,11 +198,11 @@ object auto_commands{
                 wristcommand,
                 setClawIntakeState(0),
             ),
-            SleepCommand(if(!isSample) wait_take else wait_takeS + secondary_wait),
+            SleepCommand(if (!isSample) wait_take else wait_takeS + secondary_wait),
             setIntakeState(2),
-            SleepCommand(if(!isSample) wait_take else wait_takeS),
+            SleepCommand(if (!isSample) wait_take else wait_takeS),
             setClawIntakeState(1),
-            SleepCommand(if(!isSample) wait_take else wait_takeS),
+            SleepCommand(if (!isSample) wait_take else wait_takeS),
             setIntakeState(1),
             InstantCommand { send_toall("is", "taking") }
         )
@@ -211,12 +210,12 @@ object auto_commands{
 }
 
 @Autonomous
-class SpecimenPrime: LinearOpMode() {
+class SpecimenPrime : LinearOpMode() {
     var cdist = 10.0
     var ep = ElapsedTime()
     fun extMove(): Boolean {
         setExtendoTargetLinear(cdist.toInt())
-        cdist += linearopmode.gamepad1.left_stick_x  * 50 / ep.seconds()
+        cdist += linearopmode.gamepad1.left_stick_x * 50 / ep.seconds()
         cdist = clamp(cdist, max_examination.toDouble(), 0.0)
         send_toall("ExtDist", cdist)
 
@@ -257,10 +256,10 @@ class SpecimenPrime: LinearOpMode() {
             SequentialCommand(
                 ParallelCommand(
                     setIntakeState(1),
-                    InstantCommand { intake.wrist.position = wrist_one},
+                    InstantCommand { intake.wrist.position = wrist_one },
                     setClawIntakeState(0),
                 ),
-                WaitUntilCommand { isExtendoinTolerance() && p2p.done},
+                WaitUntilCommand { isExtendoinTolerance() && p2p.done },
                 SleepCommand(wait_take),
                 setIntakeState(2),
                 SleepCommand(wait_take),
@@ -296,10 +295,10 @@ class SpecimenPrime: LinearOpMode() {
             //pickup third sample
             InstantCommand { setExtendoTarget(1) },
             InstantCommand { p2p.followpath(the_third_children) },
-            InstantCommand { intake.wrist.position = 0.9},
+            InstantCommand { intake.wrist.position = 0.9 },
             SleepCommand(sleepy_extend_third_impact),
             InstantCommand { setExtendoTarget(2) },
-            InstantCommand { intake.wrist.position = 0.9},
+            InstantCommand { intake.wrist.position = 0.9 },
             WaitUntilCommand { p2p.done && isExtendoinTolerance() },
             take(wrist_three, false),
 
@@ -427,7 +426,7 @@ class SpecimenPrime: LinearOpMode() {
             SleepCommand(sleep_preload),
             place_specimen(),
 
-        )
+            )
 
         waitForStart()
         val elap: ElapsedTime = ElapsedTime()
@@ -451,38 +450,38 @@ class SpecimenPrime: LinearOpMode() {
 }
 
 @Autonomous
-class Sample: LinearOpMode(){
-    fun doDunk(isDunk2: Boolean = false) =
-      SequentialCommand(
-        InstantCommand { p2p.followpath(if (isDunk2) dunk2 else dunk) },
-        WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
-        setOuttake(3),
-        setOuttakeFourbar(3),
-        SleepCommand(0.3),
-        setClawState(1),
-        SleepCommand(0.2),
-        setOuttake(1)
-      )
+class Sample : LinearOpMode() {
+    private fun doDunk(isDunk2: Boolean = false) =
+        SequentialCommand(
+            InstantCommand { p2p.followpath(if (isDunk2) dunk2 else dunk) },
+            WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
+            setOuttake(3),
+            setOuttakeFourbar(3),
+            SleepCommand(0.3),
+            setClawState(1),
+            SleepCommand(0.2),
+            setOuttake(1)
+        )
 
-    fun doGrab() =
-            SequentialCommand(
-                setWrist(),
-                ParallelCommand(
-                    setIntakeState(1),
-                    setClawIntakeState(0),
-                ),
-                SleepCommand(wait_takeS + 0.2),
-                setIntakeState(2),
-                SleepCommand(wait_takeS),
-                setClawIntakeState(1),
-                SleepCommand(wait_takeS),
+    private fun doGrab() =
+        SequentialCommand(
+            setWrist(),
+            ParallelCommand(
                 setIntakeState(1),
-                setIntakeState(0),
-                InstantCommand { send_toall("is", "taking") }
-            )
+                setClawIntakeState(0),
+            ),
+            SleepCommand(wait_takeS + 0.2),
+            setIntakeState(2),
+            SleepCommand(wait_takeS),
+            setClawIntakeState(1),
+            SleepCommand(wait_takeS),
+            setIntakeState(1),
+            setIntakeState(0),
+            InstantCommand { send_toall("is", "taking") }
+        )
 
     override fun runOpMode() {
-        isAuto= true
+        isAuto = true
 //        liftl_first_open.opened = false
 //        liftr_first_open.opened = false
 //        extendo_first_open.opened = false
@@ -492,105 +491,112 @@ class Sample: LinearOpMode(){
         localizer.reset()
         current_command = SequentialCommand(
             InstantCommand { setExtendoTarget(0) },
-            SequentialCommand( /// Start to dunk preload
+            SequentialCommand(
+                /// Start to dunk preload
                 InstantCommand { setLiftTarget(6) },
-                InstantCommand { p2p.followpath(rotate1)},
-                WaitUntilCommand { p2p.done},
+                InstantCommand { p2p.followpath(rotate1) },
+                WaitUntilCommand { p2p.done },
                 doDunk(),
             ),
 
-            SequentialCommand( /// Preload to sample 1
-              InstantCommand   { p2p.followpath(rotatemid)},
-              WaitUntilCommand { p2p.done },
-              InstantCommand   { setLiftTarget(0) },
-              InstantCommand   { p2p.followpath(sample_1)},
+            SequentialCommand(
+                /// Preload to sample 1
+                InstantCommand { p2p.followpath(rotatemid) },
+                WaitUntilCommand { p2p.done },
+                InstantCommand { setLiftTarget(0) },
+                InstantCommand { p2p.followpath(sample_1) },
 
-              InstantCommand   { setExtendoTarget(2) },
+                InstantCommand { setExtendoTarget(2) },
 
-              setWrist(),
-              SleepCommand(0.15),
-              setIntakeState(1), setClawIntakeState(0),
-              SleepCommand(waitaminute),
+                setWrist(),
+                SleepCommand(0.15),
+                setIntakeState(1), setClawIntakeState(0),
+                SleepCommand(waitaminute),
 
-              WaitUntilCommand { p2p.done  && isExtendoinTolerance() },
-              doGrab(),
+                WaitUntilCommand { p2p.done && isExtendoinTolerance() },
+                doGrab(),
             ),
 
-            SequentialCommand( /// Grab 1 to Dunk 1
-              InstantCommand { p2p.followpath(rotate1)},
-              setIntakeState(0),
-              SleepCommand(0.2),
-              retract(), transfer(),
+            SequentialCommand(
+                /// Grab 1 to Dunk 1
+                InstantCommand { p2p.followpath(rotate1) },
+                setIntakeState(0),
+                SleepCommand(0.2),
+                retract(), transfer(),
 
-              InstantCommand { setLiftTarget(6) },
-              WaitUntilCommand { p2p.done  && isLiftinMaxTolerance()},
+                InstantCommand { setLiftTarget(6) },
+                WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
 
-              doDunk(),
+                doDunk(),
             ),
 
-            SequentialCommand( /// Dunk 1 to Grab 2
-              InstantCommand { p2p.followpath(rotatemid)},
-              WaitUntilCommand { p2p.done },
-              InstantCommand { p2p.followpath(sample_2)},
-              InstantCommand { setExtendoTargetLinear(sample2_examination) },
-              SleepCommand(waitaminute),
-              InstantCommand {setLiftTarget(0) },
+            SequentialCommand(
+                /// Dunk 1 to Grab 2
+                InstantCommand { p2p.followpath(rotatemid) },
+                WaitUntilCommand { p2p.done },
+                InstantCommand { p2p.followpath(sample_2) },
+                InstantCommand { setExtendoTargetLinear(sample2_examination) },
+                SleepCommand(waitaminute),
+                InstantCommand { setLiftTarget(0) },
 
-              WaitUntilCommand { p2p.done  && isExtendoinTolerance() },
-              doGrab(),
+                WaitUntilCommand { p2p.done && isExtendoinTolerance() },
+                doGrab(),
             ),
 
-            SequentialCommand( /// Grab 2 to Dunk 2
-              InstantCommand { p2p.followpath(rotate2)},
-              setIntakeState(0),
-              SleepCommand(0.2),
-              retract(),
-              transfer(),
+            SequentialCommand(
+                /// Grab 2 to Dunk 2
+                InstantCommand { p2p.followpath(rotate2) },
+                setIntakeState(0),
+                SleepCommand(0.2),
+                retract(),
+                transfer(),
 
-              InstantCommand { setLiftTarget(6) },
-              WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
+                InstantCommand { setLiftTarget(6) },
+                WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
 
-              doDunk(),
+                doDunk(),
             ),
 
-            SequentialCommand( /// Dunk 2 to Grab 3
-              InstantCommand { p2p.followpath(sample_three)},
+            SequentialCommand(
+                /// Dunk 2 to Grab 3
+                InstantCommand { p2p.followpath(sample_three) },
 
-              SleepCommand(waitaminute),
-              InstantCommand {setLiftTarget(0) },
+                SleepCommand(waitaminute),
+                InstantCommand { setLiftTarget(0) },
 
-              WaitUntilCommand { p2p.done },
-              InstantCommand { setExtendoTarget(2) },
-              SleepCommand(0.2),
-              setIntakeState(1),
-              InstantCommand { intake.wrist.position = 0.9},
-              SleepCommand(sleepExtendoThird),
-              InstantCommand { setExtendoPowers(1.0) },
-              doGrab(),
+                WaitUntilCommand { p2p.done },
+                InstantCommand { setExtendoTarget(2) },
+                SleepCommand(0.2),
+                setIntakeState(1),
+                InstantCommand { intake.wrist.position = 0.9 },
+                SleepCommand(sleepExtendoThird),
+                InstantCommand { setExtendoPowers(1.0) },
+                doGrab(),
             ),
 
-            SequentialCommand( /// Grab 3 to Dunk 3
-              InstantCommand { p2p.followpath(rotate1)},
-              SleepCommand(0.2),
-              InstantCommand { setExtendoPowers(0.0) },
-              retract(),
-              transfer(),
+            SequentialCommand(
+                /// Grab 3 to Dunk 3
+                InstantCommand { p2p.followpath(rotate1) },
+                SleepCommand(0.2),
+                InstantCommand { setExtendoPowers(0.0) },
+                retract(),
+                transfer(),
 
-              InstantCommand { setLiftTarget(6) },
-              WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
+                InstantCommand { setLiftTarget(6) },
+                WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
 
-              doDunk(true), // to pose Dunk2
+                doDunk(true), // to pose Dunk2
             ),
 
             SequentialCommand( /// Park
-              InstantCommand { p2p.followpath(rotate3)},
-              InstantCommand { setLiftTarget(0) },
-              WaitUntilCommand { p2p.done },
+                InstantCommand { p2p.followpath(rotate3) },
+                InstantCommand { setLiftTarget(0) },
+                WaitUntilCommand { p2p.done },
 
-              InstantCommand { p2p.followpath(park2) },
-              WaitUntilCommand { p2p.done},
-              InstantCommand { p2p.followpath(park3) },
-              WaitUntilCommand { p2p.done }
+                InstantCommand { p2p.followpath(park2) },
+                WaitUntilCommand { p2p.done },
+                InstantCommand { p2p.followpath(park3) },
+                WaitUntilCommand { p2p.done }
             )
         )
 
@@ -634,24 +640,21 @@ class Sample: LinearOpMode(){
 }
 
 
-
-
-
 @Autonomous
-class testy: LinearOpMode(){
+class testy : LinearOpMode() {
     override fun runOpMode() {
         val robot = robot(true)
         robot.start(this)
         DISABLE_CAM = true
         localizer.reset()
         current_command = SequentialCommand(
-            InstantCommand { p2p.followpath(testp)},
+            InstantCommand { p2p.followpath(testp) },
             InstantCommand { setLiftTarget(3) }
             //InstantCommand { setLiftTarget(3) }
         )
 
         waitForStart()
-        while(!isStopRequested){
+        while (!isStopRequested) {
             if (current_command != null) {
                 if (current_command!!.run(telemetry_packet)) {
                     current_command = null
@@ -668,14 +671,14 @@ class testy: LinearOpMode(){
 }
 
 @Config
-object pp_test{
+object pp_test {
     @JvmField
     var test_pose = Pose()
 }
 
 
 @Autonomous
-class PPTest: LinearOpMode() {
+class PPTest : LinearOpMode() {
     override fun runOpMode() {
         val robot = robot(true, true, false)
         robot.start(this)
