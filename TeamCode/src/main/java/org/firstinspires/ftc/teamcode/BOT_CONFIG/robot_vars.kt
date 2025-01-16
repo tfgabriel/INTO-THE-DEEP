@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.Lift
 import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CAMERA.Camera
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.FIRSTOPEN
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
 
 @Config
@@ -108,6 +109,13 @@ object robot_vars {
     var offx = 100.0
     @JvmField
     var offy = -100.0
+
+    @JvmField
+    var extendo_first_open = FIRSTOPEN()
+    @JvmField
+    var liftr_first_open = FIRSTOPEN()
+    @JvmField
+    var liftl_first_open = FIRSTOPEN()
 
     var vel: Double = 0.5
 

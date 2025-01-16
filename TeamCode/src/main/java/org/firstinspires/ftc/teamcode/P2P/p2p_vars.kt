@@ -8,25 +8,22 @@ import kotlin.math.sqrt
 
 @Config
 object p2p_vars{
-
-
-
     @JvmField
-    var PDFCX: PDFC = PDFC(0.05, 0.0, 0.005)
+    var PDFCX: PDFC = PDFC(0.05, 0.0, 0.00)
     @JvmField
-    var PDFCY: PDFC = PDFC(0.05, 0.0, 0.005)
+    var PDFCY: PDFC = PDFC(0.05, 0.0, 0.00)
     @JvmField
     var PDFCH: PDFC = PDFC(0.5, 0.0, 0.0)
 
     @JvmField
-    var PDFCFinalX: PDFC = PDFC(0.015, 0.0, 0.03)
+    var PDFCFinalX: PDFC = PDFC(0.012, 0.0, 0.0)
     @JvmField
-    var PDFCFinalY: PDFC = PDFC(0.012, 0.0, 0.03)
+    var PDFCFinalY: PDFC = PDFC(0.012, 0.0, 0.0)
     @JvmField
-    var PDFCFinalH: PDFC = PDFC(0.33, 0.0, 0.0)
+    var PDFCFinalH: PDFC = PDFC(0.4, 0.0, 0.0)
 
     @JvmField
-    var deftones: Vec4D = Vec4D(3.8, 0.2, 6.0, 6.0) /// Pose, Ang, PoseVel, AngVel
+    var deftones: Vec4D = Vec4D(5.2, 0.1, 6.0, 6.0) /// Pose, Ang, PoseVel, AngVel
 
     @JvmField
     var anti_ch_fa: Double = 0.17
@@ -35,6 +32,8 @@ object p2p_vars{
 
     @JvmField
     var PeruMin = 0.2
+    @JvmField
+    var PeruMinTime = 0.22
     @JvmField
     var PeruMinAngCoef = 0.9
     @JvmField

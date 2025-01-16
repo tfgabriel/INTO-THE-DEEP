@@ -13,7 +13,7 @@ object extendo_vars {
 
 
     @JvmField
-    var max_examination: Int = -700
+    var max_examination: Int = -740
     @JvmField
     var home_examination: Int = 0
 

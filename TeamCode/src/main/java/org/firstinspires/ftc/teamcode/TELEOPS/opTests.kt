@@ -55,6 +55,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmStat
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setOuttake
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
+import org.firstinspires.ftc.teamcode.TELEOPS.uhhuhuh.braketime
 import org.firstinspires.ftc.teamcode.TELEOPS.uhhuhuh.coef
 import kotlin.math.abs
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
@@ -124,9 +125,57 @@ var isDown = true
 @Config
 object uhhuhuh{
     @JvmField
-    var coef = 0.9
+    var coef = 0.6
+
+    @JvmField
+    var braketime = 0.1
 }
-@Disabled
+
+@TeleOp
+class kmswheel : LinearOpMode() {
+    fun brake() {
+        chassis.leftfront.power = 0.0
+        chassis.leftback.power = 0.0
+        chassis.rightfront.power = 0.0
+        chassis.rightback.power = 0.0
+    }
+
+    val et = ElapsedTime()
+    var lb = false
+    var cp = 0.0
+    override fun runOpMode() {
+        val robot = robot(false)
+        robot.start(this)
+        while (!isStopRequested) {
+            if (gamepad1.a) { // I LOVE YOU ELMO!!!
+                cp = 0.0
+                send_toall("Press A", et.seconds())
+            }
+            if (gamepad1.right_bumper && !lb) {
+                et.reset()
+                cp = 0.8
+                send_toall("Rightbumber A", et.seconds())
+            }
+            lb = gamepad1.right_bumper
+            if (et.seconds() < braketime) {
+                brake()
+                send_toall("Inbrake", et.seconds())
+                cp = 0.8
+            } else {
+                if (gamepad1.right_trigger > 0.01) {
+                    brake()
+                    cp = 0.8
+                    send_toall("Inrt", et.seconds())
+                } else {
+                    send_toall("Moving", et.seconds())
+                    chassis.fc_drive(-gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x.toDouble(), cp + gamepad1.left_trigger.toDouble() * coef)
+                    robot.update()
+                }
+            }
+        }
+    }
+}
+
 @TeleOp
 class ffwheeltest: LinearOpMode() {
     override fun runOpMode() {
@@ -174,7 +223,7 @@ class opTest: LinearOpMode() {
             ///chassis
             chassis.fc_drive(-gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x+ if(WITH_PID && abs(ang_diff(
                     targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(
-                targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble() * 0.65 )
+                targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble() * coef )
 
             send_toall("imew yaw", imew.yaw)
             //chassis.rc_drive(gamepad1.left_stick_y.toDouble(),  gamepad1.left_stick_x.toDouble(), gamepad1.right_stick_x + if(WITH_PID && abs(ang_diff(targetheading, imew.yaw)) >= chassis_vars.angular_tolerance) chassis_vars.h_PDF.update(ang_diff(targetheading, imew.yaw)) else 0.0, gamepad1.left_trigger.toDouble())
@@ -199,14 +248,14 @@ class opTest: LinearOpMode() {
                 isDown = true
                 current_command = if(isSpecimen)
                     SequentialCommand(
-                        SleepCommand(0.2),
+                        SleepCommand(0.3),
                         setClawState(1),
                         SleepCommand(0.1),
                         setOuttake(1)
                 )
                 else ParallelCommand(
                     setOuttake(1),
-                    setClawState(1)
+                    setClawState(1),
                 )
                 setLiftTarget(0)
             }
@@ -255,6 +304,7 @@ class opTest: LinearOpMode() {
                 setExtendoTarget(0)
                 current_command = SequentialCommand(
                     setIntakeState(0),
+                    setOuttake(1),
                     WaitUntilCommand { !isExtendoinHomeTolerance() },
                     SleepCommand(0.55),
                     setOuttake(0),
@@ -439,7 +489,6 @@ class opTest: LinearOpMode() {
             send_toall("pos", extendo.chub_rails.currentpos)
            // send_toall("KAAAAAAAAAAAAAAAAAAA", lift.chub_slides.motor.isOverCurrent)
 
-
             setExtendo(gamepad2.right_stick_y.toDouble())
 
             setLift()
@@ -450,11 +499,6 @@ class opTest: LinearOpMode() {
                     current_command = null
                 }
             }
-
-
-            send_toall("lift pos ehub", lift.ehub_slides.currentpos)
-            send_toall("lift pos chub", lift.chub_slides.currentpos)
-            send_toall("target", lift_target)
 
             robot.update()
         }
@@ -547,15 +591,19 @@ object testttttt{
 class stangadreapta: LinearOpMode(){
     override fun runOpMode() {
         val robot = robot(false)
-        robot.base_init(this)
-        val servohandy = hardwareMap.servo.get("CHUB_ARM_OUTTAKE")
+        robot.start(this)
         waitForStart()
         while(!isStopRequested){
-            
+            outtake.fourbar.position = outtake_vars.fb_transfer
+            outtake.ehub_arm.position = outtake_vars.transfer_outtake
+            outtake.chub_arm.position = outtake_vars.transfer_outtake
+            robot.update()
         }
     }
 
 }
+
+
 
 
 ///modify transfer pos for outtake + transfer pos for intake

@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.P2P
 
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angDiff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angNorm
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.clamp
+import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.pos_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
+import org.firstinspires.ftc.teamcode.ALGORITHMS.SQUID
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
@@ -18,6 +21,7 @@ import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCY
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMax
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMin
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMinAngCoef
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMinTime
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
 import kotlin.math.sign
@@ -33,24 +37,29 @@ class P2P {
     var xPDF: PDF = PDF()
     var yPDF: PDF = PDF()
     var hPDF: PDF = PDF()
-    var xFinalPDF: PDF = PDF()
-    var yFinalPDF: PDF = PDF()
+    var xFinalPDF: SQUID = SQUID()
+    var yFinalPDF: SQUID = SQUID()
     var hFinalPDF: PDF = PDF()
     val ep: ElapsedTime = ElapsedTime()
     var done: Boolean = false
 
     var robot_vel = Pose()
 
+    var p2p_logid = 0
+
     fun followpath(current_path: Pose) {
         xPDF = PDF(PDFCX)
         yPDF = PDF(PDFCY)
         hPDF = PDF(PDFCH)
-        xFinalPDF = PDF(PDFCFinalX)
-        yFinalPDF = PDF(PDFCFinalY)
+        xFinalPDF = SQUID(PDFCFinalX)
+        yFinalPDF = SQUID(PDFCFinalY)
         hFinalPDF = PDF(PDFCFinalH)
         done = false
         path = current_path
         target_pose = current_path
+        if (target_pose.decelPose.x > target_pose.decelPose.y) {
+            send_toall("Invalid decel pose for ${target_pose.name}", target_pose.decelPose)
+        }
         start_pose =
             Pose(localizer.pose.x, localizer.pose.y, angNorm(localizer.pose.h), current_path.vel)
     }
@@ -66,6 +75,11 @@ class P2P {
         PeruMax
     )
 
+    var hitPeruMin = false
+    var et = ElapsedTime()
+
+    fun fe(p: Pose) = "${p.x}, ${p.y}, ${angDiff(p.h, 0.0)}"
+
     fun update() {
         current_pos = localizer.pose + Pose(0.0, 0.0, 0.0, target_pose.vel)
         robot_vel = localizer.vel
@@ -80,6 +94,10 @@ class P2P {
         if (!isBotinTolerance()) {
             val dist = err.distance()
             val peruCoef = getPeruCoef(err.distance())
+            if (!hitPeruMin && pos_diff(peruCoef, PeruMin)) {
+                hitPeruMin = true
+                et.reset()
+            }
 
             val move = clamp(
                 (if (dist < target_pose.goodEnough) // Use Final pid when close enough
@@ -102,11 +120,19 @@ class P2P {
             send_toall("2movey", move.y)
             send_toall("2moveh", if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h))
 
-            chassis.rc_drive(
-                move.y, move.x,
-                clamp(if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h), -peruCoef * PeruMinAngCoef, peruCoef * PeruMinAngCoef),
+            if (hitPeruMin && et.seconds() < PeruMinTime) {
+                chassis.rc_brake()
+            } else {
+                chassis.rc_drive(
+                    move.y, move.x,
+                    clamp(
+                        if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(
+                            err.h
+                        ), -peruCoef * PeruMinAngCoef, peruCoef * PeruMinAngCoef
+                    ),
                     0.0
-            )
+                )
+            }
             ep.reset()
         } else {
             // else, run with the pd in the opposite direction in order to stop it and counteract the slip for a bit then stop
@@ -117,10 +143,17 @@ class P2P {
                     PDFCH.f * sign(err.h),
                     0.0
                 )
-                done = true
+                if (!done) {
+                    send_toall("0errs $p2p_logid", "${fe(err)} ${target_pose.name}")
+                    ++p2p_logid
+                }
             }
             else {
                 chassis.rc_drive(0.0, 0.0, 0.0, 0.0)
+                if (!done) {
+                    send_toall("0errs $p2p_logid", "${fe(err)} ${target_pose.name}")
+                    ++p2p_logid
+                }
                 done = true
             }
         }

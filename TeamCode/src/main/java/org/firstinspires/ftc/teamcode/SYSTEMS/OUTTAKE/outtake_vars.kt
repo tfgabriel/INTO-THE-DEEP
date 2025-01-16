@@ -7,15 +7,15 @@ object outtake_vars {
 
     //positioner offsets are ~0.31
     @JvmField
-    var transfer_outtake = 0.26
+    var transfer_outtake = 0.23
     @JvmField
     var idle = 0.28
     @JvmField
-    var score_basket = 0.55
+    var score_basket = 0.51
     @JvmField
-    var score_specimen = 0.51
+    var score_specimen = 0.48
     @JvmField
-    var steal = 0.72
+    var steal = 0.69
 
 
     @JvmField
@@ -23,7 +23,7 @@ object outtake_vars {
     @JvmField
     var fb_score = 0.51
     @JvmField
-    var fb_steal = 0.93
+    var fb_steal = 0.96
 
     @JvmField
     var claw_open = 0.5

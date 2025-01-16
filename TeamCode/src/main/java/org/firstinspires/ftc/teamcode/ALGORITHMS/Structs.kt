@@ -20,9 +20,10 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
     }
 }
 
-class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double, @JvmField var tolerance: Vec4D){
+class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double, @JvmField var tolerance: Vec4D, var name: String = ""){
     constructor(): this(0.0, 0.0, 0.0, 0.0)
     constructor(x: Double, y: Double, h: Double, decelPose: Vec2D): this(x, y, h, 1.0, decelPose)
+    constructor(x: Double, y: Double, h: Double): this(x, y, h, 1.0)
     constructor(x: Double, y: Double): this(x, y, 0.0, 0.0)
     constructor(point: Vec2D, h: Double, vel: Double): this(point.x, point.y, h, 1.0)
     constructor(x: Double, y: Double, h: Double, vel: Double, dp: Vec2D, goodEnough: Double): this(x, y, h, vel, dp, goodEnough, deftones.duplicate())
@@ -32,6 +33,11 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
     constructor(x: Double, y: Double, h: Double, vel: Double): this(x, y, h, 1.0, Vec2D(29.9, 30.0))
     constructor(sparkpos: SparkFunOTOS.Pose2D): this(sparkpos.x, sparkpos.y, sparkpos.h, 0.0)
     constructor(sparkpos: SparkFunOTOS.Pose2D, vel: Double): this(sparkpos.x, sparkpos.y, angNorm( sparkpos.h), 1.0)
+
+    fun setName(s: String): Pose {
+        name = s
+        return this
+    }
 
     operator fun plus(pose: Pose): Pose = Pose(x + pose.x, y + pose.y, h + pose.h, vel + pose.vel)
 
@@ -51,7 +57,7 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
     fun point(): Vec2D = Vec2D(x, y)
 
     @SuppressLint("DefaultLocale")
-    override fun toString() = String.format("(%.3f %.3f %.3f)", x, y, angNorm(h))
+    override fun toString() = String.format("%s(%.3f %.3f %.3f)", name, x, y, angNorm(h))
 }
 
 class Path(var sp: Pose, var ep: Pose){

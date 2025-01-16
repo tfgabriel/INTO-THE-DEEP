@@ -23,7 +23,7 @@ object lift_vars {
     @JvmField
     var low_basket: Int = 1550
     @JvmField
-    var high_basket: Int = 2465
+    var high_basket: Int = 2400
 
     @JvmField
     var home: Int = 0
@@ -41,7 +41,9 @@ object lift_vars {
     @JvmField
     var force: Double = 0.008
     @JvmField
-    var tolerance: Double = 8.0
+    var tolerance_tight: Double = 8.0
+    @JvmField
+    var tolerance_loose: Double = 14.0
 
     var lift_target: Int = 0
 

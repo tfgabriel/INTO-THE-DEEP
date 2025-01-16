@@ -6,6 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
@@ -37,6 +38,7 @@ import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
 import org.firstinspires.ftc.teamcode.TELEOPS.DISABLE_CAM
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinMaxTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
 
@@ -137,9 +139,12 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         send_toall("chassis rb", chassis.rightback.motor.isOverCurrent)
         send_toall("extendo", extendo.chub_rails.motor.isOverCurrent)
         send_toall("lift in tolerance", isLiftinMaxTolerance())
-        send_toall("lift pos", lift.chub_slides.currentpos)
         send_toall("extendo pos", extendo.chub_rails.currentpos)
 
+        send_toall("extendo in tolerance", isExtendoinTolerance())
+
+        send_toall("Ccurrent", lift.chub_slides.motor.getCurrent(CurrentUnit.AMPS))
+        send_toall("Ecurrent", lift.ehub_slides.motor.getCurrent(CurrentUnit.AMPS))
 
 
         val tp = TelemetryPacket()

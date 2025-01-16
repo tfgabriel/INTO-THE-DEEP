@@ -4,16 +4,12 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
-import org.firstinspires.ftc.teamcode.COMMANDBASE.RunUntilCommand
-import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
-import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.derivative
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.force
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_basket
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_chamber
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_rung
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lazy_coef
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.low_basket
@@ -21,8 +17,10 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.low_chamber
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.low_rung
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.max_extension
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.proportional
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance_loose
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance_tight
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.transfer
+import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -72,12 +70,19 @@ object commands
         }
     }
 
-    fun isLiftinTolerance() = abs(lift_target-lift.chub_slides.currentpos) < tolerance
+    fun isLiftinTolerance(): Boolean {
+        if (!lift.intolerance && abs(lift_target-lift.chub_slides.currentpos) < tolerance_tight) {
+            lift.intolerance = true
+        } else if (lift.intolerance && abs(lift_target-lift.chub_slides.currentpos) > tolerance_loose) {
+            lift.intolerance = false
+        }
+        return lift.intolerance
+    }
 
-    fun isLiftinMaxTolerance() = lift.chub_slides.currentpos in 2401..2499
+    fun isLiftinMaxTolerance() = lift.chub_slides.currentpos > high_basket-30
 
     fun isLiftinHomeTolerance() = abs(lift_target - lift.chub_slides.currentpos) < 50.0
-    fun isSpecimenScored() = abs(1200 - lift.chub_slides.power) < tolerance
+    fun isSpecimenScored() = abs(1200 - lift.chub_slides.power) < tolerance_tight
 
     fun setLiftPowers(pwr1: Double){
         lift.chub_slides.power = pwr1 + if(abs(lift.chub_slides.currentpos - lift.ehub_slides.power) < 4 || isLiftinTolerance()) 0.0 else (lift.chub_slides.currentpos - lift.ehub_slides.power) * lift_vars.rebepe
@@ -99,6 +104,14 @@ object commands
             setLiftPowers(0.0)
         else
             setLiftPowers(force * sign(err.toDouble()))
+
+        send_toall("lift pos ehub", lift.ehub_slides.currentpos)
+        send_toall("lift pos chub", lift.chub_slides.currentpos)
+        send_toall("lift ehub amps", lift.ehub_slides.amps)
+        send_toall("lift chub amps", lift.ehub_slides.amps)
+        send_toall("lift target", lift_target)
+        send_toall("lift chub pwr", lift.chub_slides.power)
+        send_toall("lift ehub pwr", lift.ehub_slides.power)
     }
 
 }

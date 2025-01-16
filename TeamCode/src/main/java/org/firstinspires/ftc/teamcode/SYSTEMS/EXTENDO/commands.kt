@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.derivative
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examinati
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.mid_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
 import kotlin.math.sign
@@ -76,7 +78,6 @@ object commands {
     fun setExtendo(gamepad_power: Double) {
         val err = extendo_target - extendo.chub_rails.currentpos
 
-
         if (!isExtendoinTolerance()) {
             if (extendo_target != home_extendo) {
                 setExtendoPowers(extendo_pdf.update(err.toDouble()))
@@ -91,8 +92,16 @@ object commands {
         } else {
             setExtendoPowers(force * sign(err.toDouble()) + gamepad_power * 0.5)
             send_toall("extendo is", "idling")
-
         }
+
+
+//        send_toall("extendo pos ehub", extendo.ehub_rails.currentpos)
+        send_toall("extendo pos chub", extendo.chub_rails.currentpos)
+//        send_toall("extendo ehub amps", extendo.ehub_slides.amps)
+        send_toall("extendo chub amps", extendo.chub_rails.amps)
+        send_toall("extendo target", extendo_target)
+        send_toall("extendo chub pwr", extendo.chub_rails.power)
+//        send_toall("extendo ehub pwr", extendo.ehub_slides.power)
     }
 
 

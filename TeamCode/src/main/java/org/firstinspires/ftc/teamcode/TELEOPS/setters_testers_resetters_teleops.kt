@@ -63,7 +63,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.tolerance_tight
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.complex_commands
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
@@ -137,7 +137,7 @@ class lift_test: LinearOpMode(){
             setLiftTarget(LIFT_STATE)
             lift_pdf = PDF(lift_vars.proportional, lift_vars.derivative, lift_vars.force)
             setLift()
-            send_toall("IS IN TOLERANCE", lift_target-lift.ehub_slides.currentpos < tolerance)
+            send_toall("IS IN TOLERANCE", lift_target-lift.ehub_slides.currentpos < tolerance_tight)
             send_toall("VALUE",  lift_target-lift.ehub_slides.currentpos * lift_vars.proportional)
             send_toall("POS", lift.ehub_slides.currentpos)
             send_toall("ERR", lift_target-lift.ehub_slides.currentpos)

@@ -34,5 +34,21 @@ object chassis_vars {
     var h_PDF = PDF()
 
     @JvmField
-    var chassis_f = Vec4D(0.05, 0.05, 0.05, 0.07)
+    var chassis_f = Vec4D(0.05, 0.08, 0.05, 0.08)
+
+    @JvmField
+    var chassis_af = 0.1
+
+    @JvmField
+    var chassis_aang = 0.0
+
+    @JvmField
+    var speedIntegratorCoef = 0.01
+
+    @JvmField
+    var maxMecanumSpeed = 1.0
+
+    @JvmField
+    var decelMinStep = 0.01
+
 }
