@@ -454,7 +454,7 @@ class SpecimenPrime: LinearOpMode() {
 class Sample: LinearOpMode(){
     fun doDunk(isDunk2: Boolean = false) =
       SequentialCommand(
-        InstantCommand { p2p.followpath(if (isDunk2) dunk2 else dunk) }
+        InstantCommand { p2p.followpath(if (isDunk2) dunk2 else dunk) },
         WaitUntilCommand { p2p.done  && isLiftinMaxTolerance() },
         setOuttake(3),
         setOuttakeFourbar(3),
