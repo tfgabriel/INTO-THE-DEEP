@@ -198,6 +198,9 @@ class opTest: LinearOpMode() {
         isAuto = false
         val robot = robot(false)
         robot.start(this)
+        setExtendoTarget(0);
+        setLiftTarget(0);
+
         DISABLE_CAM = true
         //lift.chub_slides.motor.setCurrentAlert(3.0, CurrentUnit.AMPS)
         k = true

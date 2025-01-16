@@ -176,9 +176,9 @@ object sample_vars {
         -27.0,
         -59.7,
         Math.toRadians(90.0),
-        Vec2D(15.0, 30.0),
-        15.0,
-        Vec4D(20.0, 0.2, 200.0, 200.0),
+        Vec2D(0.0, 0.0),
+        0.0,
+        Vec4D(50.0, 0.3, 200.0, 200.0),
     ).setName("rotate3")
 
     @JvmField
