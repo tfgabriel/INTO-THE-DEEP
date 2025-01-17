@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.x_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.y_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.Robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.EXTENDO_STATE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.LIFT_STATE
@@ -82,7 +82,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
 class servo_resetter: LinearOpMode(){
 
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.start(this)
         val chub_outtake_servo = robot_vars.hardwareMap.servo.get("CHUB_ARM")
         val ehub_outtake_servo = robot_vars.hardwareMap.servo.get("EHUB_ARM")
@@ -103,7 +103,7 @@ class servo_resetter: LinearOpMode(){
 @TeleOp
 class extendo_test: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         extendo = Extendo()
 
@@ -128,7 +128,7 @@ var test_pid = false
 @TeleOp
 class lift_test: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         lift = Lift()
         waitForStart()
@@ -153,7 +153,7 @@ class lift_test: LinearOpMode(){
 @TeleOp
 class set_lift_f: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         lift = Lift()
 
@@ -170,7 +170,7 @@ class set_lift_f: LinearOpMode(){
 @TeleOp
 class set_extendo_f: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         extendo = Extendo()
 
@@ -187,7 +187,7 @@ class set_extendo_f: LinearOpMode(){
 @TeleOp
 class find_lift_positions: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         lift = Lift()
 
@@ -203,7 +203,7 @@ class find_lift_positions: LinearOpMode(){
 @TeleOp
 class find_extendo_positions: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         extendo = Extendo()
 
@@ -219,7 +219,7 @@ class find_extendo_positions: LinearOpMode(){
 @TeleOp
 class are_servos_alive: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
 
         val servo1 = hardwareMap.servo.get("POSITIONER")
@@ -270,7 +270,7 @@ class are_servos_alive: LinearOpMode(){
 @TeleOp
 class are_intake_servos_alive: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
 
         val servo1 = hardwareMap.servo.get("EHUB_ARM")
@@ -318,7 +318,7 @@ class are_intake_servos_alive: LinearOpMode(){
 @TeleOp
 class slides_testyyyy: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         val chub_slide = MOTOR("CHUB_SLIDE", false, false)
         val ehub_slide = MOTOR("EHUB_SLIDE", true, true)
@@ -340,7 +340,7 @@ class slides_testyyyy: LinearOpMode(){
 @TeleOp
 class extendo_testyyyy: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         var extendo_motor = hardwareMap.dcMotor.get("EXTENDO_MOTOR")
         var extendo_power: Double
@@ -359,7 +359,7 @@ class extendo_testyyyy: LinearOpMode(){
 @TeleOp
 class intake_testyyyy: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         val servo1 = hardwareMap.servo.get("EHUB_ARM")
         val servo2 = hardwareMap.servo.get("CHUB_ARM")
@@ -408,7 +408,7 @@ class intake_testyyyy: LinearOpMode(){
 @TeleOp
 class camera_testyyyy: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         val limelight = hardwareMap.get(Limelight3A::class.java,"limelight")
         limelight.start()
@@ -429,7 +429,7 @@ class camera_testyyyy: LinearOpMode(){
 @TeleOp
 class outtake_testyyyy: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         val servo1 = hardwareMap.servo.get("EHUB_ARM")
         val servo2 = hardwareMap.servo.get("CHUB_ARM")
@@ -471,7 +471,7 @@ class outtake_testyyyy: LinearOpMode(){
 @TeleOp
 class imew_checker: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         chassis = Chassis()
         lift = Lift()
@@ -517,7 +517,7 @@ class imew_checker: LinearOpMode(){
 @TeleOp
 class teletest: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         linearopmode = this
         robot_vars.hardwareMap = linearopmode.hardwareMap
 
@@ -556,7 +556,7 @@ var aaaaaa = false
 @TeleOp
 class servoTEST: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         intake = Intake()
         waitForStart()
@@ -579,7 +579,7 @@ var eee = false
 @TeleOp
 class servoTTTT: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         intake = Intake()
         outtake = Outtake()
@@ -643,7 +643,7 @@ class servoTTTT: LinearOpMode(){
 @TeleOp
 class ecstendo: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         extendo = Extendo()
         val servo = hardwareMap.servo.get("wrist")
@@ -662,7 +662,7 @@ class ecstendo: LinearOpMode(){
 @TeleOp
 class outtake_reset: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         outtake = Outtake()
         intake = Intake()
@@ -690,7 +690,7 @@ class outtake_reset: LinearOpMode(){
 class cameruta: LinearOpMode(){
 
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         camera = Camera()
         camera.limelight.start()
@@ -805,7 +805,7 @@ var current_command2: Command? = null
 @TeleOp
 class teser: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         chassis = Chassis()
         intake = Intake()
@@ -988,7 +988,7 @@ class teser: LinearOpMode(){
 @TeleOp
 class activeintake_test: LinearOpMode(){
     override fun runOpMode() {
-        val robot = robot(false)
+        val robot = Robot(false)
         robot.base_init(this)
         val servo = hardwareMap.crservo.get("CHUB_ARM_INTAKE")
         val servo2 = hardwareMap.crservo.get("EHUB_ARM_INTAKE")

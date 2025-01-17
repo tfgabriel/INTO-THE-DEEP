@@ -6,7 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.USE_TELE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
@@ -39,10 +39,11 @@ import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
 import org.firstinspires.ftc.teamcode.TELEOPS.DISABLE_CAM
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinMaxTolerance
-import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinTolerance
+import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall_imp
 
-class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
+class Robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     constructor(isAuto: Boolean): this(isAuto, true, true)
 
     fun start(lom: LinearOpMode){
@@ -111,14 +112,16 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
 
     fun init_positions(isAuto: Boolean){
         intake.wrist.position = intake_vars.wrist_neutral
-        outtake.chub_arm.position = outtake_vars.idle
-        outtake.ehub_arm.position = outtake_vars.idle
         outtake.fourbar.position = outtake_vars.fb_transfer
         if(isAuto){
             outtake.claw.position = outtake_vars.claw_close
+            outtake.chub_arm.position = outtake_vars.transfer_outtake
+            outtake.ehub_arm.position = outtake_vars.transfer_outtake
         }
         else {
             outtake.claw.position = outtake_vars.claw_open
+            outtake.chub_arm.position = outtake_vars.idle
+            outtake.ehub_arm.position = outtake_vars.idle
         }
 
         intake.chub_arm.position = transfer
@@ -130,21 +133,18 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
 
     private val et = ElapsedTime()
     fun update() {
-        send_toall("framerate", 1 / et.seconds())
-        send_toall("slide chub", lift.chub_slides.motor.isOverCurrent)
-        send_toall("slide ehub", lift.ehub_slides.motor.isOverCurrent)
-        send_toall("chassis lf", chassis.leftfront.motor.isOverCurrent)
-        send_toall("chassis lb", chassis.leftback.motor.isOverCurrent)
-        send_toall("chassis rf", chassis.rightfront.motor.isOverCurrent)
-        send_toall("chassis rb", chassis.rightback.motor.isOverCurrent)
-        send_toall("extendo", extendo.chub_rails.motor.isOverCurrent)
+        send_toall_imp("framerate", 1 / et.seconds())
         send_toall("lift in tolerance", isLiftinMaxTolerance())
         send_toall("extendo pos", extendo.chub_rails.currentpos)
 
         send_toall("extendo in tolerance", isExtendoinTolerance())
+        send_toall("ext power", extendo.chub_rails.power)
+        send_toall("extendo target", extendo_target)
 
-        send_toall("Ccurrent", lift.chub_slides.motor.getCurrent(CurrentUnit.AMPS))
-        send_toall("Ecurrent", lift.ehub_slides.motor.getCurrent(CurrentUnit.AMPS))
+        send_toall("extendo diff", extendo_target - extendo.chub_rails.currentpos)
+        send_toall("Extcurrent", extendo.chub_rails.amps)
+        send_toall("Ccurrent", lift.chub_slides.amps)
+        send_toall("Ecurrent", lift.ehub_slides.amps)
 
 
         val tp = TelemetryPacket()
@@ -153,32 +153,26 @@ class robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         send_toall("isato", isAuto)
         if (isAuto) { drawings.drawP2P(canvas) }
         send_toall("POse", localizer.pose)
-
-
-
         localizer.update()
-
-
-
-
-
 
         //send_toall("is open", camera.is_open)
         //send_toall("is valid", result.isValid)
         //send_toall("is not empty", !result.colorResults.isEmpty())
         //send_toall("is in size", result.colorResults[0].targetCorners.size == 4)
 
-        if(!DISABLE_CAM) {
-            if (camera.is_open)
-                if (result.isValid())
-                    if (!result.colorResults.isEmpty())
-                        if (result.colorResults[0].targetCorners.size == 4)
-                            drawings.draw_sample(canvas, result)
+        if (USE_TELE) {
+            if (!DISABLE_CAM) {
+                if (camera.is_open)
+                    if (result.isValid())
+                        if (!result.colorResults.isEmpty())
+                            if (result.colorResults[0].targetCorners.size == 4)
+                                drawings.draw_sample(canvas, result)
+            }
         }
         dashboard.sendTelemetryPacket(tp)
         telemetry.update()
         et.reset()
-        control_hub.clearBulkCache()
+        //control_hub.clearBulkCache()
         expansion_hub.clearBulkCache()
     }
 }

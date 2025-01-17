@@ -6,7 +6,9 @@ import kotlin.math.abs
 import kotlin.math.sign
 import kotlin.math.sqrt
 
-class PDFC(@JvmField var p: Double, @JvmField var d: Double, @JvmField var f: Double)
+class PDFC(@JvmField var p: Double, @JvmField var d: Double, @JvmField var f: Double) {
+    fun duplicate() = PDFC(p, d, f)
+}
 
 class PDF(@JvmField var coef: PDFC) {
     constructor(): this(PDFC(0.0,0.0,0.0))

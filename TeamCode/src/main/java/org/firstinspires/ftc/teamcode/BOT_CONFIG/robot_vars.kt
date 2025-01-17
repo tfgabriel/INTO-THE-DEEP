@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.Systems.ThreadedIMU
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CAMERA.Camera
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.FIRSTOPEN
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.LocalizerT
 
 @Config
 @SuppressLint("StaticFieldLeak")
@@ -57,12 +58,6 @@ object robot_vars {
     var EXTENDO_STATE: Int = 0
     @JvmField
     var LIFT_STATE: Int = 0
-
-    var READY_FOR_TRANSFER: Boolean = false
-    var READY_FOR_PLACEMENT: Boolean = false
-    var READY_FOR_LEAVING: Boolean = false
-    var READY_FOR_INTAKING: Boolean = false
-    var READY_FOR_EXAMINING: Boolean = false
 
     var servo_range = 355.0
     var camera_ang = -10.0
@@ -111,12 +106,20 @@ object robot_vars {
     var offy = -100.0
 
     @JvmField
+    var USE_EXTENDO = true
+    @JvmField
+    var USE_LIFT = true
+    @JvmField
+    var USE_TELE = true
+
+    @JvmField
     var extendo_first_open = FIRSTOPEN()
     @JvmField
     var liftr_first_open = FIRSTOPEN()
     @JvmField
     var liftl_first_open = FIRSTOPEN()
 
-    var vel: Double = 0.5
 
+    @JvmField
+    var HANDYMIN = false
 }

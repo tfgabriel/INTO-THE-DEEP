@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.AUTO
 
+import android.graphics.Color
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -8,29 +9,33 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.clamp
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Path
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Trajectory
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
-import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec4D
 import org.firstinspires.ftc.teamcode.AUTO.AutoTestVars.test_pose
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.from_preload_to_samples
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.bomboclaat
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.bomboclaat_0
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.co1
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.co2
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.co3
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.extension_0
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.rotate
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_8
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_9
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_s
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_gen
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_offset
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_preload
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_with_rotation
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.second_sample
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleep_preload
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleep_steal
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleepy_extend_from_preload
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleepy_extend_third_impact
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.spinny_baby
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.spinny_baby2
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.spinny_baby3
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.steal_withff
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.testp
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.the_third_children
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_move
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_take
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_theydontloveyoulikeiloveyou
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wo1
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wo2
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wo3
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_one
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_three
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wrist_two
@@ -41,11 +46,11 @@ import org.firstinspires.ftc.teamcode.AUTO.auto_commands.take
 import org.firstinspires.ftc.teamcode.AUTO.auto_commands.transfer
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.dunk
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.dunk2
+import org.firstinspires.ftc.teamcode.AUTO.sample_vars.dunkmid
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.park2
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.park3
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.rotate1
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.rotate2
-import org.firstinspires.ftc.teamcode.AUTO.sample_vars.rotate3
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.rotatemid
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sample2_examination
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sample_1
@@ -54,7 +59,7 @@ import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sample_three
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.sleepExtendoThird
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.wait_takeS
 import org.firstinspires.ftc.teamcode.AUTO.sample_vars.waitaminute
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.Robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.isAuto
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
@@ -69,6 +74,7 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.setCol
 import org.firstinspires.ftc.teamcode.PURE_PURSUIT.pure_pursuit
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinHomeTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
@@ -81,6 +87,7 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setClawIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setIntakeState
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.commands.setWrist
 import org.firstinspires.ftc.teamcode.SYSTEMS.INTAKE.intake_vars.fourbar_yummy
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinLooseMaxTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinMaxTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
@@ -92,7 +99,6 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setOuttake
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.TELEOPS.DISABLE_CAM
 import org.firstinspires.ftc.teamcode.TELEOPS.current_command
-import kotlin.math.PI
 
 
 @Config
@@ -139,7 +145,7 @@ object auto_commands {
     fun place_specimen(): Command {
         return SequentialCommand(
             InstantCommand { setLiftTarget(0) },
-            SleepCommand(0.3),
+            SleepCommand(0.4),
             setClawState(1),
             SleepCommand(0.1),
             setOuttake(1),
@@ -152,7 +158,7 @@ object auto_commands {
         return SequentialCommand(
             setOuttake(2),
             InstantCommand { setLiftTarget(3) },
-            InstantCommand { p2p.followpath(score_with_rotation + offset) },
+            InstantCommand { p2p.followpath(score_gen + offset)},
             InstantCommand { send_toall("is", "going to chamber") }
         )
     }
@@ -183,30 +189,6 @@ object auto_commands {
             InstantCommand { send_toall("is", "taking") }
         )
     }
-
-    fun take(pos: Double, isSample: Boolean, secondary_wait: Double): Command {
-
-        val wristcommand = if (pos != 0.0)
-            InstantCommand { intake.wrist.position = pos }
-        else
-            setWrist()
-
-
-        return SequentialCommand(
-            ParallelCommand(
-                setIntakeState(1),
-                wristcommand,
-                setClawIntakeState(0),
-            ),
-            SleepCommand(if (!isSample) wait_take else wait_takeS + secondary_wait),
-            setIntakeState(2),
-            SleepCommand(if (!isSample) wait_take else wait_takeS),
-            setClawIntakeState(1),
-            SleepCommand(if (!isSample) wait_take else wait_takeS),
-            setIntakeState(1),
-            InstantCommand { send_toall("is", "taking") }
-        )
-    }
 }
 
 @Autonomous
@@ -222,8 +204,49 @@ class SpecimenPrime : LinearOpMode() {
         return linearopmode.gamepad1.a
     }
 
+    fun cycle(offsetscore: Pose, offsetTake: Pose): Command{
+        return SequentialCommand(
+
+            // adjusting pose
+            InstantCommand { p2p.followpath(s_8) },
+            WaitUntilCommand { p2p.done },
+
+            //steal pose
+            InstantCommand { p2p.followpath(steal_withff + offsetTake) },
+            WaitUntilCommand { p2p.done },
+
+            //steal
+            SleepCommand(0.2),
+            setClawState(0),
+            SleepCommand(0.2),
+
+
+            //goto chamber
+            setOuttake(2),
+            InstantCommand { setLiftTarget(3) },
+            SleepCommand(sleep_steal),
+            InstantCommand { p2p.followpath(score_gen + offsetscore)},
+            WaitUntilCommand { p2p.done },
+
+            //place specimen
+            InstantCommand { setLiftTarget(0) },
+            SleepCommand(0.4),
+            setClawState(1),
+            SleepCommand(0.1),
+            setOuttake(1),
+
+            //rotate and prepare to leave
+            InstantCommand { p2p.followpath(rotate) },
+            WaitUntilCommand { p2p.done },
+
+            //reset arm for steal
+            setOuttake(4),
+        )
+    }
+
     override fun runOpMode() {
-        val robot = robot(true, true, false)
+        isAuto = true
+        val robot = Robot(true, true, false)
         robot.start(this)
         DISABLE_CAM = true
         localizer.reset()
@@ -232,6 +255,7 @@ class SpecimenPrime : LinearOpMode() {
             InstantCommand { setExtendoTarget(0) },
             SequentialCommand(
                 InstantCommand { setLiftTarget(3) },
+                SleepCommand(0.2),
                 setOuttake(2),
                 InstantCommand { p2p.followpath(score_preload) },
             ),
@@ -239,19 +263,21 @@ class SpecimenPrime : LinearOpMode() {
 
             SequentialCommand(
                 InstantCommand { setLiftTarget(0) },
-                SleepCommand(0.2),
+                SleepCommand(0.4),
                 setClawState(1),
                 SleepCommand(0.2),
                 setOuttake(1),
                 InstantCommand { p2p.followpath(wait_theydontloveyoulikeiloveyou) },
                 WaitUntilCommand { p2p.done },
-                InstantCommand { p2p.followpath(from_preload_to_samples) },
+                InstantCommand { p2p.followpath(bomboclaat_0) },
             ),
             setOuttake(4),
             WaitUntilCommand { p2p.done },
             SleepCommand(sleepy_extend_from_preload),
-            InstantCommand { setExtendoTarget(2) },
+            InstantCommand { setExtendoTargetLinear(extension_0) },
             SleepCommand(0.05),
+
+            setIntakeState(1),
             //pickup first sample
             SequentialCommand(
                 ParallelCommand(
@@ -271,21 +297,24 @@ class SpecimenPrime : LinearOpMode() {
 
             //dropoff first sample
             SequentialCommand(
+                InstantCommand { setExtendoTarget(2) },
                 InstantCommand { p2p.followpath(spinny_baby) },
                 SleepCommand(wait_move),
-                WaitUntilCommand { p2p.done },
+                WaitUntilCommand { p2p.done && isExtendoinTolerance() },
                 setClawIntakeState(0),
                 setIntakeState(1)
             ),
 
             //pickup second sample
-            InstantCommand { p2p.followpath(second_sample) },
+            InstantCommand { p2p.followpath(bomboclaat) },
+
+            setIntakeState(1),
             WaitUntilCommand { p2p.done },
             take(wrist_two, false),
 
             //dropoff second sample
             SequentialCommand(
-                InstantCommand { p2p.followpath(spinny_baby2) },
+                InstantCommand { p2p.followpath(spinny_baby) },
                 SleepCommand(wait_move),
                 WaitUntilCommand { p2p.done },
                 setClawIntakeState(0),
@@ -293,15 +322,21 @@ class SpecimenPrime : LinearOpMode() {
             ),
 
             //pickup third sample
+            InstantCommand { intake.wrist.position = 0.9 },
             InstantCommand { setExtendoTarget(1) },
             InstantCommand { p2p.followpath(the_third_children) },
             InstantCommand { intake.wrist.position = 0.9 },
-            SleepCommand(sleepy_extend_third_impact),
+            WaitUntilCommand { p2p.done },
             InstantCommand { setExtendoTarget(2) },
+            InstantCommand { setExtendoPowers(1.0) },
+            setIntakeState(1),
             InstantCommand { intake.wrist.position = 0.9 },
-            WaitUntilCommand { p2p.done && isExtendoinTolerance() },
+            WaitUntilCommand { p2p.done },
+            SleepCommand(sleepy_extend_third_impact),
             take(wrist_three, false),
+            InstantCommand { setExtendoPowers(0.0) },
 
+            InstantCommand { setExtendoTarget(2) },
             //dropoff third sample
             SequentialCommand(
                 setIntakeState(1),
@@ -325,107 +360,22 @@ class SpecimenPrime : LinearOpMode() {
             ),
 
             //score wall specimen
-
             goto_chamber(score_offset),
             WaitUntilCommand { p2p.done },
-            SleepCommand(sleep_preload),
             place_specimen(),
 
             InstantCommand { p2p.followpath(rotate) },
             WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(s_s) },
-            WaitUntilCommand { p2p.done },
-
             setOuttake(4),
-            SequentialCommand(
-                setArmState(1),
-                setClawState(1),
-                InstantCommand { p2p.followpath(s_9) },
-                WaitUntilCommand { p2p.done },
 
-                setArmState(1),
-                setArmState(1),
-                setArmState(1),
-                setArmState(1),
-                setArmState(1),
-                setArmState(1),
-                SleepCommand(0.2),
-                setClawState(0),
-                SleepCommand(0.2),
-            ),
+            //cycle 1
+            cycle(co1, wo1),
 
-            //score wall specimen
-            goto_chamber(score_offset),
-            WaitUntilCommand { p2p.done },
-            SleepCommand(sleep_preload),
-            place_specimen(),
+            //cycle 2
+            cycle(co2, wo2),
 
-            InstantCommand { p2p.followpath(rotate) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(s_s) },
-            WaitUntilCommand { p2p.done },
-            setOuttake(4),
-            SequentialCommand(
-                setArmState(1),
-                setClawState(1),
-                InstantCommand { p2p.followpath(s_9) },
-                WaitUntilCommand { p2p.done },
-                SleepCommand(0.2),
-                setClawState(0),
-                SleepCommand(0.2),
-            ),
-
-            //score wall specimen
-            goto_chamber(score_offset),
-            WaitUntilCommand { p2p.done },
-            SleepCommand(sleep_preload),
-            place_specimen(),
-
-
-            setOuttake(4),
-            InstantCommand { p2p.followpath(rotate) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(s_s) },
-            WaitUntilCommand { p2p.done },
-            SequentialCommand(
-                setArmState(1),
-                setClawState(1),
-                InstantCommand { p2p.followpath(s_9) },
-                WaitUntilCommand { p2p.done },
-                SleepCommand(0.2),
-                setArmState(1),
-                setClawState(0),
-                SleepCommand(0.2),
-            ),
-
-            //score wall specimen
-            goto_chamber(score_offset),
-            WaitUntilCommand { p2p.done },
-            SleepCommand(sleep_preload),
-            place_specimen(),
-
-            InstantCommand { p2p.followpath(rotate) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(s_s) },
-            WaitUntilCommand { p2p.done },
-            setOuttake(4),
-            //park
-            SequentialCommand(
-                setArmState(1),
-                setClawState(1),
-                InstantCommand { p2p.followpath(s_9) },
-                WaitUntilCommand { p2p.done },
-                SleepCommand(0.2),
-                setClawState(1),
-                SleepCommand(0.2),
-            ),
-
-            //score wall specimen
-            goto_chamber(score_offset),
-            WaitUntilCommand { p2p.done },
-            SleepCommand(sleep_preload),
-            place_specimen(),
-
+            //cycle 3
+            cycle(co3, wo3),
             )
 
         waitForStart()
@@ -451,21 +401,39 @@ class SpecimenPrime : LinearOpMode() {
 
 @Autonomous
 class Sample : LinearOpMode() {
-    private fun doDunk(isDunk2: Boolean = false) =
+    private fun waitPExst() =
         SequentialCommand(
-            InstantCommand { p2p.followpath(if (isDunk2) dunk2 else dunk) },
+            WaitUntilCommand {p2p.done},
+            InstantCommand {setCol(Color.rgb(0, 255, 0)) } ,
+            WaitUntilCommand { isExtendoinTolerance() },
+            InstantCommand {setCol(Color.rgb(255, 255, 255)) }
+        )
+
+    private fun doDunk(pose: Pose) =
+        SequentialCommand(
+            InstantCommand { p2p.followpath(pose) },
+            WaitUntilCommand { isLiftinLooseMaxTolerance() },
+            setOuttake(3),
+            setOuttakeFourbar(3),
+
+            setOuttake(3),
+            setOuttakeFourbar(3),
+            setOuttake(3),
+            setOuttakeFourbar(3),
+            setOuttake(3),
+            setOuttakeFourbar(3),
             WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
             setOuttake(3),
             setOuttakeFourbar(3),
             SleepCommand(0.3),
             setClawState(1),
-            SleepCommand(0.2),
+            SleepCommand(0.4),
             setOuttake(1)
         )
 
-    private fun doGrab() =
+    private fun doGrab(isThird: Boolean = false) =
         SequentialCommand(
-            setWrist(),
+            if (isThird) InstantCommand { intake.wrist.position = 0.9 } else setWrist(),
             ParallelCommand(
                 setIntakeState(1),
                 setClawIntakeState(0),
@@ -485,7 +453,7 @@ class Sample : LinearOpMode() {
 //        liftl_first_open.opened = false
 //        liftr_first_open.opened = false
 //        extendo_first_open.opened = false
-        val robot = robot(true, true, false)
+        val robot = Robot(true, true, false)
         robot.start(this)
         DISABLE_CAM = true
         localizer.reset()
@@ -496,7 +464,7 @@ class Sample : LinearOpMode() {
                 InstantCommand { setLiftTarget(6) },
                 InstantCommand { p2p.followpath(rotate1) },
                 WaitUntilCommand { p2p.done },
-                doDunk(),
+                doDunk(dunk),
             ),
 
             SequentialCommand(
@@ -513,7 +481,7 @@ class Sample : LinearOpMode() {
                 setIntakeState(1), setClawIntakeState(0),
                 SleepCommand(waitaminute),
 
-                WaitUntilCommand { p2p.done && isExtendoinTolerance() },
+                waitPExst(),
                 doGrab(),
             ),
 
@@ -527,7 +495,7 @@ class Sample : LinearOpMode() {
                 InstantCommand { setLiftTarget(6) },
                 WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
 
-                doDunk(),
+                doDunk(dunk),
             ),
 
             SequentialCommand(
@@ -537,9 +505,9 @@ class Sample : LinearOpMode() {
                 InstantCommand { p2p.followpath(sample_2) },
                 InstantCommand { setExtendoTargetLinear(sample2_examination) },
                 SleepCommand(waitaminute),
-                InstantCommand { setLiftTarget(0) },
 
-                WaitUntilCommand { p2p.done && isExtendoinTolerance() },
+                InstantCommand { setLiftTarget(0) },
+                waitPExst(),
                 doGrab(),
             ),
 
@@ -554,7 +522,7 @@ class Sample : LinearOpMode() {
                 InstantCommand { setLiftTarget(6) },
                 WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
 
-                doDunk(),
+                doDunk(dunkmid),
             ),
 
             SequentialCommand(
@@ -566,34 +534,33 @@ class Sample : LinearOpMode() {
 
                 WaitUntilCommand { p2p.done },
                 InstantCommand { setExtendoTarget(2) },
-                SleepCommand(0.2),
+                SleepCommand(0.1),
                 setIntakeState(1),
                 InstantCommand { intake.wrist.position = 0.9 },
                 SleepCommand(sleepExtendoThird),
                 InstantCommand { setExtendoPowers(1.0) },
-                doGrab(),
+                doGrab(true),
             ),
 
             SequentialCommand(
                 /// Grab 3 to Dunk 3
-                InstantCommand { p2p.followpath(rotate1) },
-                SleepCommand(0.2),
+               // InstantCommand { p2p.followpath(rotate1) },
                 InstantCommand { setExtendoPowers(0.0) },
                 retract(),
+                InstantCommand { p2p.followpath(dunk2)},
                 transfer(),
 
                 InstantCommand { setLiftTarget(6) },
-                WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
+                WaitUntilCommand { p2p.done  },
 
-                doDunk(true), // to pose Dunk2
+                doDunk(dunk2), // to pose Dunk2
             ),
 
             SequentialCommand( /// Park
-                InstantCommand { p2p.followpath(rotate3) },
-                InstantCommand { setLiftTarget(0) },
-                WaitUntilCommand { p2p.done },
-
                 InstantCommand { p2p.followpath(park2) },
+                SleepCommand(0.1),
+                InstantCommand { setLiftTarget(0) },
+                setOuttake(3),
                 WaitUntilCommand { p2p.done },
                 InstantCommand { p2p.followpath(park3) },
                 WaitUntilCommand { p2p.done }
@@ -642,15 +609,29 @@ class Sample : LinearOpMode() {
 
 @Autonomous
 class testy : LinearOpMode() {
+    fun getc() = testp
     override fun runOpMode() {
-        val robot = robot(true)
+        val robot = Robot(true)
         robot.start(this)
         DISABLE_CAM = true
         localizer.reset()
         current_command = SequentialCommand(
-            InstantCommand { p2p.followpath(testp) },
-            InstantCommand { setLiftTarget(3) }
-            //InstantCommand { setLiftTarget(3) }
+            InstantCommand { p2p.followpath(getc()) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(getc()*2.0) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(getc()*3.0) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(getc()*4.0) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(getc()*3.0) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(getc()*2.0) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(getc()*1.0) },
+            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(getc()*0.0) },
+            WaitUntilCommand { p2p.done },
         )
 
         waitForStart()
@@ -680,7 +661,7 @@ object pp_test {
 @Autonomous
 class PPTest : LinearOpMode() {
     override fun runOpMode() {
-        val robot = robot(true, true, false)
+        val robot = Robot(true, true, false)
         robot.start(this)
         DISABLE_CAM = true
         localizer.reset()

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.P2P
 
+import android.graphics.Color
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angDiff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.angNorm
@@ -10,7 +11,10 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.ALGORITHMS.SQUID
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.HANDYMIN
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.expansion_hub
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCFinalH
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCFinalX
@@ -22,6 +26,8 @@ import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMax
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMin
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMinAngCoef
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMinTime
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.retardationTimer
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.setCol
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
 import kotlin.math.sign
@@ -51,8 +57,16 @@ class P2P {
         xPDF = PDF(PDFCX)
         yPDF = PDF(PDFCY)
         hPDF = PDF(PDFCH)
-        xFinalPDF = SQUID(PDFCFinalX)
-        yFinalPDF = SQUID(PDFCFinalY)
+        val pfx = PDFCFinalX.duplicate()
+        if (current_path.customff < 20.0) {
+            pfx.f = current_path.customff
+        }
+        val pfy = PDFCFinalY.duplicate()
+        if (current_path.customff < 20.0) {
+            pfy.f = current_path.customff
+        }
+        xFinalPDF = SQUID(pfx)
+        yFinalPDF = SQUID(pfy)
         hFinalPDF = PDF(PDFCFinalH)
         done = false
         path = current_path
@@ -62,6 +76,8 @@ class P2P {
         }
         start_pose =
             Pose(localizer.pose.x, localizer.pose.y, angNorm(localizer.pose.h), current_path.vel)
+
+        setCol(Color.rgb(255, 255, 255))
     }
 
     fun isBotinTolerance() = err.distance() < target_pose.tolerance[0]
@@ -78,7 +94,7 @@ class P2P {
     var hitPeruMin = false
     var et = ElapsedTime()
 
-    fun fe(p: Pose) = "${p.x}, ${p.y}, ${angDiff(p.h, 0.0)}"
+    fun fe(p: Pose) = String.format("%.2f %.2f %.2f", p.x, p.y, angDiff(p.h, 0.0))
 
     fun update() {
         current_pos = localizer.pose + Pose(0.0, 0.0, 0.0, target_pose.vel)
@@ -123,20 +139,46 @@ class P2P {
             if (hitPeruMin && et.seconds() < PeruMinTime) {
                 chassis.rc_brake()
             } else {
-                chassis.rc_drive(
-                    move.y, move.x,
-                    clamp(
-                        if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(
-                            err.h
-                        ), -peruCoef * PeruMinAngCoef, peruCoef * PeruMinAngCoef
-                    ),
-                    0.0
-                )
+                if(!path.is_headingonly) {
+
+                    chassis.rc_drive(
+                        move.y, move.x,
+                        clamp(
+                            if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(
+                                err.h
+                            ), -peruCoef * PeruMinAngCoef, peruCoef * PeruMinAngCoef
+                        ),
+                        0.0
+                    )
+                }
+                else{
+                    var sebi = if(HANDYMIN)
+                        PeruMin
+                    else
+                        PeruMax
+
+                    val handicapped_move =
+                        clamp(Vec2D(
+                            clamp(xFinalPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
+                            clamp(-yFinalPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
+                        ), -sebi,
+                            sebi)
+
+                    chassis.rc_drive(
+                        handicapped_move.y, handicapped_move.x,
+                        clamp(
+                            if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(
+                                err.h
+                            ), -peruCoef * PeruMinAngCoef, peruCoef * PeruMinAngCoef
+                        ),
+                        0.0
+                    )
+                }
             }
             ep.reset()
         } else {
             // else, run with the pd in the opposite direction in order to stop it and counteract the slip for a bit then stop
-            if (ep.milliseconds() < 10) {
+            if (ep.seconds() < retardationTimer) {
                 chassis.rc_drive(
                     PDFCY.f * sign(err.y),
                     -PDFCX.f * sign(-err.x),
@@ -146,6 +188,7 @@ class P2P {
                 if (!done) {
                     send_toall("0errs $p2p_logid", "${fe(err)} ${target_pose.name}")
                     ++p2p_logid
+                    setCol(Color.rgb(255, 0, 0))
                 }
             }
             else {
@@ -153,6 +196,7 @@ class P2P {
                 if (!done) {
                     send_toall("0errs $p2p_logid", "${fe(err)} ${target_pose.name}")
                     ++p2p_logid
+                    setCol(Color.rgb(255, 0, 0))
                 }
                 done = true
             }

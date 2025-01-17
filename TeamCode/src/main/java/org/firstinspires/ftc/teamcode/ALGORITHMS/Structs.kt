@@ -20,7 +20,7 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
     }
 }
 
-class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double, @JvmField var tolerance: Vec4D, var name: String = ""){
+class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double, @JvmField var tolerance: Vec4D, var name: String = "", @JvmField var customff: Double = 999.9, @JvmField var is_headingonly: Boolean = false){
     constructor(): this(0.0, 0.0, 0.0, 0.0)
     constructor(x: Double, y: Double, h: Double, decelPose: Vec2D): this(x, y, h, 1.0, decelPose)
     constructor(x: Double, y: Double, h: Double): this(x, y, h, 1.0)
@@ -39,11 +39,28 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
         return this
     }
 
-    operator fun plus(pose: Pose): Pose = Pose(x + pose.x, y + pose.y, h + pose.h, vel + pose.vel)
+    fun setff(s: Double): Pose {
+        customff = s
+        return this
+    }
 
-    operator fun minus(pose: Pose): Pose = Pose(x - pose.x, y - pose.y, h - pose.h, vel - pose.vel)
+    fun setHeading(b: Boolean): Pose{
+        is_headingonly = b
+        return this
+    }
 
-    operator fun times(a: Double): Pose = Pose(a * x, a * y, a * h, vel)
+    fun duplicate() = Pose(x, y, h, vel, decelPose, goodEnough, tolerance, name)
+
+    operator fun plus(pose: Pose): Pose = Pose(x + pose.x, y + pose.y, h + pose.h, vel + pose.vel, pose.decelPose, pose.goodEnough, pose.tolerance, pose.name, pose.customff, pose.is_headingonly)
+
+    operator fun minus(pose: Pose): Pose = Pose(x - pose.x, y - pose.y, h - pose.h, vel - pose.vel, pose.decelPose, pose.goodEnough, pose.tolerance, pose.name, pose.customff, pose.is_headingonly)
+
+    operator fun times(a: Double): Pose {
+        val np = duplicate()
+        np.x *= a
+        np.y *= a
+        return np
+    }
 
     operator fun div(a: Double): Pose = Pose(x / a, y / a, h / a, vel)
 

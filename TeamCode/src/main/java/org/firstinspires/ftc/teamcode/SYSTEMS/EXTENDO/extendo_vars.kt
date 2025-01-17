@@ -24,7 +24,7 @@ object extendo_vars {
 
     @JvmField
     // Might get changed
-    var proportional: Double = 0.004
+    var proportional: Double = 0.005
     @JvmField
     // To be changed
     var derivative: Double = 0.2
@@ -33,6 +33,9 @@ object extendo_vars {
     var force: Double = 0.0
     @JvmField
     var tolerance: Double = 5.5
+
+    @JvmField
+    var hometolerance: Double = 15.0
 
     var extendo_target: Int = 0
 

@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.derivative
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.force
+import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.highLooseDif
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_basket
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_chamber
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.high_rung
@@ -80,6 +81,7 @@ object commands
     }
 
     fun isLiftinMaxTolerance() = lift.chub_slides.currentpos > high_basket-30
+    fun isLiftinLooseMaxTolerance() = lift.chub_slides.currentpos > high_basket-highLooseDif
 
     fun isLiftinHomeTolerance() = abs(lift_target - lift.chub_slides.currentpos) < 50.0
     fun isSpecimenScored() = abs(1200 - lift.chub_slides.power) < tolerance_tight

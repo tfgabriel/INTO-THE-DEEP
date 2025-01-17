@@ -45,6 +45,9 @@ object lift_vars {
     @JvmField
     var tolerance_loose: Double = 14.0
 
+    @JvmField
+    var highLooseDif: Int = 300
+
     var lift_target: Int = 0
 
     @JvmField

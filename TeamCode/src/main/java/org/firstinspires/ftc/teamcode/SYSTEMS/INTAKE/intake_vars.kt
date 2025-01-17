@@ -5,24 +5,18 @@ import com.acmerobotics.dashboard.config.Config
 @Config
 object intake_vars {
     @JvmField
-    var transfer: Double = 0.87 //+0.08
+    var transfer: Double = 0.83 //+0.08
 
     @JvmField
-    var hover:Double = 0.60
+    var hover:Double = 0.59
 
     @JvmField
-    var intake : Double = 0.53
-
-    var wrist_intake: Double = 0.60
+    var intake : Double = 0.5
     @JvmField
     var wrist_neutral: Double = 0.6 //+0.11
 
     @JvmField
     var reset_offset = 0.04
-
-    var intaker_power: Double = 1.0
-    var intaker_spit_power: Double = -1.0
-
     var fourbar_intake: Double = 0.6 + reset_offset//+0.078
     @JvmField
     var fourbar_third: Double = 0.708 + reset_offset

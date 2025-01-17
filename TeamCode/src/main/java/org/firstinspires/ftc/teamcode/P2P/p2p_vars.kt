@@ -4,10 +4,17 @@ import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFC
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec4D
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.control_hub
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.expansion_hub
 import kotlin.math.sqrt
 
 @Config
 object p2p_vars{
+
+    fun setCol(col: Int) {
+        expansion_hub.setConstant(col)
+        control_hub.setConstant(col)
+    }
     @JvmField
     var PDFCX: PDFC = PDFC(0.05, 0.0, 0.00)
     @JvmField
@@ -31,11 +38,14 @@ object p2p_vars{
     var anti_eh_fa: Double = 0.4
 
     @JvmField
+    var retardationTimer = 0.00
+
+    @JvmField
     var PeruMin = 0.2
     @JvmField
     var PeruMinTime = 0.22
     @JvmField
-    var PeruMinAngCoef = 0.9
+    var PeruMinAngCoef = 0.8
     @JvmField
     var PeruMax = sqrt(2.0)
 }

@@ -11,11 +11,11 @@ object outtake_vars {
     @JvmField
     var idle = 0.28
     @JvmField
-    var score_basket = 0.51
+    var score_basket = 0.52
     @JvmField
     var score_specimen = 0.48
     @JvmField
-    var steal = 0.69
+    var steal = 0.73
 
 
     @JvmField
@@ -23,7 +23,7 @@ object outtake_vars {
     @JvmField
     var fb_score = 0.51
     @JvmField
-    var fb_steal = 0.96
+    var fb_steal = 0.98
 
     @JvmField
     var claw_open = 0.5
