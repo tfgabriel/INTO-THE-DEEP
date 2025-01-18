@@ -466,6 +466,7 @@ class Sample : LinearOpMode() {
                 InstantCommand { p2p.followpath(rotate1) },
                 WaitUntilCommand { p2p.done },
                 doDunk(dunk),
+                setIntakeState(1), setClawIntakeState(0),
             ),
 
             SequentialCommand(
@@ -495,6 +496,7 @@ class Sample : LinearOpMode() {
 
                 InstantCommand { setLiftTarget(6) },
                 WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
+                setIntakeState(1),
 
                 doDunk(dunk),
             ),
@@ -522,6 +524,7 @@ class Sample : LinearOpMode() {
 
                 InstantCommand { setLiftTarget(6) },
                 WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
+                setIntakeState(1),
 
                 doDunk(dunkmid),
             ),

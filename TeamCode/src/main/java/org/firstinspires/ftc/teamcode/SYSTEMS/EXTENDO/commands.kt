@@ -80,20 +80,29 @@ object commands {
     }
 
     fun setExtendo(gamepad_power: Double) {
-        val err = extendo_target - extendo.chub_rails.currentpos
+        val cp = extendo.chub_rails.currentpos
+        val err = extendo_target - cp
 
-        if (extendo_target == home_extendo) {
-            if (isExtendoinHomeTolerance()) {
+        if (abs(gamepad_power) > 0.001) {
+            if (isExtendoinHomeTolerance() && gamepad_power > 0) {
+                setExtendoPowers(0.0)
+            } else if (cp < max_examination && gamepad_power < 0) {
                 setExtendoPowers(0.0)
             } else {
-                setExtendoPowers(1.0)
+                setExtendoPowers(force * sign(err.toDouble()) + gamepad_power * 0.5)
             }
-        } else if (!isExtendoinTolerance()) {
-            setExtendoPowers(extendo_pdf.update(err.toDouble()))
-            send_toall("extendo is", "going elsewhere")
-        } else {
-            setExtendoPowers(force * sign(err.toDouble()) + gamepad_power * 0.5)
             send_toall("extendo is", "idling")
+        } else {
+            if (extendo_target == home_extendo) {
+                if (isExtendoinHomeTolerance()) {
+                    setExtendoPowers(0.0)
+                } else {
+                    setExtendoPowers(1.0)
+                }
+            } else if (!isExtendoinTolerance()) {
+                setExtendoPowers(extendo_pdf.update(err.toDouble()))
+                send_toall("extendo is", "going elsewhere")
+            }
         }
 
 

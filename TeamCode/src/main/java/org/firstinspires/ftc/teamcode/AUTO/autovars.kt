@@ -23,7 +23,7 @@ object SpecimenVars {
     @JvmField
     var s_8 = Pose(-75.0, -40.0, PI, Vec2D(0.0, 0.0), 0.0, Vec4D(30.0, 0.2, 200.0, 200.0))
     @JvmField
-    var s_9 = Pose(-73.0, -10.0, PI, Vec2D(20.0, 20.0), 20.0, Vec4D(5.0, 0.2, 200.0, 200.0))
+    var s_9 = Pose(-73.0, -10.0, PI, Vec2D(20.0, 20.0), 25.0, Vec4D(5.0, 0.2, 200.0, 200.0)).setff(0.02)
 
     @JvmField
     var wait_move = 0.00
@@ -96,7 +96,7 @@ object sample_vars {
     var dunk = Pose(-17.0, -48.0, Math.toRadians(45.0), Vec2D(14.0, 15.0), 10.0, Vec4D(10.0, 0.1, 200.0, 200.0)).setName("dunk")
 
     @JvmField
-    var sample_1 = Pose(-22.0, -31.0, 1.62 , Vec2D(20.0, 20.0), 7.0).setName("sample1")
+    var sample_1 = Pose(-20.5, -31.0, 1.62 , Vec2D(20.0, 20.0), 9.0).setName("sample1")
 
     @JvmField
     var sample_2 = Pose(-37.0, -56.7, 1.6, Vec2D(17.0, 17.0), 10.0).setName("sample2")
@@ -164,7 +164,7 @@ object sample_vars {
 
     @JvmField
 
-    var dunkmid = Pose(-20.0, -48.0, Math.toRadians(45.0), Vec2D(14.0, 15.0), 10.0, Vec4D(10.0, 0.1, 200.0, 200.0)).setName("dunk")
+    var dunkmid = Pose(-18.0, -48.0, Math.toRadians(45.0), Vec2D(14.0, 15.0), 10.0, Vec4D(10.0, 0.1, 200.0, 200.0)).setName("dunk")
 
     @JvmField
     var rotatemid = Pose(-22.0, -44.0, 1.62, Vec2D(14.0, 15.0), 10.0, Vec4D(5.0, 0.1, 200.0, 200.0)).setName("rotateMid")

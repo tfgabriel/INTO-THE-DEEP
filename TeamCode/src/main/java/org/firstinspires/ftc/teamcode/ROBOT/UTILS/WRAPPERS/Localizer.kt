@@ -43,6 +43,9 @@ class Localizer(name: String) {
         vel = (pose - lpose) / ep.seconds()
         ep.reset()
         send_toall("UPDATE SPARKFUN TIME", et.seconds())
+        send_toall("pvel x", vel.x)
+        send_toall("pvel y", vel.y)
+        send_toall("pvel h", vel.h)
     }
     fun reset() = otos.resetTracking()
 

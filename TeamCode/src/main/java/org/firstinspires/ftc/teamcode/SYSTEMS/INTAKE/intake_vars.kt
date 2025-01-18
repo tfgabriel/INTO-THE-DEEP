@@ -11,7 +11,7 @@ object intake_vars {
     var hover:Double = 0.57
 
     @JvmField
-    var intake : Double = 0.49
+    var intake : Double = 0.48
     @JvmField
     var wrist_neutral: Double = 0.6 //+0.11
 
