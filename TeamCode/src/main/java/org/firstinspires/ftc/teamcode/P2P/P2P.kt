@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCFinalY
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCH
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCX
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCY
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PDFCsebiH
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMax
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMin
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMinAngCoef
@@ -46,6 +47,8 @@ class P2P {
     var xFinalPDF: SQUID = SQUID()
     var yFinalPDF: SQUID = SQUID()
     var hFinalPDF: PDF = PDF()
+
+    var hsebiPDF: PDF= PDF()
     val ep: ElapsedTime = ElapsedTime()
     var done: Boolean = false
 
@@ -68,6 +71,8 @@ class P2P {
         xFinalPDF = SQUID(pfx)
         yFinalPDF = SQUID(pfy)
         hFinalPDF = PDF(PDFCFinalH)
+
+        hsebiPDF = PDF(PDFCsebiH)
         done = false
         path = current_path
         target_pose = current_path
@@ -152,7 +157,7 @@ class P2P {
                     )
                 }
                 else{
-                    var sebi = if(HANDYMIN)
+                    val sebi = if(HANDYMIN)
                         PeruMin
                     else
                         PeruMax
@@ -167,7 +172,7 @@ class P2P {
                     chassis.rc_drive(
                         handicapped_move.y, handicapped_move.x,
                         clamp(
-                            if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(
+                            if (dist < target_pose.goodEnough) -hsebiPDF.update(err.h) else -hPDF.update(
                                 err.h
                             ), -peruCoef * PeruMinAngCoef, peruCoef * PeruMinAngCoef
                         ),

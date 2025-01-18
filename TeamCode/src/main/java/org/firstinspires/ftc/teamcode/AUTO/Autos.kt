@@ -21,7 +21,8 @@ import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_8
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_9
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_gen
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_offset
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_preload
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.Ascore_preload
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.Bwait_theydontloveyoulikeiloveyou
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleep_steal
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleepy_extend_from_preload
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleepy_extend_third_impact
@@ -32,7 +33,6 @@ import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.testp
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.the_third_children
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_move
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_take
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wait_theydontloveyoulikeiloveyou
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wo1
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wo2
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.wo3
@@ -92,7 +92,6 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinMaxTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLift
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setArmState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setOuttake
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setOuttakeFourbar
@@ -257,7 +256,7 @@ class SpecimenPrime : LinearOpMode() {
                 InstantCommand { setLiftTarget(3) },
                 SleepCommand(0.2),
                 setOuttake(2),
-                InstantCommand { p2p.followpath(score_preload) },
+                InstantCommand { p2p.followpath(Ascore_preload) },
             ),
             WaitUntilCommand { p2p.done },
 
@@ -267,7 +266,7 @@ class SpecimenPrime : LinearOpMode() {
                 setClawState(1),
                 SleepCommand(0.2),
                 setOuttake(1),
-                InstantCommand { p2p.followpath(wait_theydontloveyoulikeiloveyou) },
+                InstantCommand { p2p.followpath(Bwait_theydontloveyoulikeiloveyou) },
                 WaitUntilCommand { p2p.done },
                 InstantCommand { p2p.followpath(bomboclaat_0) },
             ),
@@ -324,19 +323,21 @@ class SpecimenPrime : LinearOpMode() {
             //pickup third sample
             InstantCommand { intake.wrist.position = 0.9 },
             InstantCommand { setExtendoTarget(1) },
+
             InstantCommand { p2p.followpath(the_third_children) },
-            InstantCommand { intake.wrist.position = 0.9 },
             WaitUntilCommand { p2p.done },
+
             InstantCommand { setExtendoTarget(2) },
             InstantCommand { setExtendoPowers(1.0) },
             setIntakeState(1),
-            InstantCommand { intake.wrist.position = 0.9 },
             WaitUntilCommand { p2p.done },
+
             SleepCommand(sleepy_extend_third_impact),
             take(wrist_three, false),
-            InstantCommand { setExtendoPowers(0.0) },
 
+            InstantCommand { setExtendoPowers(0.0) },
             InstantCommand { setExtendoTarget(2) },
+
             //dropoff third sample
             SequentialCommand(
                 setIntakeState(1),
@@ -360,7 +361,7 @@ class SpecimenPrime : LinearOpMode() {
             ),
 
             //score wall specimen
-            goto_chamber(score_offset),
+            goto_chamber(Pose()),
             WaitUntilCommand { p2p.done },
             place_specimen(),
 
@@ -560,7 +561,7 @@ class Sample : LinearOpMode() {
                 InstantCommand { p2p.followpath(park2) },
                 SleepCommand(0.1),
                 InstantCommand { setLiftTarget(0) },
-                setOuttake(3),
+                setOuttake(2),
                 WaitUntilCommand { p2p.done },
                 InstantCommand { p2p.followpath(park3) },
                 WaitUntilCommand { p2p.done }

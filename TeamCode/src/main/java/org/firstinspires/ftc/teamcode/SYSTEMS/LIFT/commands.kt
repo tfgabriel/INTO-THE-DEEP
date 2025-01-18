@@ -83,7 +83,7 @@ object commands
     fun isLiftinMaxTolerance() = lift.chub_slides.currentpos > high_basket-30
     fun isLiftinLooseMaxTolerance() = lift.chub_slides.currentpos > high_basket-highLooseDif
 
-    fun isLiftinHomeTolerance() = abs(lift_target - lift.chub_slides.currentpos) < 50.0
+    fun isLiftinHomeTolerance() = lift.chub_slides.currentpos < 40.0
     fun isSpecimenScored() = abs(1200 - lift.chub_slides.power) < tolerance_tight
 
     fun setLiftPowers(pwr1: Double){

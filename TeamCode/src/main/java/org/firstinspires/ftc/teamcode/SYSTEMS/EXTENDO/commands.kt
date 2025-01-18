@@ -64,7 +64,7 @@ object commands {
     }
 
     fun isExtendoinTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < tolerance
-    fun isExtendoinHomeTolerance() = abs(extendo_target - extendo.chub_rails.currentpos) < hometolerance
+    fun isExtendoinHomeTolerance() = extendo.chub_rails.currentpos > hometolerance
 
     /*
     fun setExtendoPowers(pwr1: Double, pwr2: Double){

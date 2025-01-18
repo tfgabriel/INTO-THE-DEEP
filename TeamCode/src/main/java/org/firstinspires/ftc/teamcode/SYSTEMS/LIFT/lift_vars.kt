@@ -48,6 +48,7 @@ object lift_vars {
     @JvmField
     var highLooseDif: Int = 300
 
+    @JvmField
     var lift_target: Int = 0
 
     @JvmField

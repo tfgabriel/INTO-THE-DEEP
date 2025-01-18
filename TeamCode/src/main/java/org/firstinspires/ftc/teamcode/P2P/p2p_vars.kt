@@ -30,6 +30,8 @@ object p2p_vars{
     var PDFCFinalH: PDFC = PDFC(0.4, 0.0, 0.0)
 
     @JvmField
+    var PDFCsebiH: PDFC = PDFC(0.3, 0.0, 0.0)
+    @JvmField
     var deftones: Vec4D = Vec4D(5.2, 0.1, 6.0, 6.0) /// Pose, Ang, PoseVel, AngVel
 
     @JvmField

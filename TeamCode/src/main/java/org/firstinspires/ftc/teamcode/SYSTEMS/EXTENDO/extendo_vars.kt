@@ -13,7 +13,7 @@ object extendo_vars {
 
 
     @JvmField
-    var max_examination: Int = -730
+    var max_examination: Int = -725
     @JvmField
     var home_examination: Int = 0
 
@@ -35,8 +35,9 @@ object extendo_vars {
     var tolerance: Double = 5.5
 
     @JvmField
-    var hometolerance: Double = 15.0
+    var hometolerance: Double = -15.0
 
+    @JvmField
     var extendo_target: Int = 0
 
     @JvmField
