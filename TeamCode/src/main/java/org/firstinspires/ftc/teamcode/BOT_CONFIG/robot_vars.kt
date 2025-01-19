@@ -124,4 +124,16 @@ object robot_vars {
 
     @JvmField
     var HANDYMIN = false
+
+    /*
+        Expansion:
+            Motor: CHUB_RAIL, EHUB_SLIDE, CHUB_SLIDE, None
+            Servo: CHUB_ARM_INTAKE, EHUB_ARM_INTAKE, NONE, WRIST_INTAKE, fourbar, CLAWS,
+
+        Contrl:
+            Motor: RF, RB, LF, LB
+            Servo: EHUB_ARM_OUTTAKE, None FOURBAR, CLAW, None, CHUB_ARM_OUTTAKE
+
+
+     */
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.AUTO
 
 import com.acmerobotics.dashboard.config.Config
+import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFC
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec4D
@@ -11,7 +12,7 @@ object SpecimenVars {
 
     @JvmField
     var Ascore_preload =
-        Pose(0.0, -85.0, 0.0, Vec2D(50.0, 55.0), 25.0, Vec4D(20.0, 0.4, 200.0, 200.0))
+        Pose(0.0, -82.0, 0.0, Vec2D(65.0, 75.0), 45.0, Vec4D(20.0, 0.4, 200.0, 200.0)).setff(0.025)
 
 
     @JvmField
@@ -23,7 +24,7 @@ object SpecimenVars {
     @JvmField
     var oppositionclaims = Pose(-70.0, -35.0, 0.0, Vec2D(0.0, 0.0), 0.0, Vec4D(30.0, 0.8, 200.0, 200.0)).setHeading(true)
     @JvmField
-    var oppositionclaimsRetard = Pose(0.0, -35.0, 0.0, Vec2D(0.0, 0.0), 0.0, Vec4D(30.0, 0.8, 200.0, 200.0))
+    var oppositionclaimsRetard = Pose(0.0, -31.0, 0.0, Vec2D(0.0, 0.0), 0.0, Vec4D(30.0, 0.8, 200.0, 200.0))
     @JvmField
     var score_gen = Pose(0.0, -83.0, 0.0, Vec2D(50.0, 55.0), 40.0, Vec4D(20.0, 0.4, 200.0, 200.0)).setff(0.025)
     @JvmField
@@ -31,9 +32,9 @@ object SpecimenVars {
 
 
     @JvmField
-    var first_spin = Pose(-72.0, -52.0, 2.15, Vec2D(), 5.0, Vec4D(5.0, 0.1, 200.0, 200.0)).setHeading(true)
+    var first_spin = Pose(-72.0, -52.0, 2.15, Vec2D(), 1.0, Vec4D(5.0, 0.1, 200.0, 200.0)).setHeading(true)
     @JvmField
-    var second_spin = Pose(-72.0, -52.0, 2.35, Vec2D(), 5.0, Vec4D(5.0, 0.1, 200.0, 200.0)).setHeading(true)
+    var second_spin = Pose(-72.0, -52.0, 2.35, Vec2D(), 1.0, Vec4D(5.0, 0.1, 200.0, 200.0)).setHeading(true)
     @JvmField
     var drop_speci = -530
     @JvmField
@@ -49,15 +50,15 @@ object SpecimenVars {
     var wrist_three = 0.9
 
     @JvmField
-    var spinny_baby = Pose(-72.0, -58.0, 0.7, Vec2D(0.0, 0.0), 00.0, Vec4D(6.0, 0.2, 200.0, 200.0)).setHeading(true)
+    var spinny_baby = Pose(-72.0, -45.0, 0.7, Vec2D(0.0, 0.0), 0.0, Vec4D(10.0, 0.2, 200.0, 200.0)).setHeading(true)
     @JvmField
     var wait_take = 0.35
 
     @JvmField
-    var the_third_children = Pose(-85.0, -93.0, Math.toRadians(90.0), Vec2D(20.0, 20.0), 15.0).setff(0.025)
+    var the_third_children = Pose(-85.0, -90.0, Math.toRadians(90.0), Vec2D(20.0, 20.0), 15.0).setff(0.025)
 
     @JvmField
-    var spinny_baby3 = Pose(-74.0, -58.0, 0.5, Vec2D(0.0, 0.0), 0.0, Vec4D(10.0, 0.3, 200.0, 200.0))
+    var spinny_baby3 = Pose(-74.0, -45.0, 0.5, Vec2D(0.0, 0.0), 0.0, Vec4D(10.0, 0.3, 200.0, 200.0))
 
     @JvmField
     var sleepy_extend_from_preload = 0.2
@@ -66,17 +67,17 @@ object SpecimenVars {
     var sleepy_extend_third_impact = 0.3
 
     @JvmField
-    var testp = Pose(0.0, -40.0, 0.0, 1.0)
+    var testp = Pose(0.0, 0.0, 1.7, 1.0, Vec2D(0.0, 0.0), 0.0, Vec4D())
     @JvmField
-    var bomboclaat = Pose(-74.0, -58.0, 2.36, Vec2D(0.0, 0.0), 4.0, Vec4D(4.0, 0.15, 200.0, 200.0)).setHeading(true)
+    var bomboclaat = Pose(-74.0, -45.0, 2.36, Vec2D(0.0, 0.0), 1.0, Vec4D(4.0, 0.15, 200.0, 200.0)).setHeading(true)
 
     @JvmField
-   var bomboclaat_0 = Pose(-74.0, -58.0, 2.56, Vec2D(50.0, 50.0), 10.0, Vec4D(4.0, 0.1, 200.0, 200.0))
+   var bomboclaat_0 = Pose(-74.0, -45.0, 2.45, Vec2D(50.0, 50.0), 10.0, Vec4D(4.0, 0.1, 200.0, 200.0))
 
     @JvmField
     var extension_0 = -500
     @JvmField
-    var steal_withff = Pose(-75.0, -18.0, PI, Vec2D(20.0, 20.0), 35.0, Vec4D(3.5, 0.2, 200.0, 200.0)).setff(0.025)
+    var steal_withff = Pose(-75.0, -14.0, PI, Vec2D(20.0, 20.0), 35.0, Vec4D(3.5, 0.2, 200.0, 200.0)).setff(0.025)
 
     @JvmField
     var wo1 = Pose()
@@ -103,7 +104,10 @@ object sample_vars {
     var dunk = Pose(-17.0, -48.0, Math.toRadians(45.0), Vec2D(14.0, 15.0), 10.0, Vec4D(10.0, 0.1, 200.0, 200.0)).setName("dunk")
 
     @JvmField
-    var sample_1 = Pose(-20.5, -31.0, 1.62 , Vec2D(20.0, 20.0), 9.0).setName("sample1")
+    var extPFDC = PDFC(0.018, 0.01, 0.0)
+
+    @JvmField
+    var sample_1 = Pose(-20.5, -31.0, 1.57 , Vec2D(20.0, 20.0), 9.0).setName("sample1")
 
     @JvmField
     var sample_2 = Pose(-37.0, -51.0, 1.6, Vec2D(17.0, 17.0), 10.0).setName("sample2")
@@ -112,7 +116,7 @@ object sample_vars {
     var sample2_examination: Int = -540
 
     @JvmField
-    var sample_three = Pose(-85.0, -13.0, Math.toRadians(180.0), Vec2D(20.0, 20.0), 13.0).setName("sample3").setff(0.025)
+    var sample_three = Pose(-85.0, -13.0, Math.toRadians(180.0), Vec2D(20.0, 20.0), 12.5).setName("sample3").setff(0.025)
 
     @JvmField
     var wait_takeS = 0.27

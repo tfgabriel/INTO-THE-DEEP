@@ -249,6 +249,14 @@ class SpecimenPrime : LinearOpMode() {
         )
     }
 
+    private fun waitPExst() =
+        SequentialCommand(
+            WaitUntilCommand {p2p.done},
+            InstantCommand {setCol(Color.rgb(0, 255, 0)) } ,
+            WaitUntilCommand { isExtendoinTolerance() },
+            InstantCommand {setCol(Color.rgb(255, 255, 255)) }
+        )
+
     override fun runOpMode() {
         isAuto = true
         val robot = Robot(true, true, false)
@@ -257,7 +265,11 @@ class SpecimenPrime : LinearOpMode() {
         localizer.reset()
         current_command = SequentialCommand(
             //score preload
+
+
             InstantCommand { setExtendoTarget(0) },
+            setOuttake(2),
+
             SequentialCommand(
                 InstantCommand { setLiftTarget(3) },
                 SleepCommand(0.2),
@@ -290,7 +302,7 @@ class SpecimenPrime : LinearOpMode() {
                     InstantCommand { intake.wrist.position = wrist_one },
                     setClawIntakeState(0),
                 ),
-                WaitUntilCommand { isExtendoinTolerance() && p2p.done },
+                waitPExst(),
                 SleepCommand(wait_take),
                 setIntakeState(2),
                 SleepCommand(wait_take),
@@ -305,7 +317,7 @@ class SpecimenPrime : LinearOpMode() {
                 InstantCommand { setExtendoTargetLinear(drop_speci) },
                 InstantCommand { p2p.followpath(spinny_baby) },
                 SleepCommand(wait_move),
-                WaitUntilCommand { p2p.done && isExtendoinTolerance() },
+                waitPExst(),
                 setClawIntakeState(0),
                 setIntakeState(1)
             ),
@@ -345,7 +357,6 @@ class SpecimenPrime : LinearOpMode() {
             take(wrist_three, false),
 
             InstantCommand { setExtendoPowers(0.0) },
-            InstantCommand { setExtendoTarget(2) },
 
             //dropoff third sample
             SequentialCommand(
@@ -408,12 +419,6 @@ class Sample : LinearOpMode() {
             setOuttake(3),
             setOuttakeFourbar(3),
 
-            setOuttake(3),
-            setOuttakeFourbar(3),
-            setOuttake(3),
-            setOuttakeFourbar(3),
-            setOuttake(3),
-            setOuttakeFourbar(3),
             WaitUntilCommand { p2p.done && isLiftinMaxTolerance() },
             setOuttake(3),
             setOuttakeFourbar(3),
@@ -529,10 +534,12 @@ class Sample : LinearOpMode() {
 
                 WaitUntilCommand { p2p.done },
                 InstantCommand { setExtendoTarget(2) },
+                InstantCommand { setExtendoPowers(1.0) },
                 SleepCommand(0.1),
                 setIntakeState(1),
                 InstantCommand { intake.wrist.position = 0.9 },
                 SleepCommand(sleepExtendoThird),
+
                 InstantCommand { setExtendoPowers(1.0) },
                 doGrab(true),
             ),
@@ -611,22 +618,7 @@ class testy : LinearOpMode() {
         DISABLE_CAM = true
         localizer.reset()
         current_command = SequentialCommand(
-            InstantCommand { p2p.followpath(getc()) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(getc()*2.0) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(getc()*3.0) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(getc()*4.0) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(getc()*3.0) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(getc()*2.0) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(getc()*1.0) },
-            WaitUntilCommand { p2p.done },
-            InstantCommand { p2p.followpath(getc()*0.0) },
-            WaitUntilCommand { p2p.done },
+            InstantCommand { p2p.followpath(testp)}
         )
 
         waitForStart()

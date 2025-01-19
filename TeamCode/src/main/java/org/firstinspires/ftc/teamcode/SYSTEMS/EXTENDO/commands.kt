@@ -45,7 +45,6 @@ object commands {
     }
 
     fun setExtendoTargetCommand(state: Int): Command {
-
         extendo_pdf = if (state != -1)
             SQUID(extc)
         else

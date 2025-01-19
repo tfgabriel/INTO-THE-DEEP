@@ -24,8 +24,9 @@ object extendo_vars {
 
     var extendo_pdf: SQUID = SQUID()
 
-    @JvmField
     var extc = PDFC(0.05, 0.002, 0.0)
+    @JvmField
+    var textc = PDFC(0.05, 0.002, 0.0)
     @JvmField
     var tolerance: Double = 5.5
 

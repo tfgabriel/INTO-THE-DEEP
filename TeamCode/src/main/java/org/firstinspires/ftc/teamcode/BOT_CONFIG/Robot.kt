@@ -6,6 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.AUTO.sample_vars.extPFDC
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.ImewToClose
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.USE_TELE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
@@ -40,7 +41,9 @@ import org.firstinspires.ftc.teamcode.TELEMETRY.drawings
 import org.firstinspires.ftc.teamcode.TELEOPS.DISABLE_CAM
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extc
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.textc
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.isLiftinMaxTolerance
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall_imp
 
@@ -59,6 +62,7 @@ class Robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         val tp = TelemetryPacket()
         chassis = Chassis()
         tp.put("0Chassis", ep.seconds()); dashboard.sendTelemetryPacket(tp)
+        extc = if (isAuto) { extPFDC } else  { textc }
         lift = Lift()
         tp.put("0Lift", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         extendo = Extendo()
@@ -107,11 +111,12 @@ class Robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
                 if (ImewToClose) {
                     imew.close()
                     imew.init()
+                    ImewToClose = false
                 }
             }
             imew.initThread()
         } catch (e: Exception) {
-            imew = ThreadedIMU("imu")
+            imew = ThreadedIMU("IMU")
             imew.init()
             imew.initThread()
         }
