@@ -80,7 +80,7 @@ object commands
         return lift.intolerance
     }
 
-    fun isLiftinMaxTolerance() = lift.chub_slides.currentpos > high_basket-30
+    fun isLiftinMaxTolerance() = lift.chub_slides.currentpos > high_basket-70
     fun isLiftinLooseMaxTolerance() = lift.chub_slides.currentpos > high_basket-highLooseDif
 
     fun isLiftinHomeTolerance() = lift.chub_slides.currentpos < 40.0

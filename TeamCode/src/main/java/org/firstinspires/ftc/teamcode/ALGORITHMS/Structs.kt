@@ -20,7 +20,7 @@ class Array(val val1: Double, val val2: Double, val val3: Double){
     }
 }
 
-class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double, @JvmField var tolerance: Vec4D, var name: String = "", @JvmField var customff: Double = 999.9, @JvmField var is_headingonly: Boolean = false){
+class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double, @JvmField var vel: Double, @JvmField var decelPose: Vec2D, @JvmField var goodEnough: Double, @JvmField var tolerance: Vec4D, var name: String = "", @JvmField var customff: Double = 999.9, @JvmField var is_headingonly: Boolean = false, @JvmField var timeout: Double = 3.0){
     constructor(): this(0.0, 0.0, 0.0, 0.0)
     constructor(x: Double, y: Double, h: Double, decelPose: Vec2D): this(x, y, h, 1.0, decelPose)
     constructor(x: Double, y: Double, h: Double): this(x, y, h, 1.0)
@@ -36,6 +36,11 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
 
     fun setName(s: String): Pose {
         name = s
+        return this
+    }
+
+    fun setTimeout(s: Double): Pose {
+        timeout = s
         return this
     }
 

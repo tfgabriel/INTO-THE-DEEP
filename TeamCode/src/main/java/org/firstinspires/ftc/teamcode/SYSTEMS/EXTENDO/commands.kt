@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO
 
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
+import org.firstinspires.ftc.teamcode.ALGORITHMS.SQUID
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.derivative
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extc
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_pdf
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extendo_target
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.force
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.home_extendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.hometolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.max_examination
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.mid_examination
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.proportional
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.tolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.home
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
@@ -27,9 +26,9 @@ object commands {
     ///0 - home, 1 - mid , 2 - max, 3 - max_submersible
     fun setExtendoTarget(state: Int) {
         extendo_pdf = if (state != -1)
-            PDF(proportional, derivative, force)
+            SQUID(extc)
         else
-            PDF()
+            SQUID()
 
         extendo_target = if (state == 0)
             home_extendo
@@ -41,16 +40,16 @@ object commands {
     }
 
     fun setExtendoTargetLinear(dist: Int) {
-        extendo_pdf = PDF(proportional, derivative, force)
+        extendo_pdf = SQUID(extc)
         extendo_target = dist
     }
 
     fun setExtendoTargetCommand(state: Int): Command {
 
         extendo_pdf = if (state != -1)
-            PDF(proportional, derivative, force)
+            SQUID(extc)
         else
-            PDF()
+            SQUID()
 
         return InstantCommand {
             extendo_target = if (state == 0)
@@ -89,7 +88,7 @@ object commands {
             } else if (cp < max_examination && gamepad_power < 0) {
                 setExtendoPowers(0.0)
             } else {
-                setExtendoPowers(force * sign(err.toDouble()) + gamepad_power * 0.5)
+                setExtendoPowers(extc.f * sign(err.toDouble()) + gamepad_power * 0.5)
             }
             send_toall("extendo is", "idling")
         } else {
@@ -102,6 +101,8 @@ object commands {
             } else if (!isExtendoinTolerance()) {
                 setExtendoPowers(extendo_pdf.update(err.toDouble()))
                 send_toall("extendo is", "going elsewhere")
+            } else {
+                setExtendoPowers(0.0)
             }
         }
 

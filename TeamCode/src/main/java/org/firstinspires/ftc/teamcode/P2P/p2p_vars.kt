@@ -35,6 +35,15 @@ object p2p_vars{
     var deftones: Vec4D = Vec4D(5.2, 0.1, 6.0, 6.0) /// Pose, Ang, PoseVel, AngVel
 
     @JvmField
+    var bigP = PDFC(0.8, 0.0, 0.0)
+    @JvmField
+    var smalPPX = PDFC(0.012, 0.0, 0.0)
+    @JvmField
+    var smalPPY = PDFC(0.012, 0.0, 0.0)
+    @JvmField
+    var smalPPH = PDFC(0.5, 0.0, 0.15)
+
+    @JvmField
     var anti_ch_fa: Double = 0.17
     @JvmField
     var anti_eh_fa: Double = 0.4

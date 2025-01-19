@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.clamp
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.pos_diff
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
+import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFC
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.ALGORITHMS.SQUID
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
@@ -27,8 +28,12 @@ import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMax
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMin
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMinAngCoef
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.PeruMinTime
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.bigP
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.retardationTimer
 import org.firstinspires.ftc.teamcode.P2P.p2p_vars.setCol
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.smalPPH
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.smalPPX
+import org.firstinspires.ftc.teamcode.P2P.p2p_vars.smalPPY
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import kotlin.math.abs
 import kotlin.math.sign
@@ -48,11 +53,12 @@ class P2P {
     var yFinalPDF: SQUID = SQUID()
     var hFinalPDF: PDF = PDF()
 
-    var hsebiPDF: PDF= PDF()
+    var hsebiPDF: PDF = PDF()
     val ep: ElapsedTime = ElapsedTime()
     var done: Boolean = false
 
     var robot_vel = Pose()
+    val eet = ElapsedTime()
 
     var p2p_logid = 0
 
@@ -82,6 +88,7 @@ class P2P {
         start_pose =
             Pose(localizer.pose.x, localizer.pose.y, angNorm(localizer.pose.h), current_path.vel)
 
+        eet.reset()
         setCol(Color.rgb(255, 255, 255))
     }
 
@@ -98,8 +105,28 @@ class P2P {
 
     var hitPeruMin = false
     var et = ElapsedTime()
+    val pbigP = PDF(bigP)
+    val psmalPPH = PDF(smalPPH)
+    val psmalPPX = PDF(smalPPX)
+    val psmalPPY = PDF(smalPPY)
 
     fun fe(p: Pose) = String.format("%.2f %.2f %.2f", p.x, p.y, angDiff(p.h, 0.0))
+
+    private fun move_headingonly(err: Pose) {
+        if (abs(err.h) < target_pose.goodEnough) {
+            chassis.rc_drive(
+                clamp(
+                    Vec2D(
+                        clamp(psmalPPX.update(-err.x) * target_pose.vel, -1.0, 1.0),
+                        clamp(-psmalPPY.update(err.y) * target_pose.vel, -1.0, 1.0)
+                    ), -PeruMin,
+                    PeruMin
+                ), clamp(psmalPPH.update(-err.h), -PeruMin * PeruMinAngCoef, PeruMin * PeruMinAngCoef), 0.0
+            )
+        } else {
+            chassis.rc_drive(Vec2D(), pbigP.update(-err.h), 0.0)
+        }
+    }
 
     fun update() {
         current_pos = localizer.pose + Pose(0.0, 0.0, 0.0, target_pose.vel)
@@ -112,7 +139,7 @@ class P2P {
         err = err.rotate(-current_pos.h)
         err.h = ang_diff(current_pos.h, target_pose.h)
         // If the robot is not in tolerance, run with the pd
-        if (!isBotinTolerance()) {
+        if (!isBotinTolerance() && eet.seconds() < target_pose.timeout) {
             val dist = err.distance()
             val peruCoef = getPeruCoef(err.distance())
             if (!hitPeruMin && pos_diff(peruCoef, PeruMin)) {
@@ -122,30 +149,33 @@ class P2P {
 
             val move = clamp(
                 (if (dist < target_pose.goodEnough) // Use Final pid when close enough
-                Vec2D(
-                    clamp(xFinalPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
-                    clamp(-yFinalPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
-                )
+                    Vec2D(
+                        clamp(xFinalPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
+                        clamp(-yFinalPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
+                    )
                 else // Use regular pid
-                Vec2D(
-                    clamp(xPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
-                    clamp(-yPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
-                )),
+                    Vec2D(
+                        clamp(xPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
+                        clamp(-yPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
+                    )),
 
                 -peruCoef,
-                peruCoef)
+                peruCoef
+            )
             send_toall("2PeruCoef", peruCoef)
 
 
             send_toall("2movex", move.x)
             send_toall("2movey", move.y)
-            send_toall("2moveh", if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h)) /// Tmp
+            send_toall(
+                "2moveh",
+                if (dist < target_pose.goodEnough) -hFinalPDF.update(err.h) else -hPDF.update(err.h)
+            ) /// Tmp
 
             if (hitPeruMin && et.seconds() < PeruMinTime) {
                 chassis.rc_brake()
             } else {
-                if(!path.is_headingonly) {
-
+                if (!path.is_headingonly) {
                     chassis.rc_drive(
                         move.y, move.x,
                         clamp(
@@ -155,29 +185,8 @@ class P2P {
                         ),
                         0.0
                     )
-                }
-                else{
-                    val sebi = if(HANDYMIN)
-                        PeruMin
-                    else
-                        PeruMax
-
-                    val handicapped_move =
-                        clamp(Vec2D(
-                            clamp(xFinalPDF.update(-err.x) * target_pose.vel, -1.0, 1.0),
-                            clamp(-yFinalPDF.update(err.y) * target_pose.vel, -1.0, 1.0)
-                        ), -sebi,
-                            sebi)
-
-                    chassis.rc_drive(
-                        handicapped_move.y, handicapped_move.x,
-                        clamp(
-                            if (dist < target_pose.goodEnough) -hsebiPDF.update(err.h) else -hPDF.update(
-                                err.h
-                            ), -peruCoef * PeruMinAngCoef, peruCoef * PeruMinAngCoef
-                        ),
-                        0.0
-                    )
+                } else {
+                    move_headingonly(err);
                 }
             }
             ep.reset()
@@ -195,8 +204,7 @@ class P2P {
                     ++p2p_logid
                     setCol(Color.rgb(255, 0, 0))
                 }
-            }
-            else {
+            } else {
                 chassis.rc_drive(0.0, 0.0, 0.0, 0.0)
                 if (!done) {
                     send_toall("0errs $p2p_logid", "${fe(err)} ${target_pose.name}")

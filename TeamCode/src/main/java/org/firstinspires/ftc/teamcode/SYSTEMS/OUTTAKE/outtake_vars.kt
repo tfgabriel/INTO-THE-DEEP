@@ -13,7 +13,7 @@ object outtake_vars {
     @JvmField
     var score_basket = 0.52
     @JvmField
-    var score_specimen = 0.48
+    var score_specimen = 0.49
     @JvmField
     var steal = 0.73
 
@@ -21,7 +21,7 @@ object outtake_vars {
     @JvmField
     var fb_transfer = 0.93
     @JvmField
-    var fb_score = 0.51
+    var fb_score = 0.47
     @JvmField
     var fb_steal = 0.98
 

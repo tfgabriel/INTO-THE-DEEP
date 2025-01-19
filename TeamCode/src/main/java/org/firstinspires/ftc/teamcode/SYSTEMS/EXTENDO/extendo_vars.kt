@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO
 
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
+import org.firstinspires.ftc.teamcode.ALGORITHMS.PDFC
+import org.firstinspires.ftc.teamcode.ALGORITHMS.SQUID
 
 @Config
 object extendo_vars {
@@ -20,17 +22,10 @@ object extendo_vars {
     @JvmField
     var manual_tresh: Int = 350
 
-    var extendo_pdf: PDF = PDF()
+    var extendo_pdf: SQUID = SQUID()
 
     @JvmField
-    // Might get changed
-    var proportional: Double = 0.005
-    @JvmField
-    // To be changed
-    var derivative: Double = 0.2
-    @JvmField
-    // To be changed
-    var force: Double = 0.0
+    var extc = PDFC(0.05, 0.002, 0.0)
     @JvmField
     var tolerance: Double = 5.5
 

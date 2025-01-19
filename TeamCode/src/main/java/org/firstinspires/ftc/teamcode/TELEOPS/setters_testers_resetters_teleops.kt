@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.ang_to_pos
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.x_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Math.y_distance
 import org.firstinspires.ftc.teamcode.ALGORITHMS.PDF
+import org.firstinspires.ftc.teamcode.ALGORITHMS.SQUID
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Vec2D
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.Robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars
@@ -74,6 +75,7 @@ import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.CAMERA.Camera
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.Localizer
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.MOTOR
+import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.extendo_vars.extc
 import kotlin.math.abs
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
 
@@ -110,7 +112,7 @@ class extendo_test: LinearOpMode(){
         waitForStart()
         while(!isStopRequested){
             setExtendoTarget(EXTENDO_STATE)
-            extendo_pdf = PDF(extendo_vars.proportional, extendo_vars.derivative, extendo_vars.force)
+            extendo_pdf = SQUID(extc)
             send_toall("POWER", extendo.chub_rails.power)
             send_toall("POS", extendo.chub_rails.currentpos)
             send_toall("ERR", extendo_target- extendo.chub_rails.currentpos)
@@ -176,7 +178,7 @@ class set_extendo_f: LinearOpMode(){
 
         waitForStart()
         while(!isStopRequested){
-            setExtendoPowers(extendo_vars.force)
+            setExtendoPowers(extc.f)
             robot.update()
         }
     }

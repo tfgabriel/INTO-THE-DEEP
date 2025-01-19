@@ -6,6 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.ImewToClose
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.USE_TELE
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.camera
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
@@ -80,6 +81,7 @@ class Robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     fun base_init(lom: LinearOpMode){
         val tp = TelemetryPacket()
         ep.reset()
+        if (isAuto) { ImewToClose = true; }
         dashboard = FtcDashboard.getInstance()
         tp.put("0Start", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         linearopmode = lom
@@ -98,9 +100,22 @@ class Robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         }
         tp.put("0Lynx", ep.seconds()); dashboard.sendTelemetryPacket(tp)
 
-        imew = ThreadedIMU("IMU")
-        imew.init()
-        imew.initThread()
+        try {
+            if (!imew.initialized) {
+                imew.init()
+            } else {
+                if (ImewToClose) {
+                    imew.close()
+                    imew.init()
+                }
+            }
+            imew.initThread()
+        } catch (e: Exception) {
+            imew = ThreadedIMU("imu")
+            imew.init()
+            imew.initThread()
+        }
+
         tp.put("0Imew", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         telemetry = dashboard.telemetry
         telemetry_packet = TelemetryPacket()

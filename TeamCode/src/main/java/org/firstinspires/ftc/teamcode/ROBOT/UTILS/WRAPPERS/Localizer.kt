@@ -14,10 +14,12 @@ import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
 @Config
 object freakyyyy{
     @JvmField
-    var angScalar: Double = 1.002
+    //var angScalar: Double = 1.002
+    var angScalar: Double = 0.9941
     @JvmField
-    var linearScalar: Double = 1.0075
+    var linearScalar: Double = 1.101
 }
+
 class Localizer(name: String) {
     private val otos = hardwareMap.get(SparkFunOTOS::class.java, name)
     var pose: Pose = Pose()

@@ -18,11 +18,12 @@ import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.co3
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.extension_0
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.rotate
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_8
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.s_9
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_gen
-import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.score_offset
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.Ascore_preload
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.Bwait_theydontloveyoulikeiloveyou
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.drop_speci
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.oppositionclaims
+import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.oppositionclaimsRetard
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleep_steal
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleepy_extend_from_preload
 import org.firstinspires.ftc.teamcode.AUTO.SpecimenVars.sleepy_extend_third_impact
@@ -219,11 +220,17 @@ class SpecimenPrime : LinearOpMode() {
             setClawState(0),
             SleepCommand(0.2),
 
-
             //goto chamber
             setOuttake(2),
             InstantCommand { setLiftTarget(3) },
             SleepCommand(sleep_steal),
+
+            InstantCommand { p2p.followpath(oppositionclaims)},
+            WaitUntilCommand { p2p.done },
+
+            InstantCommand { p2p.followpath(oppositionclaimsRetard)},
+            WaitUntilCommand { p2p.done },
+
             InstantCommand { p2p.followpath(score_gen + offsetscore)},
             WaitUntilCommand { p2p.done },
 
@@ -231,15 +238,14 @@ class SpecimenPrime : LinearOpMode() {
             InstantCommand { setLiftTarget(0) },
             SleepCommand(0.4),
             setClawState(1),
-            SleepCommand(0.1),
-            setOuttake(1),
 
             //rotate and prepare to leave
             InstantCommand { p2p.followpath(rotate) },
+            //reset arm for steal
+            SleepCommand(0.3),
+            setOuttake(4),
             WaitUntilCommand { p2p.done },
 
-            //reset arm for steal
-            setOuttake(4),
         )
     }
 
@@ -296,7 +302,7 @@ class SpecimenPrime : LinearOpMode() {
 
             //dropoff first sample
             SequentialCommand(
-                InstantCommand { setExtendoTarget(2) },
+                InstantCommand { setExtendoTargetLinear(drop_speci) },
                 InstantCommand { p2p.followpath(spinny_baby) },
                 SleepCommand(wait_move),
                 WaitUntilCommand { p2p.done && isExtendoinTolerance() },
@@ -304,6 +310,7 @@ class SpecimenPrime : LinearOpMode() {
                 setIntakeState(1)
             ),
 
+            InstantCommand { setExtendoTarget(2) },
             //pickup second sample
             InstantCommand { p2p.followpath(bomboclaat) },
 
@@ -322,11 +329,13 @@ class SpecimenPrime : LinearOpMode() {
 
             //pickup third sample
             InstantCommand { intake.wrist.position = 0.9 },
-            InstantCommand { setExtendoTarget(1) },
+            InstantCommand { setExtendoTargetLinear(drop_speci) },
 
+            InstantCommand { intake.wrist.position = 0.9 },
             InstantCommand { p2p.followpath(the_third_children) },
             WaitUntilCommand { p2p.done },
 
+            InstantCommand { intake.wrist.position = 0.9 },
             InstantCommand { setExtendoTarget(2) },
             InstantCommand { setExtendoPowers(1.0) },
             setIntakeState(1),
@@ -340,6 +349,7 @@ class SpecimenPrime : LinearOpMode() {
 
             //dropoff third sample
             SequentialCommand(
+                InstantCommand { setExtendoTarget(1) },
                 setIntakeState(1),
                 setWrist(),
                 InstantCommand { p2p.followpath(spinny_baby3) },
@@ -350,24 +360,7 @@ class SpecimenPrime : LinearOpMode() {
 
             //take wall specimen
             retract(),
-            SequentialCommand(
-                InstantCommand { p2p.followpath(s_8) },
-                WaitUntilCommand { p2p.done },
-                InstantCommand { p2p.followpath(s_9) },
-                WaitUntilCommand { p2p.done },
-                SleepCommand(0.2),
-                setClawState(0),
-                SleepCommand(0.2),
-            ),
-
-            //score wall specimen
-            goto_chamber(Pose()),
-            WaitUntilCommand { p2p.done },
-            place_specimen(),
-
-            InstantCommand { p2p.followpath(rotate) },
-            WaitUntilCommand { p2p.done },
-            setOuttake(4),
+            cycle(Pose(), Pose()),
 
             //cycle 1
             cycle(co1, wo1),
@@ -389,8 +382,6 @@ class SpecimenPrime : LinearOpMode() {
                     current_command = null
                 }
             }
-
-
 
             setLift()
             setExtendo(0.0)
