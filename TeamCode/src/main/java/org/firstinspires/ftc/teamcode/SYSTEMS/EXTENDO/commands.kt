@@ -72,7 +72,6 @@ object commands {
     */
 
     fun setExtendoPowers(pwr1: Double) {
-
             extendo.chub_rails.power = pwr1
         //extendo.ehub_rails.power = pwr1
     }

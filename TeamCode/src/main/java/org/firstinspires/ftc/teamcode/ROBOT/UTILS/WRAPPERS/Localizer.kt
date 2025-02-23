@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.ALGORITHMS.Pose
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.hardwareMap
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.freakyyyy.angScalar
 import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.freakyyyy.linearScalar
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
@@ -41,7 +42,8 @@ class Localizer(name: String) {
         val et = ElapsedTime()
         et.reset()
         lpose = pose
-        pose = Pose(otos.position)
+        val cpos = Pose(otos.position)
+        pose = Pose(cpos.x, cpos.y, imew.yaw)
         vel = (pose - lpose) / ep.seconds()
         ep.reset()
         send_toall("UPDATE SPARKFUN TIME", et.seconds())

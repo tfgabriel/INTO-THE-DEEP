@@ -121,9 +121,15 @@ object robot_vars {
     @JvmField
     var liftl_first_open = FIRSTOPEN()
 
+    @JvmField
+    var REVERSE_LIFT = false
+
 
     @JvmField
     var HANDYMIN = false
+
+    @JvmField
+    var LIFT_TARGET = 0
 
     /*
         Expansion:

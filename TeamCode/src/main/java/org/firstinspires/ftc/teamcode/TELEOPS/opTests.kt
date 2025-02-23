@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.TELEOPS
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
@@ -12,23 +17,21 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.Robot
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.WITH_PID
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.chassis
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.dashboard
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.extendo
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.imew
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.intake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.isAuto
-import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
 import org.firstinspires.ftc.teamcode.COMMANDBASE.Command
 import org.firstinspires.ftc.teamcode.COMMANDBASE.InstantCommand
+import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SequentialCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.SleepCommand
 import org.firstinspires.ftc.teamcode.COMMANDBASE.WaitUntilCommand
-import org.firstinspires.ftc.teamcode.COMMANDBASE.ParallelCommand
-
+import org.firstinspires.ftc.teamcode.ROBOT.UTILS.WRAPPERS.MOTOR
 import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars
-import org.firstinspires.ftc.teamcode.SYSTEMS.CHASSIS.chassis_vars.chassis_f
-import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinHomeTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.isExtendoinTolerance
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendo
 import org.firstinspires.ftc.teamcode.SYSTEMS.EXTENDO.commands.setExtendoPowers
@@ -48,14 +51,15 @@ import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftPowers
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.commands.setLiftTarget
 import org.firstinspires.ftc.teamcode.SYSTEMS.LIFT.lift_vars.lift_target
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.Outtake
-import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.outtake_vars
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setClawState
 import org.firstinspires.ftc.teamcode.SYSTEMS.OUTTAKE.simple_commands.setOuttake
 import org.firstinspires.ftc.teamcode.TELEMETRY.communication.send_toall
+import org.firstinspires.ftc.teamcode.TELEOPS.OPTest.side_reversed
+import org.firstinspires.ftc.teamcode.TELEOPS.testttttt.pwr
 import org.firstinspires.ftc.teamcode.TELEOPS.uhhuhuh.braketime
 import org.firstinspires.ftc.teamcode.TELEOPS.uhhuhuh.coef
 import kotlin.math.abs
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp as TeleOp
+import kotlin.math.max
 
 var PS1: Boolean = false
 var targetheading: Double = 0.0
@@ -173,20 +177,57 @@ class kmswheel : LinearOpMode() {
     }
 }
 
+@Config
+object OPTest{
+    @JvmField
+    var side_reversed = false
+}
 @TeleOp
 class ffwheeltest: LinearOpMode() {
+
     override fun runOpMode() {
+        dashboard = FtcDashboard.getInstance()
+
         isAuto = false
-        val robot = Robot(false)
-        robot.start(this)
+
+        val lf = hardwareMap.get(DcMotorEx::class.java, "LF")
+        val lb = hardwareMap.get(DcMotorEx::class.java, "LB")
+        val rf = hardwareMap.get(DcMotorEx::class.java, "RF")
+        val rb = hardwareMap.get(DcMotorEx::class.java, "RB")
+
+        //if (isStopRequested) return
+
         while (!isStopRequested) {
-            chassis.leftfront.power = chassis_f[0]
-            chassis.leftback.power = chassis_f[1]
-            chassis.rightfront.power = chassis_f[2]
-            chassis.rightback.power = chassis_f[3]
+
+            rf.direction = if(side_reversed) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
+            rb.direction = if(side_reversed) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
+            lf.direction = if(!side_reversed) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
+            lb.direction = if(!side_reversed) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
+            val y = -gamepad1.left_stick_y.toDouble() // Remember, Y stick value is reversed
+            val x = gamepad1.left_stick_x * 1.1 // Counteract imperfect strafing
+            val rx = gamepad1.right_stick_x.toDouble()
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
+            val denominator = max(abs(y) + abs(x) + abs(rx), 1.0)
+            val frontLeftPower = (y + x + rx) / denominator
+            val backLeftPower = (y - x + rx) / denominator
+            val frontRightPower = (y - x - rx) / denominator
+            val backRightPower = (y + x - rx) / denominator
+
+            lf.power = frontLeftPower
+            lb.power = backLeftPower
+            rf.power = frontRightPower
+            rb.power = backRightPower
+
+          //  robot.update()
         }
+
+
     }
 }
+@Disabled
 @TeleOp(name = "我討厭修訂")
 class opTest: LinearOpMode() {
     val pressSquareTimer = ElapsedTime()
@@ -575,7 +616,7 @@ class mapispeel: LinearOpMode(){
     }
 
 }
-
+@Disabled
 @TeleOp
 class sparcfan: LinearOpMode(){
     override fun runOpMode() {
@@ -620,8 +661,11 @@ class sparcfan: LinearOpMode(){
 object testttttt{
     @JvmField
     var xd = 0.3
-}
 
+    @JvmField
+    var pwr = 0.0
+}
+@Disabled
 @TeleOp
 class stangadreapta: LinearOpMode(){
     override fun runOpMode() {
@@ -629,9 +673,7 @@ class stangadreapta: LinearOpMode(){
         robot.start(this)
         waitForStart()
         while(!isStopRequested){
-            outtake.fourbar.position = outtake_vars.fb_transfer
-            outtake.ehub_arm.position = outtake_vars.transfer_outtake
-            outtake.chub_arm.position = outtake_vars.transfer_outtake
+            setLiftPowers(pwr)
             robot.update()
         }
     }

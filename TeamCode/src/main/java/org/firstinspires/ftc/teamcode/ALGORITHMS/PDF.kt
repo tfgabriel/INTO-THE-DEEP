@@ -31,7 +31,8 @@ class PDF(@JvmField var coef: PDFC) {
 
 class SQUID(@JvmField var coef: PDFC) {
     constructor(): this(PDFC(0.0,0.0,0.0))
+    private var ep = ElapsedTime()
     fun update(err: Double): Double {
-        return sign(err) * (sqrt(abs(err)) * coef.p + coef.f)
+        return sign(err) * (sqrt(abs(err)) * coef.p) + coef.f
     }
 }

@@ -72,7 +72,7 @@ object commands
     }
 
     fun isLiftinTolerance(): Boolean {
-        if (!lift.intolerance && abs(lift_target-lift.chub_slides.currentpos) < tolerance_tight) {
+        if (!lift.intolerance && abs(lift_target-lift.ehub_slides.currentpos) < tolerance_tight) {
             lift.intolerance = true
         } else if (lift.intolerance && abs(lift_target-lift.chub_slides.currentpos) > tolerance_loose) {
             lift.intolerance = false
@@ -80,7 +80,7 @@ object commands
         return lift.intolerance
     }
 
-    fun isLiftinMaxTolerance() = lift.chub_slides.currentpos > high_basket-70
+    fun isLiftinMaxTolerance() = lift.chub_slides.currentpos > high_basket-80
     fun isLiftinLooseMaxTolerance() = lift.chub_slides.currentpos > high_basket-highLooseDif
 
     fun isLiftinHomeTolerance() = lift.chub_slides.currentpos < 40.0

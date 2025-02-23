@@ -97,31 +97,31 @@ class Robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         }
         if (lynxModules[0].isParent && LynxConstants.isEmbeddedSerialNumber(lynxModules[0].serialNumber)) {
             control_hub = lynxModules[0]
-            expansion_hub = lynxModules[1]
+        //    expansion_hub = lynxModules[1]
         } else {
             control_hub = lynxModules[1]
-            expansion_hub = lynxModules[0]
+          //  expansion_hub = lynxModules[0]
         }
         tp.put("0Lynx", ep.seconds()); dashboard.sendTelemetryPacket(tp)
 
-        try {
-            if (!imew.initialized) {
-                imew.init()
-            } else {
-                if (ImewToClose) {
-                    imew.close()
-                    imew.init()
-                    ImewToClose = false
-                }
-            }
-            imew.initThread()
-        } catch (e: Exception) {
-            imew = ThreadedIMU("IMU")
-            imew.init()
-            imew.initThread()
-        }
+        //try {
+          //  if (!imew.initialized) {
+           //     imew.init()
+           // } else {
+             //   if (ImewToClose) {
+              ///      imew.close()
+                //    imew.init()
+                 //   ImewToClose = false
+               // }
+           // }
+          //  imew.initThread()
+        //} catch (e: Exception) {
+          //  imew = ThreadedIMU("IMU")
+           // imew.init()
+            //imew.initThread()
+        //}
 
-        tp.put("0Imew", ep.seconds()); dashboard.sendTelemetryPacket(tp)
+//        tp.put("0Imew", ep.seconds()); dashboard.sendTelemetryPacket(tp)
         telemetry = dashboard.telemetry
         telemetry_packet = TelemetryPacket()
 
@@ -154,26 +154,26 @@ class Robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
     private val et = ElapsedTime()
     fun update() {
         send_toall_imp("framerate", 1 / et.seconds())
-        send_toall("lift in tolerance", isLiftinMaxTolerance())
-        send_toall("extendo pos", extendo.chub_rails.currentpos)
+        //send_toall("lift in tolerance", isLiftinMaxTolerance())
+        //send_toall("extendo pos", extendo.chub_rails.currentpos)
 
-        send_toall("extendo in tolerance", isExtendoinTolerance())
-        send_toall("ext power", extendo.chub_rails.power)
-        send_toall("extendo target", extendo_target)
+        //send_toall("extendo in tolerance", isExtendoinTolerance())
+        //send_toall("ext power", extendo.chub_rails.power)
+        //send_toall("extendo target", extendo_target)
 
-        send_toall("extendo diff", extendo_target - extendo.chub_rails.currentpos)
-        send_toall("Extcurrent", extendo.chub_rails.amps)
-        send_toall("Ccurrent", lift.chub_slides.amps)
-        send_toall("Ecurrent", lift.ehub_slides.amps)
+        //send_toall("extendo diff", extendo_target - extendo.chub_rails.currentpos)
+        //send_toall("Extcurrent", extendo.chub_rails.amps)
+        //send_toall("Ccurrent", lift.chub_slides.amps)
+        //send_toall("Ecurrent", lift.ehub_slides.amps)
 
 
         val tp = TelemetryPacket()
         val canvas = tp.fieldOverlay()
-        drawings.drawRobot(canvas, localizer.pose)
-        send_toall("isato", isAuto)
-        if (isAuto) { drawings.drawP2P(canvas) }
-        send_toall("POse", localizer.pose)
-        localizer.update()
+        //drawings.drawRobot(canvas, localizer.pose)
+        //send_toall("isato", isAuto)
+        //if (isAuto) { drawings.drawP2P(canvas) }
+        //send_toall("POse", localizer.pose)
+        //localizer.update()
 
         //send_toall("is open", camera.is_open)
         //send_toall("is valid", result.isValid)
@@ -192,7 +192,7 @@ class Robot(var isAuto: Boolean, var isRed: Boolean, var isSample: Boolean) {
         dashboard.sendTelemetryPacket(tp)
         telemetry.update()
         et.reset()
-        //control_hub.clearBulkCache()
-        expansion_hub.clearBulkCache()
+        control_hub.clearBulkCache()
+        //expansion_hub.clearBulkCache()
     }
 }

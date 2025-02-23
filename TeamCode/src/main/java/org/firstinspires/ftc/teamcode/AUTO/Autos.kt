@@ -66,6 +66,7 @@ import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.isAuto
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.lift
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.linearopmode
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.localizer
+import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.outtake
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.p2p
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.pp
 import org.firstinspires.ftc.teamcode.BOT_CONFIG.robot_vars.telemetry_packet
@@ -470,9 +471,9 @@ class Sample : LinearOpMode() {
                 InstantCommand { p2p.followpath(rotatemid) },
                 WaitUntilCommand { p2p.done },
                 InstantCommand { setLiftTarget(0) },
+                InstantCommand { setExtendoTarget(2) },
                 InstantCommand { p2p.followpath(sample_1) },
 
-                InstantCommand { setExtendoTarget(2) },
 
                 setWrist(),
                 SleepCommand(0.15),
@@ -530,10 +531,10 @@ class Sample : LinearOpMode() {
                 InstantCommand { p2p.followpath(sample_three) },
 
                 SleepCommand(waitaminute),
-                InstantCommand { setLiftTarget(0) },
-
                 WaitUntilCommand { p2p.done },
+                InstantCommand { setLiftTarget(0) },
                 InstantCommand { setExtendoTarget(2) },
+
                 InstantCommand { setExtendoPowers(1.0) },
                 SleepCommand(0.1),
                 setIntakeState(1),
@@ -541,6 +542,7 @@ class Sample : LinearOpMode() {
                 SleepCommand(sleepExtendoThird),
 
                 InstantCommand { setExtendoPowers(1.0) },
+                SleepCommand(0.2),
                 doGrab(true),
             ),
 
@@ -562,8 +564,9 @@ class Sample : LinearOpMode() {
                 InstantCommand { p2p.followpath(park2) },
                 SleepCommand(0.1),
                 InstantCommand { setLiftTarget(0) },
-                setOuttake(2),
                 WaitUntilCommand { p2p.done },
+                InstantCommand { outtake.chub_arm.position = 0.49},
+                InstantCommand { outtake.ehub_arm.position = 0.49},
                 InstantCommand { p2p.followpath(park3) },
                 WaitUntilCommand { p2p.done }
             )
